@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/ReactivityTemperatureConvertion/static/css/main.80819fd9.css",
+    "main.js": "/ReactivityTemperatureConvertion/static/js/main.fede6cb1.js",
+    "static/js/453.5458dc98.chunk.js": "/ReactivityTemperatureConvertion/static/js/453.5458dc98.chunk.js",
+    "index.html": "/ReactivityTemperatureConvertion/index.html",
+    "main.80819fd9.css.map": "/ReactivityTemperatureConvertion/static/css/main.80819fd9.css.map",
+    "main.fede6cb1.js.map": "/ReactivityTemperatureConvertion/static/js/main.fede6cb1.js.map",
+    "453.5458dc98.chunk.js.map": "/ReactivityTemperatureConvertion/static/js/453.5458dc98.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.80819fd9.css",
+    "static/js/main.fede6cb1.js"
+  ]
+}
