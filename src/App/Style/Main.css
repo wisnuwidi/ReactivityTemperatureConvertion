@@ -1,0 +1,814 @@
+/* The `@import` rule in CSS is used to import a style sheet into another style sheet. In this case,
+the `@import` rule is importing the Google Fonts stylesheet for the fonts "Nunito" and "Protest
+Strike" with specific font weights and styles. */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Protest+Strike&display=swap');
+
+/* The `@import` rule in CSS is used to import a style sheet into another style sheet. */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+
+/* The CSS code `*` selector with the properties `margin: 0;`, `padding: 0;`, `box-sizing:
+border-box;`, `font-family: "Nunito", sans-serif;`, `font-optical-sizing: auto;`, and `font-style:
+normal;` is setting default styles for all elements on the page. */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Nunito", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+/* This CSS code for the `body` selector is styling the overall layout and appearance of the webpage.
+Here's what each property is doing: */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1.6;
+    margin: 0;
+    transition: background 0.5s ease, color 0.3s ease;
+}
+
+/* The CSS code `body.dark-mode { background: linear-gradient(135deg, #333, #666); }` is defining a
+specific styling for the `body` element when it has the class `dark-mode` added to it. */
+body.dark-mode {
+    background: linear-gradient(135deg, #333, #666);
+}
+
+/* The above CSS code is targeting the `.clock-container` element within the `body` element with the
+class `dark-mode`. It is setting the background of the `.clock-container` element to a linear
+gradient with specific color stops and transparency values. It is also setting the text color of the
+`.clock-container` element to a specific semi-transparent white color. This code is likely part of a
+dark mode styling for a clock display on a webpage. */
+body.dark-mode .clock-container {
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(77, 75, 75, 0.45));
+    color: rgba(255, 255, 255, 0.70);
+}
+
+/* The above CSS code is styling a container element on a webpage. It sets the maximum width of the
+container to 800 pixels, centers the container horizontally on the page with a 1% margin on all
+sides, and adds 20 pixels of padding inside the container. */
+.container {
+    max-width: 800px;
+    margin: 1% auto;
+    padding: 20px;
+}
+
+/* The above code is a CSS code snippet that styles the header element. It sets the text alignment to
+center, adds a bottom margin of 20 pixels, and positions the header element relative to its normal
+position in the document flow. */
+header {
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+/* The above CSS code is styling the `<h1>` element within a `<header>` element. It sets the font
+family to "Protest Strike" with a fallback to a sans-serif font, font weight to 400, font style to
+normal, font size to 3rem, text color to #42a2bf, and margin to 3% on the top and bottom and auto on
+the left and right. */
+header h1 {
+    font-family: "Protest Strike", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 3rem;
+    color: #42a2bf;
+    margin: 3% auto 8% auto;
+}
+
+/* The above code is a CSS code snippet targeting the `h1` element within a `header` element in dark
+mode. It sets the text color of the `h1` element to `#d0e7ee`, which is a light blue color. */
+body.dark-mode header h1 {
+    color: #d0e7ee;
+}
+
+/* The above CSS code is styling the <main> element. It is using flexbox properties to create a column
+layout where the child elements are stacked vertically. The `display: flex;` property makes the main
+element a flex container, `flex-direction: column;` sets the direction of the main axis to be
+vertical, and `align-items: center;` centers the child elements along the cross axis (vertically in
+this case). */
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* The above CSS code is styling a `section` element. It sets the width to 100% but with a maximum
+width of 600px. It adds margin of 10px on the top and bottom, padding of 15px on all sides, a white
+background color, border radius of 8px for rounded corners, and a box shadow for a subtle shadow
+effect. */
+section {
+    width: 100%;
+    max-width: 600px;
+    margin: 10px 0;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* The above CSS code is targeting all input and button elements within a section element and applying
+a margin of 10px on the top and bottom, and auto on the left and right. This will center the input
+and button elements within the section element with equal spacing around them. */
+section input,
+section button {
+    margin: 10px auto;
+}
+
+/* The above code is setting the width of all buttons inside a section element to be 46% of the width
+of their container. */
+section button {
+    width: 46%;
+}
+
+/* The above CSS code is targeting the last button element within a section element and applying a
+style rule to float it to the right. */
+section button:last-child {
+    float: right;
+}
+
+/* The above code is a CSS code snippet that targets an element with the ID "inputConvertionID" and
+sets the text alignment to the right. This means that any text content within the element with that
+specific ID will be aligned to the right within the element. */
+#inputConvertionID {
+    text-align: right;
+}
+
+/* The above CSS code is styling a class called ".line-box". It is setting the border color to
+transparent for the top and left sides, and setting the border color to #cccccc for the bottom side
+with a thickness of 1px. It is also setting the border radius to 0, which means the corners of the
+element will be square. The use of "!important" is to give these styles the highest priority and
+override any other conflicting styles. */
+.line-box {
+    border: transparent solid 1px !important;
+    border-bottom: #cccccc solid 1px !important;
+    border-radius: 0 !important;
+}
+
+/* The above code is a CSS rule targeting an element with the class "line-box" that is disabled. It
+sets the background color of the element to transparent, using the !important keyword to ensure that
+this style takes precedence over any other conflicting styles. */
+.line-box:disabled {
+    background-color: transparent !important;
+}
+
+/* The above CSS code is defining a transition effect for the `.calc-method` class. This transition
+effect will change the background color over a duration of 0.5 seconds with an ease timing function,
+and it will also change the text color over a duration of 0.3 seconds with an ease timing function.
+This will create a smooth visual transition when the background or text color of elements with the
+`.calc-method` class are changed. */
+.calc-method {
+    transition: background 0.5s ease, color 0.3s ease;
+}
+
+/* The above CSS code is targeting elements with the class "calc-method" when they are either focused
+or hovered over. It applies a box shadow with a light blue color and a slight blur effect, as well
+as changes the bottom border color to a darker blue shade. The use of "!important" ensures that the
+border color change takes precedence over any other conflicting styles. */
+.calc-method:focus,
+.calc-method:hover {
+    box-shadow: rgba(101, 175, 255, 0.19) -1px 8px 8px;
+    border-bottom-color: rgba(101, 175, 255, 0.38) !important;
+}
+
+/* The above CSS code is styling a button element. It sets the padding to 10px on the top and bottom,
+and 20px on the left and right. It removes the border around the button using `border: none`, and
+gives it a border radius of 5px to make the corners rounded. The cursor is set to pointer to
+indicate interactivity, and there is a transition effect on the background color that lasts for 0.3
+seconds. */
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* The above CSS code is styling a notification element with the ID "notification". It sets the
+position to fixed at the bottom right corner of the screen with a background color of orange
+(rgba(242, 110, 30, 0.9)), white text color, padding of 0, border radius of 5px, and a transform
+property to move the element 20px down. It also includes a transition effect for opacity and
+transform properties with a duration of 0.5s and easing function of ease. */
+#notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(242, 110, 30, 0.9);
+    color: white;
+    padding: 0;
+    border-radius: 5px;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* The above code is a CSS code snippet defining a class named "danger". This class sets the margin of
+elements with this class to 10px on the top and bottom, and 20px on the left and right. */
+.danger {
+    margin: 10px 20px;
+}
+
+/* The above CSS code is defining a class called `.danger-info`. This class sets the background color
+to a semi-transparent red color with an opacity of 0.18 using the `rgba()` function. It also sets
+the border color to a semi-transparent red color with an opacity of 0.38 and a solid border style of
+1px width. The `!important` keyword is used to give these styles higher priority and override any
+other conflicting styles. */
+.danger-info {
+    background-color: rgba(255, 0, 0, 0.18) !important;
+    border: rgba(255, 0, 0, 0.38) solid 1px !important;
+}
+
+/* The above CSS code is styling a close button element with the class "close-btn". It sets the font
+family to "Protest Strike" with a fallback to sans-serif, makes the text bold, positions the button
+absolutely at the top right corner of its container, sets the cursor to a pointer, defines the text
+color as #e10000, background color as #ffeada, and gives the button a circular shape with
+border-radius. The button has a width and height of 14pt, text is centered within the button, and
+padding is added around the text. The line height and font */
+.close-btn {
+    font-family: "Protest Strike", sans-serif;
+    font-weight: bold;
+    position: absolute;
+    top: 12%;
+    right: 2%;
+    cursor: pointer;
+    color: #e10000;
+    background-color: #ffeada;
+    border-radius: 50%;
+    width: 14pt;
+    height: 14pt;
+    text-align: center;
+    padding: 1%;
+    line-height: 0.38em;
+    font-size: 1.2rem;
+}
+
+/* The above CSS code is styling the `#copy` element and any anchor `<a>` elements within it. It sets
+the text alignment to right, uses the "Protest Strike" font family with specified properties, sets
+the font size, color, margin, and text shadow for the text within the elements. The width of the
+elements is also set to 78%. */
+#copy,
+#copy>a {
+    text-align: right;
+    font-family: "Protest Strike", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 0.8rem;
+    color: rgba(49, 119, 113, 0.84);
+    margin: 5% auto 2% auto;
+    text-shadow: rgba(66, 162, 191, 0.38) 0px 0px 2px;
+    width: 78%;
+}
+
+
+/* The above CSS code is targeting specific elements within the dark-mode styling of a webpage's header
+and copy section. It sets the color of the text to a semi-transparent light blue (rgba(208, 231,
+238, 0.61)) and removes any text shadow by setting it to transparent (rgba(19, 53, 50, 0.38) 0px 0px
+0px). This styling is applied to elements with the specified classes and IDs when the webpage is in
+dark mode. */
+body.dark-mode header .clock-container,
+body.dark-mode header .label,
+body.dark-mode header .toggle-container,
+body.dark-mode #copy,
+body.dark-mode #copy>a {
+    color: rgba(208, 231, 238, 0.61);
+    text-shadow: rgba(19, 53, 50, 0.38) 0px 0px 0px;
+}
+
+/* The above CSS code is targeting disabled input elements and setting their background color to a
+semi-transparent light blue color (rgb(96, 139, 149) with an opacity of 0.09). The `!important`
+keyword is used to give this style rule the highest priority, ensuring that it overrides any other
+conflicting styles. */
+input:disabled {
+    background-color: rgba(96, 139, 149, 0.09) !important;
+}
+
+/* The above CSS code is styling the labels and input elements within an element with the ID
+"conv-box". It is setting a margin of 0 on the top and bottom, and 0.5% on the left and right for
+both the labels and input elements. */
+#conv-box label,
+#conv-box input {
+    margin: 0 0.5%;
+}
+
+/* The above code is a CSS code snippet that styles an element with the class "input". It sets the font
+weight to bold and transforms the text to capitalize. */
+.input {
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+/* The above code is a CSS code snippet defining a class called "hide" with the property "display:
+none;". This class is used to hide elements on a webpage by setting their display property to none,
+effectively making them invisible and not taking up any space on the page. */
+.hide {
+    display: none !important;
+}
+
+/* The above code is a CSS code snippet that defines a class called "show" with the property "display"
+set to "block". This class can be applied to HTML elements to make them visible on the webpage by
+setting their display property to block. */
+.show {
+    display: block;
+}
+
+/* The above code is a CSS code snippet defining a class ".s-25" with a width of 25% and using the
+!important rule to give it higher specificity. This class can be applied to HTML elements to set
+their width to 25% of their parent container's width. */
+.s-25 {
+    width: 25% !important;
+}
+
+/* The above code is a CSS code snippet defining a class ".s-50" with a width of 50%. The "!important"
+declaration is used to give this style rule higher priority over other conflicting style rules. This
+class can be applied to HTML elements to set their width to 50%. */
+.s-50 {
+    width: 50% !important;
+}
+
+/* The above CSS code is targeting an element with the class "s-75" and setting its width to 73% with
+the !important rule to give it higher specificity. It also adds a margin of 1% to the left of the
+element. */
+.s-75 {
+    width: 73% !important;
+    margin-left: 1%;
+}
+
+/* The above CSS code is using a media query to apply specific styles to elements with the classes
+`.s-25`, `.s-50`, and `.s-75` when the maximum width of the viewport is 600px or less. */
+@media (max-width: 600px) {
+    .s-25 {
+        width: 72% !important;
+    }
+
+    .s-50 {
+        width: 100% !important;
+    }
+
+    .s-75 {
+        width: 100% !important;
+    }
+}
+
+/* The above code is a CSS media query targeting devices with a maximum width of 508px. Within this
+media query, it is setting the width of elements with the classes "s-25" and "s-50" to 100% using
+the !important keyword to ensure this style takes precedence over any other conflicting styles. This
+is likely done to ensure that these elements take up the full width of the viewport on smaller
+devices. */
+@media (max-width: 508px) {
+
+    .s-25,
+    .s-50 {
+        width: 100% !important;
+    }
+}
+
+/* The above code is a CSS code snippet defining a class called "show". This class sets the opacity to
+1 (fully visible) and moves the element vertically by 0 pixels using the transform property. This
+class is likely used to make an element visible and position it at its original vertical position. */
+.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* The above code is defining a CSS style for a dark mode theme. It sets the background color of the
+body to a dark gray (#333) and the text color to a light gray (#f4f4f4) when the "dark-mode" class
+is applied to the body element. */
+body.dark-mode {
+    background-color: #333;
+    color: #f4f4f4;
+}
+
+/* The above code is defining a CSS rule that targets the `section` elements within the `body` element
+with the class `dark-mode`. It sets the background color to a dark gray (#444) and the text color to
+a light gray (#f4f4f4). This rule is specifically for styling elements in dark mode. */
+body.dark-mode section {
+    background-color: #444;
+    color: #f4f4f4;
+}
+
+/* The above code is defining a CSS rule for buttons within the body element with the class
+"dark-mode". It sets the background color to #555 (a dark gray) and the text color to #f4f4f4 (a
+light gray). This rule will style buttons specifically within the dark-mode context. */
+body.dark-mode button {
+    background-color: #555;
+    color: #f4f4f4;
+}
+
+/* The above CSS code is styling the header elements with the classes "label" and "toggle-container".
+It sets their display to inline-block, width to 20% of the parent element, and positions them
+absolutely at the top right corner of their container. The font family is set to "Protest Strike",
+font size to 0.8rem, font weight to light, and color to a semi-transparent teal color. Text
+alignment is right, with a text shadow effect applied. Margin is set to 1% on the top and bottom,
+padding is 1% on the left and right */
+header .label,
+header .toggle-container {
+    position: absolute;
+    top: 0;
+    right: 1%;
+    font-family: "Protest Strike", serif;
+    font-size: 0.8rem;
+    font-weight: light;
+    color: rgba(49, 119, 113, 0.84);
+    text-align: right;
+    text-shadow: rgba(66, 162, 191, 0.38) 0px 0px 2px;
+    margin: 1% 0;
+    padding: 0 1%;
+    line-height: 1.8em;
+}
+
+.toggle>.label.switch-label {
+    width: auto;
+    text-align: right;
+    margin: 1% 5% 1% auto;
+}
+
+/* The above code is defining a CSS class called "toggle-container" with the following properties:
+- Setting the display property to flex, which allows the container to align its children in a flex
+layout.
+- Using align-items property to center the children vertically within the container.
+- Using justify-content property to center the children horizontally within the container. */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* The above CSS code is styling a toggle element. It sets the element's position to relative, width to
+50px, height to 25px, background color to #ccc (light gray), border radius to create a rounded
+shape, cursor to pointer for hover effect, and adds a transition effect for the background color
+change with a duration of 0.3 seconds. */
+.toggle {
+    position: relative;
+    width: 120px;
+    height: 25px;
+    background-color: #ccc;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* The above CSS code is creating a circular element that will be displayed before the content of an
+element with the class "toggle". The element has a white background color, a border radius of 50% to
+make it circular, and is positioned absolutely within its parent element. The transition property is
+used to animate the transform property over a duration of 0.3 seconds, allowing for smooth
+animations when the element changes position or size. */
+.toggle::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 50%;
+    top: 2.5px;
+    left: 2.5px;
+    transition: transform 0.3s;
+}
+
+/* The above code is defining a CSS rule for an element with the class "toggle" and "active". It sets
+the background color of the element to #4caf50 when it has both classes applied to it. */
+.toggle.active {
+    background-color: #4caf50;
+}
+
+/* The above CSS code is targeting an element with the class "toggle" and "active" when it is in an
+active state. It is applying a transformation to move the element 25 pixels to the right along the
+X-axis. */
+.toggle.active::before {
+    transform: translateX(25px);
+}
+
+/* The above CSS code is using a media query to apply styles specifically for screens with a maximum
+width of 768px. Within this media query, it is targeting elements with the class "label.input-label"
+and setting their display property to "none", effectively hiding them on screens with a width of
+768px or less. It is also styling elements with the class "toggle", setting their width to 42px and
+height to 17px. Additionally, it is styling the pseudo-element "::before" of elements with the class
+"toggle", setting its width to 10px and height to */
+@media (max-width: 768px) {
+    .label.input-label {
+        display: none;
+    }
+
+    .toggle {
+        width: 42px;
+        height: 17px;
+    }
+
+    .toggle::before {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+/* The above code is defining a CSS rule for an element with the class "toggle" and "active". It sets
+the background color of the element to #4caf50 when it has both classes applied to it. */
+.toggle.active {
+    background-color: #4caf50;
+}
+
+/* The above CSS code is targeting an element with the class "toggle" and the class "active", and
+applying a transformation that moves the element 25 pixels to the right along the X-axis. The
+`::before` pseudo-element is used to insert content before the content of the selected element. */
+.toggle.active::before {
+    transform: translateX(25px);
+}
+
+/* The above code is a CSS media query targeting devices with a maximum width of 768px. Within this
+media query, it is setting the maximum width of `<section>` elements to 90% and the width of
+`<button>` elements to 100% to ensure they are responsive and fit well on smaller screens. */
+@media (max-width : 768px) {
+    section {
+        max-width: 90%;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
+/* The above code is defining CSS custom properties using the `:root` pseudo-class. It is setting two
+custom properties: `--marker-color-light` with a value of `#b8daff` and `--marker-color-dark` with a
+value of `#66b3ff`. These custom properties can be used throughout the CSS code to maintain
+consistency and easily update colors in the future. */
+:root {
+    --marker-color-light: #b8daff;
+    --marker-color-dark: #66b3ff;
+}
+
+/* The above CSS code is targeting the `summary` element and setting its position to relative. It is
+also moving the element to the left by 2.8% of its containing element's width. */
+summary {
+    position: relative;
+    left: -2.8%;
+}
+
+/* The above code is a CSS code snippet that targets the `summary` element and applies a hover effect
+to it. When the `summary` element is hovered over, the cursor will change to a pointer, indicating
+that it is clickable. */
+summary:hover {
+    cursor: pointer;
+}
+
+/* The above code is a CSS rule targeting `<strong>` elements that are direct children of `<summary>`
+elements. It sets the margin of the `<strong>` elements to 0 on the top, right, and bottom, and 3px
+on the left. */
+summary>strong {
+    margin: 0 0 0 3px;
+}
+
+/* The above CSS code is styling the marker for the `<summary>` element. It sets the marker content to
+a right-pointing triangle symbol ('▶'), changes the color using a custom CSS variable
+`--marker-color-light`, sets the font size to 1.2em, and adds a margin to the right of the marker. */
+summary::marker {
+    content: '▶';
+    color: var(--marker-color-light);
+    font-size: 1.2em;
+    margin-right: 5px;
+}
+
+/* The above code is targeting the marker color of a summary element within the body of a webpage in
+dark mode. It is setting the color of the marker to a custom property (--marker-color-dark) defined
+elsewhere in the CSS. */
+body.dark-mode summary::marker {
+    color: var(--marker-color-dark);
+}
+
+/* The above CSS code is targeting the marker pseudo-element of a summary element when it is being
+hovered over. It sets the color of the marker to #0056b3 (a shade of blue) when the summary element
+is being hovered. */
+summary:hover::marker {
+    color: #0056b3;
+}
+
+/* The above code is targeting the marker (list item marker) that appears when a summary element is
+hovered over in dark mode. It changes the color of the marker to #004494 when the summary element is
+hovered over. */
+body.dark-mode summary:hover::marker {
+    color: #004494;
+}
+
+.button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+body:not(.dark-mode) .button:disabled {
+    background-color: #007bff;
+    color: rgba(255, 255, 255, 0.5);
+    border: 1px solid #0056b3;
+}
+
+body.dark-mode .button:disabled {
+    background-color: #495057;
+    color: rgba(248, 249, 250, 0.5);
+    border: 1px solid #343a40;
+}
+
+body:not(.dark-mode) .button {
+    background-color: #007bff;
+    color: white;
+}
+
+body:not(.dark-mode) .button:hover {
+    background-color: #0056b3;
+}
+
+body.dark-mode .button {
+    background-color: #495057;
+    color: #f8f9fa;
+}
+
+body.dark-mode .button:hover {
+    background-color: #343a40;
+}
+
+.input,
+.calc-method {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+body:not(.dark-mode) .input,
+body:not(.dark-mode) .calc-method {
+    background-color: white;
+    color: #333;
+}
+
+body.dark-mode .input,
+body.dark-mode .calc-method {
+    background-color: #444;
+    color: #f8f9fa;
+    border: 1px solid #666;
+}
+
+select:hover {
+    cursor: pointer;
+}
+
+.input:focus,
+.calc-method:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+body.dark-mode .input:focus,
+body.dark-mode .calc-method:focus {
+    border-color: #66afe9;
+}
+
+#info-box {
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: inline-table;
+    width: 100%;
+    margin-top: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#info-box h3,
+#info-box details {
+    margin: 20px;
+}
+
+#info-box p.info {
+    margin: 20px !important;
+}
+
+#info-box p {
+    margin: 20px auto;
+}
+
+body:not(.dark-mode) #info-box {
+    background: linear-gradient(135deg, #007bff 0%, #6c757d 100%);
+    color: white;
+}
+
+body.dark-mode #info-box {
+    background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+    color: #f8f9fa;
+}
+
+#info-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+#info-title {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.info {
+    font-size: 1em;
+    line-height: 1.5;
+}
+
+#info-notes {
+    margin-top: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px 30px;
+    border-radius: 5px;
+}
+
+body.dark-mode #info-notes {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+code {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: rgba(200, 200, 200, 0.2);
+    color: #c7254e;
+    margin: 10px auto 5px auto;
+    padding: 0.8% 1%;
+    border-radius: 3px;
+}
+
+code.inline {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #d19a66;
+}
+
+@media (max-width: 768px) {
+    code {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: #f6f8fa;
+        border-radius: 5px;
+        overflow-x: auto;
+    }
+}
+
+body.dark-mode code {
+    background-color: rgba(50, 50, 50, 0.7);
+    color: #61afef;
+}
+
+body.dark-mode pre {
+    background-color: #21252b;
+    color: #abb2bf;
+    border: 1px solid #444;
+}
+
+footer h3,
+footer p,
+footer strong,
+footer code {
+    line-height: 3rem;
+}
+
+.clock-container {
+    text-align: center;
+    font-family: "Protest Strike", serif;
+    font-size: 0.88rem;
+    font-weight: lighter;
+    border-radius: 4px;
+    background: linear-gradient(0deg, #4a90e2, #50e3c2);
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: gradient 3s ease infinite;
+    text-align: left;
+    padding: 1% 2%;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 100% 50%;
+    }
+}
+
+.floating {
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
