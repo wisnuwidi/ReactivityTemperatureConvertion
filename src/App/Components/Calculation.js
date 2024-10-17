@@ -1,15 +1,68 @@
-import React, { useState, useEffect } from "react";
-import { setStyle, getElm, ManipulateElements } from "./Helpers/Helpers";
-import { NotificationInfo } from "./Article";
+import { useState, useEffect } from "react";
+import ReactDOM from "react-dom/client";
+import { setStyle, getElm, ManipulateElements, NotificationInfo, CalculateTemperature } from "./Helpers/Helpers";
+
+function ReturnCalculationTemperatureData(value, elements) {
+    const inputConvertionIDValue = CalculateTemperature('#calcMethod', value);
+    const calcMethodValue = getElm('#calcMethod').value;
+    
+    if (Object.keys(elements).length > 0) {
+        Object.keys(elements).forEach((key) => {
+            if ('#inputConvertionID' === elements[key] && !isNaN(inputConvertionIDValue)) {
+                getElm(elements[key]).value = inputConvertionIDValue;
+            }
+            
+            if ('#inputConvertionInfo' === elements[key] && !isNaN(inputConvertionIDValue)) {
+                getElm(elements[key]).value = `\u00B0${calcMethodValue}`;
+            }
+
+            if ('#infoBox' === elements[key]) {
+                setStyle('show animate__animated animate__bounceInUp', getElm(elements[key]));
+                InfoBoxCalculated(calcMethodValue, getElm('#inputCalcID').value, getElm('#inputConvertionID').value);
+            }
+        });
+    }
+}
+
+function InfoBoxCalculated(method, input, result) {
+    const isCelcius = method === 'celcius';
+    const title     = isCelcius ? 'Konversi Fahrenheit Ke Celcius' : 'Konversi Celcius Ke Fahrenheit';
+    const code      = isCelcius ? `(${input} \u00B0C × 9/5) + 32 = ${result} \u00B0F` : `(${input} \u00B0F − 32) × 5/9 = ${result} \u00B0C`;
+    const subcode   = isCelcius ? 'S(\u00B0F) = (S(\u00B0C) x 9/5) + 32' : 'S(\u00B0C) = (S(\u00B0F) − 32) x 5/9';
+    const resubcode = isCelcius ? 'S(\u00B0F) = (S(\u00B0C) x 1,8) + 32' : 'S(\u00B0C) = (S(\u00B0F) x 0,8) − 32';
+    const content   = isCelcius ? 
+        'Suhu S dalam derajat Fahrenheit (\u00B0F) sama dengan suhu S dalam derajat Celcius (\u00B0C) kali 9/5 tambah 32.' : 
+        'Suhu S dalam derajat Celcius (\u00B0C) sama dengan suhu S dalam derajat Fahrenheit (\u00B0F) kali 5/9 kurang 32.';
+
+    const infoBox = (
+        <>
+            <h3 id="infoTitle" className="info">Info Kalkulasi: <u>{title}</u></h3>
+            <p id="infoCalc" className="info">Rumus Kalkulasi: <code>{code}</code></p>
+            <details id="infoNotes" className="info">
+                <summary>
+                    <strong>Keterangan:</strong>
+                </summary>
+                {content}
+                <p>
+                    <code>{subcode}</code>
+                    atau 
+                    <code>{resubcode}</code>
+                </p>
+            </details>
+        </>
+    );
+
+    ReactDOM.createRoot(getElm('#infoBox')).render(infoBox);
+}
 
 function EventHandleMethod() {
     const [value, setValue] = useState();
     
-    const selfElement   = getElm('#calcMethod');
-    const targetCalcElm = getElm('#inputCalcID');
-    const targetConvElm = getElm('#convBox');
-    
     useEffect(() => {
+        const selfElement   = getElm('#calcMethod');
+        const targetCalcElm = getElm('#inputCalcID');
+        const targetConvElm = getElm('#convBox');
+
         if (null !== selfElement) {
             setStyle('input s-75', targetCalcElm);
             targetCalcElm.disabled = true;
@@ -18,9 +71,17 @@ function EventHandleMethod() {
                 targetCalcElm.focus();
                 
                 setStyle('show animate__animated animate__bounceInUp', targetConvElm);
+                
+                ReturnCalculationTemperatureData(targetCalcElm.value, {
+                    'inputValue'  : targetCalcElm.value,
+                    'nodeMethod'  : '#calcMethod',
+                    'nodeConvert' : '#inputConvertionID',
+                    'nodeInfo'    : '#inputConvertionInfo',
+                    'infoBox'     : '#infoBox'
+                });
             } else {
-                targetCalcElm.value = '';
-                ManipulateElements(['convBox', 'actionBox', 'notification'], 'hide');
+                ManipulateElements(['inputCalcID', 'inputConvertionID', 'inputConvertionInfo'], 'clear');
+                ManipulateElements(['convBox', 'actionBox', 'notification', 'infoBox'], 'hide');
             }
         }
     }, [value]);
@@ -34,33 +95,45 @@ function EventHandleMethod() {
 function EventHandleInputCalculation() {
     const [value, setValue] = useState();
     
-    const selfElement   = getElm('#inputCalcID');
-    const targetElement = getElm('#actionBox');
-    const resetButton   = getElm('#buttonReset');
-    const reverseButton = getElm('#buttonReverse');
-    const notification  = getElm('#notification');
-    
     useEffect(() => {
+        const selfElement   = getElm('#inputCalcID');
+        const resetButton   = getElm('#buttonReset');
+        const reverseButton = getElm('#buttonReverse');
+        
         if (null !== selfElement) {
-                
-            const notificationInfo = NotificationInfo('Ups, Data Harus Diisi Dan Wajib Berupa Angka Atau Desimal!');
+            const notificationInfo = NotificationInfo({
+                class : 'danger',
+                text  : 'Ups, Data Harus Diisi Dan Wajib Berupa Angka Atau Desimal!'
+            });
 
-            if (isNaN(+selfElement.value) || '' === selfElement.value) {
-                selfElement.value      = '';
+            if (isNaN(+selfElement.value) || selfElement.value === '') {
                 resetButton.disabled   = true;
                 reverseButton.disabled = true;
                 
-                setStyle('input s-75 danger-info animate__animated animate__shakeX', selfElement);
-                setStyle('animate__animated animate__flash', notification);
-                ManipulateElements('notification', 'addChild', 'id', notificationInfo);
+                if (isNaN(+selfElement.value)) {
+                    ManipulateElements(['inputCalcID', 'inputConvertionID', 'inputConvertionInfo'], 'clear');
+                    ManipulateElements('infoBox', 'hide');
+                    
+                    setStyle('input s-75 danger-info animate__animated animate__shakeX', selfElement);
+                    setStyle('animate__animated animate__flash', getElm('#notification'));
+                    if (!getElm('#notification').firstChild) ManipulateElements('notification', 'addChild', 'id', notificationInfo);
+                }
             } else {
                 selfElement.className   = 'input s-75';
                 resetButton.disabled    = false;
                 reverseButton.disabled  = false;
-
-                setStyle('show animate__animated animate__bounceInUp', targetElement);
+                
+                setStyle('show animate__animated animate__bounceInUp', getElm('#actionBox'));
                 ManipulateElements('notification', 'hide');
                 ManipulateElements('notification', 'removeChild');
+                
+                ReturnCalculationTemperatureData(value, {
+                    'inputValue'  : value,
+                    'nodeMethod'  : '#calcMethod',
+                    'nodeConvert' : '#inputConvertionID',
+                    'nodeInfo'    : '#inputConvertionInfo',
+                    'infoBox'     : '#infoBox'
+                });
             }
         }
         
@@ -76,15 +149,15 @@ function Calculation() {
     
     const handleMethodChange    = EventHandleMethod();
     const handleInputCalcChange = EventHandleInputCalculation();
-
+    
     return (
         <section>
             <select id="calcMethod" className="calc-method s-25 line-box" onClick={handleMethodChange}>
                 <option value="">Pilih Konversi</option>
-                <option value="celcius">(° C) Celcius</option>
-                <option value="fahrenheit">(° F) Fahrenheit</option>
+                <option value="celcius">(&deg; C) Celcius</option>
+                <option value="fahrenheit">(&deg; F) Fahrenheit</option>
             </select>
-            <input id="inputCalcID" className="input s-75" disabled onChange={handleInputCalcChange}/>
+            <input id="inputCalcID" className="input s-75" disabled onInput={handleInputCalcChange}/>
         </section>
     );
 }

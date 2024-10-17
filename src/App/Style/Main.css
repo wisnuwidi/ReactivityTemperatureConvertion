@@ -668,7 +668,7 @@ body.dark-mode .calc-method:focus {
     border-color: #66afe9;
 }
 
-#info-box {
+#infoBox {
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     display: inline-table;
@@ -677,35 +677,35 @@ body.dark-mode .calc-method:focus {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-#info-box h3,
-#info-box details {
+#infoBox h3,
+#infoBox details {
     margin: 20px;
 }
 
-#info-box p.info {
+#infoBox p.info {
     margin: 20px !important;
 }
 
-#info-box p {
+#infoBox p {
     margin: 20px auto;
 }
 
-body:not(.dark-mode) #info-box {
+body:not(.dark-mode) #infoBox {
     background: linear-gradient(135deg, #007bff 0%, #6c757d 100%);
     color: white;
 }
 
-body.dark-mode #info-box {
+body.dark-mode #infoBox {
     background: linear-gradient(135deg, #343a40 0%, #495057 100%);
     color: #f8f9fa;
 }
 
-#info-box:hover {
+#infoBox:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
-#info-title {
+#infoTitle {
     font-size: 1.5em;
     margin-bottom: 10px;
 }
@@ -715,14 +715,14 @@ body.dark-mode #info-box {
     line-height: 1.5;
 }
 
-#info-notes {
+#infoNotes {
     margin-top: 15px;
     background-color: rgba(255, 255, 255, 0.1);
     padding: 10px 30px;
     border-radius: 5px;
 }
 
-body.dark-mode #info-notes {
+body.dark-mode #infoNotes {
     background-color: rgba(255, 255, 255, 0.2);
 }
 

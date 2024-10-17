@@ -9,7 +9,7 @@
  */
 
 import { useState, useEffect } from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 
 export const getElm = (element, node = false) => {
     if ('id' === node) {
@@ -20,6 +20,10 @@ export const getElm = (element, node = false) => {
         return document.querySelector(element);
     }
 }
+
+export const NotificationInfo = (props) => {
+    return <div className={props.class} onClick={e => e.currentTarget.remove()}><span className="close-btn">×</span>{props.text}</div>;
+};
 
 /**
  * Set the style of an element based on the given instruction.
@@ -90,11 +94,25 @@ export const ManipulateElements = (elements, instruction, node = 'id', newElemen
     
     if (Array.isArray(elements)) {
         elements.map((element) => {
-            ElementalManipulation(element, instruction, nodeElm, newElement);
+            return ElementalManipulation(element, instruction, nodeElm, newElement);
         });
     } else {
         ElementalManipulation(elements, instruction, nodeElm, newElement);
     }
+}
+
+export const CalculateTemperature = (element, input) => {
+	let resultData;
+    
+    if ('celcius' === getElm(element).value) {
+        /*(inputValue °C × 9/5) + 32 = Result °F*/
+        resultData = Math.floor((parseFloat(input) * 9/5) + 32);
+    } else {
+        /*(inputValue °F − 32) × 5/9 = Result °C*/
+        resultData = Math.ceil((parseFloat(input) - 32) * 5/9);
+    }
+    
+	return resultData;
 }
 
 /**
