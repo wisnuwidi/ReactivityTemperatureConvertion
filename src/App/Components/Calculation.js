@@ -27,7 +27,7 @@ function ReturnCalculationTemperatureData(value, elements) {
 
 function InfoBoxCalculated(method, input, result) {
     const isCelcius = method === 'celcius';
-    const title     = isCelcius ? 'Konversi Fahrenheit Ke Celcius' : 'Konversi Celcius Ke Fahrenheit';
+    const title     = isCelcius ? 'Konversi Celcius Ke Fahrenheit' : 'Konversi Fahrenheit Ke Celcius';
     const code      = isCelcius ? `(${input} \u00B0C × 9/5) + 32 = ${result} \u00B0F` : `(${input} \u00B0F − 32) × 5/9 = ${result} \u00B0C`;
     const subcode   = isCelcius ? 'S(\u00B0F) = (S(\u00B0C) x 9/5) + 32' : 'S(\u00B0C) = (S(\u00B0F) − 32) x 5/9';
     const resubcode = isCelcius ? 'S(\u00B0F) = (S(\u00B0C) x 1,8) + 32' : 'S(\u00B0C) = (S(\u00B0F) x 0,8) − 32';
@@ -167,17 +167,11 @@ function EventHandleReverseConvertion() {
             const calcMethod = getElm('#calcMethod');
             const [calcValue, convValue] = [getElm('#inputCalcID'), getElm('#inputConvertionID')].map(el => el.value);
             
-            ReturnCalculationTemperatureData(calcValue, {
-                'inputValue'  : calcValue,
-                'nodeMethod'  : '#calcMethod',
-                'nodeConvert' : '#inputConvertionID',
-                'nodeInfo'    : '#inputConvertionInfo',
-                'infoBox'     : '#infoBox'
-            });
-            
             getElm('#inputConvertionInfo').value = calcMethod.value;
             calcMethod.value = calcMethod.value === 'celcius' ? 'fahrenheit' : 'celcius';
             [getElm('#inputCalcID').value, getElm('#inputConvertionID').value] = [convValue, calcValue];
+            
+            InfoBoxCalculated(getElm('#calcMethod').value, getElm('#inputCalcID').value, getElm('#inputConvertionID').value);
         });
     }
 }
