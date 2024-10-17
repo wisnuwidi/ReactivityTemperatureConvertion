@@ -13,10 +13,11 @@ function ReturnCalculationTemperatureData(value, elements) {
             }
             
             if ('#inputConvertionInfo' === elements[key] && !isNaN(inputConvertionIDValue)) {
-                getElm(elements[key]).value = `\u00B0${calcMethodValue}`;
+                const replaceMethodName = 'celcius' === calcMethodValue ? 'fahrenheit' : 'celcius';
+                getElm(elements[key]).value = `\u00B0${replaceMethodName}`;
             }
 
-            if ('#infoBox' === elements[key]) {
+            if ('#infoBox' === elements[key] && !isNaN(inputConvertionIDValue)) {
                 setStyle('show animate__animated animate__bounceInUp', getElm(elements[key]));
                 InfoBoxCalculated(calcMethodValue, getElm('#inputCalcID').value, getElm('#inputConvertionID').value);
             }
@@ -62,8 +63,10 @@ function EventHandleMethod() {
         const selfElement   = getElm('#calcMethod');
         const targetCalcElm = getElm('#inputCalcID');
         const targetConvElm = getElm('#convBox');
+        EventHandleReverseConvertion();
 
         if (null !== selfElement) {
+
             setStyle('input s-75', targetCalcElm);
             targetCalcElm.disabled = true;
             if (selfElement.value) {
@@ -145,21 +148,54 @@ function EventHandleInputCalculation() {
     };
 }
 
-function Calculation() {
+function EventHandleResetConvertion() {
+    const resetButton = getElm('#buttonReset');
     
-    const handleMethodChange    = EventHandleMethod();
-    const handleInputCalcChange = EventHandleInputCalculation();
+    if (null !== resetButton) {
+        resetButton.addEventListener('click', () => {
+            ManipulateElements(['calcMethod', 'inputCalcID', 'inputConvertionID', 'inputConvertionInfo'], 'clear');
+            ManipulateElements(['convBox', 'actionBox', 'notification', 'infoBox'], 'hide');
+        });
+    }
+}
+
+function EventHandleReverseConvertion() {
+    const reverseButton = getElm('#buttonReverse');
+
+    if (reverseButton) {
+        reverseButton.addEventListener('click', () => {
+            const calcMethod = getElm('#calcMethod');
+            const [calcValue, convValue] = [getElm('#inputCalcID'), getElm('#inputConvertionID')].map(el => el.value);
+            
+            ReturnCalculationTemperatureData(calcValue, {
+                'inputValue'  : calcValue,
+                'nodeMethod'  : '#calcMethod',
+                'nodeConvert' : '#inputConvertionID',
+                'nodeInfo'    : '#inputConvertionInfo',
+                'infoBox'     : '#infoBox'
+            });
+            
+            getElm('#inputConvertionInfo').value = calcMethod.value;
+            calcMethod.value = calcMethod.value === 'celcius' ? 'fahrenheit' : 'celcius';
+            [getElm('#inputCalcID').value, getElm('#inputConvertionID').value] = [convValue, calcValue];
+        });
+    }
+}
+
+function Calculation() {
+    EventHandleResetConvertion();
     
     return (
         <section>
-            <select id="calcMethod" className="calc-method s-25 line-box" onClick={handleMethodChange}>
+            <select id="calcMethod" className="calc-method s-25 line-box" onChange={EventHandleMethod()}>
                 <option value="">Pilih Konversi</option>
                 <option value="celcius">(&deg; C) Celcius</option>
                 <option value="fahrenheit">(&deg; F) Fahrenheit</option>
             </select>
-            <input id="inputCalcID" className="input s-75" disabled onInput={handleInputCalcChange}/>
+            <input id="inputCalcID" className="input s-75" disabled onInput={EventHandleInputCalculation()}/>
         </section>
     );
 }
+
 
 export default Calculation;
