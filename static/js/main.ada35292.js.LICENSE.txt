@@ -1,14 +1,4 @@
 /**
- * @filename        : Helpers.js
- * @license         : MIT
- * @copyright       : 2023 IncoDIY
- * @time Created at : 15-10-2024 15:20:08
- * @email           : IncoDIY<incodiy@gmail.com>
- * @author          : IncoDIY (incodiy@gmail.com)
- * @description     : This file contains helper functions for the application.
- */
-
-/**
  * @license React
  * react-dom.production.min.js
  *
