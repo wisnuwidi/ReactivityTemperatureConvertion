@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import ReactDOM from "react-dom/client";
-import { setStyle, getElm, ManipulateElements, NotificationInfo, CalculateTemperature } from "./Helpers/Helpers";
+import { preventReactDOMRootConflict, setStyle, getElm, ManipulateElements, NotificationInfo, CalculateTemperature } from "./Helpers/Helpers";
 
 function ReturnCalculationTemperatureData(value, elements) {
     const inputConvertionIDValue = CalculateTemperature('#calcMethod', value);
@@ -53,7 +52,7 @@ function InfoBoxCalculated(method, input, result) {
         </>
     );
 
-    ReactDOM.createRoot(getElm('#infoBox')).render(infoBox);
+    preventReactDOMRootConflict('infoBox', infoBox);
 }
 
 function EventHandleMethod() {

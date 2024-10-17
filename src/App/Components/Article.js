@@ -18,9 +18,12 @@ function Info() {
 }
 
 function Copyright() {
+    const year      = new Date().getFullYear();
+    const monthName = new Date().toLocaleDateString('id', { month: 'long' });
+
     return (
-        <div id="copy" className="copy">
-            <a href="https://incodiy.com/" target="_blank" rel="noreferrer">incoDIY</a> © October 2024
+        <div id="copy">
+            <a href="https://incodiy.com/" target="_blank" rel="noreferrer">incoDIY</a> © {monthName} {year}
         </div>
     );
 }

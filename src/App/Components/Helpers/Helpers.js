@@ -21,6 +21,13 @@ export const getElm = (element, node = false) => {
     }
 }
 
+export const preventReactDOMRootConflict = (basElm, rendElm) => {
+    if (!window.infoBoxRoot) {
+        window.infoBoxRoot = ReactDOM.createRoot(getElm(`#${basElm}`));
+    }
+    window.infoBoxRoot.render(rendElm);
+}
+
 export const NotificationInfo = (props) => {
     return <div className={props.class} onClick={e => e.currentTarget.remove()}><span className="close-btn">×</span>{props.text}</div>;
 };
