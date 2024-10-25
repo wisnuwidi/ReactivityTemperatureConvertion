@@ -14,7 +14,7 @@ function Input(props) {
 
 function Content(props) {
     const [value, setValue] = useState('');
-    console.log(value);
+    
     useEffect(() => {
         if ('' === value || isNaN(value)) {
             document.querySelector('.result-box').classList.add('hide');

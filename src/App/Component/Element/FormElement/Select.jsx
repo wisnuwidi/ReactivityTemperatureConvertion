@@ -9,120 +9,83 @@
  */
 
 import React, { useEffect } from 'react';
-import { AlphaNext } from '../../Helper/ConstantMotion';
+import { AlphaNext, NextIncrement, HandleDuplicateValues } from '../../Helper/ConstantMotion';
 
 /**
  * @function Select
- * @description - A function component for rendering a select element in a form.
- *      This component supports rendering a single select element or multiple select elements.
- *      If the addable prop is true, the component will render a button to add new select elements,
- *      And each new element will have a button to delete it.
- * @param {object} props - The props object.
- * @param {string} props.name - The name of the select element.
- *      If addable is true, this will be the name of the first select element,
- *      And the name of subsequent elements will be the same with an increasing index in brackets
- *      (e.g. "mySelect[0]", "mySelect[1]", etc.).
- * @param {string} [props.className] - The class name of the select element.
- * @param {string} [props.value] - The initial value of the select element.
- * @param {array} [props.options] - An array of objects with value and text properties.
- *      The objects will be used to generate the options of the select element.
- * @param {function} [props.onChange] - A callback function that will be called when the value of the select element changes.
- * @param {boolean} [props.addable=false] - If true, allows adding multiple select elements.
- *      This will enable the "Add" button to create new select elements, and each new element will have a "Delete" button.
- * @param {string} [props.deleteText="Delete"] - The text of the delete button.
- * @param {string} [props.addText="Add"] - The text of the add button.
- * @param {object} [props.wrapperProps={}] - An object with props that will be passed to the wrapper element.
- * @param {object} [props.buttonProps={}] - An object with props that will be passed to all button elements.
- * @param {object} [props.addButtonProps={}] - An object with props that will be passed to the add button element.
- * @param {object} [props.deleteButtonProps={}] - An object with props that will be passed to the delete button element.
- * @param {object} [props.labelProps={}] - An object with props that will be passed to the label element.
- *      The label element will be rendered with the label text and position.
- * @param {string} [props.labelText] - The text of the label.
- * @param {string} [props.labelPosition="left"] - The position of the label, either "left" or "right".
- * @param {string} [props.incrementalType="number"] - The type of the incremental label text, either "number" or "alphabetical".
- * @param {boolean} [props.incrementalPrefix=false] - If true, the incremental label text will be added as a prefix to the active label text.
- * @param {boolean} [props.incrementalSuffix=false] - If true, the incremental label text will be added as a suffix to the active label text.
+ * @description - Komponen React untuk membuat select elemen dalam form.
+ *      - Komponen ini mendukung mengelola state setiap select elemen dan memungkinkan menambahkan elemen select baru secara dinamis.
+ *      - Pengguna dapat mengatur kemampuan untuk menambahkan elemen select baru dan menentukan jumlah minimal tombol hapus yang akan ditampilkan.
+ *      - Pengguna dapat juga melewati fungsi custom untuk menghandle event onChange setiap select elemen.
+ *      - Tag wrapper dapat diatur oleh pengguna. Jika tidak diatur, maka akan menggunakan tag div secara default.
+ * @param {object} props - Objek properti.
+ * @param {array} [props.options] - Array yang berisi objek-objek dengan properti sebagai berikut:
+ *      - value: string - Nilai dari opsi.
+ *      - text: string - Teks dari opsi.
+ *      - className: string - Nama kelas untuk opsi.
+ * @param {function} [props.onChange] - Fungsi yang akan dipanggil ketika nilai dari select elemen berubah.
+ *      - Fungsi ini menerima nilai-nilai saat ini dari semua select sebagai argument.
+ * @param {array} [props.wrapper] - Array yang berisi konfigurasi wrapper.
+ *      - Tag wrapper dapat diatur oleh pengguna.
+ *      - Jika tidak diatur, maka akan menggunakan tag div secara default.
+ *      - Pada setiap objeknya disarankan untuk diberikan beberapa properti sebagai berikut:
+ *          - tag: string - Tag HTML untuk membungkus select elemen.
+ *          - className: string - Nama kelas untuk wrapper elemen.
+ * @param {array} [props.addable] - Array yang berisi objek-objek dengan properti sebagai berikut:
+ *      - status: boolean - Jika true, maka akan ditampilkan tombol untuk menambahkan elemen select baru.
+ *      - increments: array - Array yang berisi objek-objek dengan properti sebagai berikut:
+ *          - type: string - Tipe awalan/sufiks, dapat berupa "number" atau "alphabetical".
+ *          - prefix: boolean - Jika true, maka awalan/sufiks akan ditampilkan sebelum nilai select elemen.
+ *          - suffix: boolean - Jika true, maka awalan/sufiks akan ditampilkan setelah nilai select elemen.
  * @example
  * <Select
-        name="mySelect"
-        className="my-select"
-        value="option2"
-        options={[
-            { value: "option1", text: "Option 1" },
-            { value: "option2", text: "Option 2" },
-            { value: "option3", text: "Option 3" },
-        ]}
-        onChange={(event) => console.log(event.target.value)}
-        addable={true}
-        deleteText="Remove"
-        addText="Add More"
-        wrapperProps={{ className: "my-select-wrapper" }}
-        buttonProps={{ className: "my-select-button" }}
-        addButtonProps={{ className: "add-button" }}
-        deleteButtonProps={{ className: "delete-button" }}
-        labelProps={{ className: "my-select-label" }}
-        labelText="My select label"
-        labelPosition="left"
-        incrementalType="alphabetical"
-        incrementalPrefix={true}
-    />
- * <Select
-        name="mySelect"
-        className="my-select"
-        value="option2"
-        options={[
-            { value: "option1", text: "Option 1" },
-            { value: "option2", text: "Option 2" },
-            { value: "option3", text: "Option 3" },
-        ]}
-        onChange={(event) => console.log(event.target.value)}
-        addable={true}
-        deleteText="Remove"
-        addText="Add More"
-        wrapperProps={{ className: "my-select-wrapper" }}
-        buttonProps={{ className: "my-select-button" }}
-        addButtonProps={{ className: "add-button" }}
-        deleteButtonProps={{ className: "delete-button" }}
-        labelProps={{ className: "my-select-label" }}
-        labelText="My select label"
-        labelPosition="left"
-        incrementalType="alphabetical"
-        incrementalSuffix={true}
-    />
+ *      name="mySelect"
+ *      value="option1"
+ *      options={[
+ *          { value: "option1", text: "Opsi 1" },
+ *          { value: "option2", text: "Opsi 2" }
+ *      ]}
+ *      className="selection-method s-25 line-box"
+ *      onChange={(event) => console.log(event.target.value)}
+ *      wrapper={[{ tag: "article", className: "multi-select-wrapper" }]}
+ *      addable={[{
+ *          status: true,
+ *          options: {
+ *              add: { text: "Tambahkan", className: "add-button" },
+ *              delete: { text: "Hapus", className: "remove-button" }
+ *          },
+ *          default: {
+ *              name: "selectadd",
+ *              className: "selection-method s-25 line-box",
+ *              options: [
+ *                  { value: "option3", text: "Opsi 3" },
+ *                  { value: "option4", text: "Opsi 4" }
+ *              ]
+ *          },
+ *          label: {
+ *              text: "Label Select",
+ *              position: "left",
+ *              increments: [{ type: "alphabetical", suffix: true }],
+ *              className: "multi-select-label-class"
+ *          }
+ *      }]}
+ * />
  */
 export const Select = ({
-    options           = [],
+    options = [],
     onChange,
-    addable           = false,
-    addText           = "Add",
-    deleteText        = "Delete",
-    wrapperProps      = {},
-    buttonProps       = {},
-    addButtonProps    = {},
-    deleteButtonProps = {},
-    labelText         = '',
-    labelPosition     = 'left',
-    labelProps        = {},
-    incrementalType   = false,
-    incrementalPrefix = false,
-    incrementalSuffix = false,
+    wrapper = [],
+    addable = [],
     ...props
 }) => {
     const [selects, setSelects] = React.useState([
-        { value: props.value, className: props.className }
+        { value: props.value, className: props.className, options }
     ]);
 
     useEffect(() => {
-        setSelects([{ value: props.value, className: props.className }]);
-    }, [props.value, props.className]);
+        setSelects([{ value: props.value, className: props.className, options }]);
+    }, [props.value, props.className, options]);
 
-    /**
-     * Handles the change event for a select element.
-     * Updates the value of the select element at the specified index in the state.
-     * Calls the onChange callback function with the event if provided.
-     * @param {number} index - The index of the select element to update.
-     * @param {object} event - The event object from the change event.
-     */
     const handleChange = (index, event) => {
         const updatedSelects = selects.map((select, i) => 
             i === index ? { ...select, value: event.target.value } : select
@@ -132,63 +95,56 @@ export const Select = ({
             onChange(event);
         }
     };
-    
-    /**
-     * Handles the addition of a new select element.
-     * If the addable prop is true, creates a new select object with an auto-generated name,
-     * an empty value, and a class name based on the first select element's class name.
-     * Adds the new select to the existing selects array and calls the onAdd function with the new select.
-     * Also handles generating the label for the new select element based on the label prop's incrementalType.
-     * If the incrementalType is 'number', the label is generated by incrementing the number in the previous label.
-     * If the incrementalType is 'alphabetical', the label is generated by incrementing the alphabetical letter in the previous label.
-     * If the incrementalType is 'false', the label is set to the text property of the label prop.
-     */
+
     const handleAdd = () => {
-        const firstClassName = selects[0].className;
-        const label = labelProps.text || labelText;
+        if (addable.length && addable[0].status) {
+            const newSelect = addable[0].default;
+            const newLabelConfig = addable[0].label.increments[0];
+            let newLabel;
 
-        let newLabel;
-        
-        if (incrementalType === 'number') {
-            newLabel = label + (selects.length + 1)
-        } else if (incrementalType === 'alphabetical') {
-            const alphaNext = AlphaNext();
-            let nextLoop = 0;
-            for (let i = 0; i < selects.length; i++) {
-                nextLoop = selects.length + 1;
-                alphaNext(nextLoop);
+            if (newLabelConfig.type === 'number') {
+                newLabel = newSelect.label ? newSelect.label.text + (selects.length + 1) : (selects.length + 1).toString();
+            } else if (newLabelConfig.type === 'alphabetical') {
+                const alphaNext = AlphaNext();
+                let nextLoop = 0;
+                for (let i = 0; i < selects.length; i++) {
+                    nextLoop = selects.length + 1;
+                    alphaNext(nextLoop);
+                }
+
+                if (newLabelConfig.suffix) {
+                    newLabel = newSelect.label ? newSelect.label.text.replace(/[0-9]/g, '') + ` ` + alphaNext(nextLoop) : alphaNext(nextLoop);
+                } else {
+                    newLabel = alphaNext(nextLoop) + ` ${newSelect.label ? newSelect.label.text.replace(/[0-9]/g, '') : ''}`;
+                }
             }
-            
-            if (incrementalPrefix === true) {
-                newLabel = alphaNext(nextLoop) + ` ${label.replace(/[0-9]/g, '')}`;
-            } else {
-                newLabel = `${label.replace(/[0-9]/g, '')} ` + alphaNext(nextLoop);
-            }
+
+            setSelects([
+                ...selects,
+                {
+                    ...newSelect,
+                    value: '',
+                    label: newLabel,
+                }
+            ]);
         }
-
-        setSelects([...selects, { value: '', className: firstClassName, label: newLabel }]);
     };
 
-    /**
-     * Deletes the select element at the given index.
-     * @param {number} index - The index of the select element to delete.
-     */
     const handleDelete = (index) => {
         setSelects(selects.filter((_, i) => i !== index));
     };
 
-    const nameAttribute = addable ? `${props.name}[]` : props.name;
-
-    const labelStyle    = labelPosition === 'left' ? { float: 'left' } : { float: 'right' };
+    const nameAttribute = addable.length && addable[0].status ? `${props.name}[]` : props.name;
+    const labelStyle = addable.length && addable[0].label.position === 'left' ? { float: 'left' } : { float: 'right' };
+    const WrapperTag = wrapper[0].tag || 'div';
 
     return (
         <>
             {selects.map((select, index) => (
-                <div key={index} {...wrapperProps}>
-                    {labelPosition === 'left' && select.label && (
+                <WrapperTag key={index} {...wrapper[0]}>
+                    {addable.length && addable[0].label.position === 'left' && (
                         <label
-                            {...labelProps}
-                            className={labelProps.className}
+                            className={addable[0].label.className}
                             style={labelStyle}
                         >
                             {select.label}
@@ -200,63 +156,65 @@ export const Select = ({
                         onChange={(event) => handleChange(index, event)}
                         className={select.className}
                     >
-                        {options.map((option, idx) => (
+                        {select.options.map((option, idx) => (
                             <option key={idx} value={option.value}>
                                 {option.text}
                             </option>
                         ))}
                     </select>
-                    {labelPosition === 'right' && select.label && (
+                    {addable.length && addable[0].label.position === 'right' && (
                         <label
-                            {...labelProps}
-                            className={labelProps.className}
+                            className={addable[0].label.className}
                             style={labelStyle}
                         >
                             {select.label}
                         </label>
                     )}
-                    {addable && selects.length > 1 && (
-                        <button type="button" {...buttonProps} {...deleteButtonProps} onClick={() => handleDelete(index)}>
-                            {deleteText}
+                    {addable.length && addable[0].status && selects.length > 1 && (
+                        <button type="button" {...addable[0].options.delete} onClick={() => handleDelete(index)}>
+                            {addable[0].options.delete.text}
                         </button>
                     )}
-                </div>
+                </WrapperTag>
             ))}
-            {addable && (
-                <button type="button" {...buttonProps} {...addButtonProps} onClick={handleAdd}>
-                    {addText}
+            {addable.length && addable[0].status && (
+                <button type="button" {...addable[0].options.add} onClick={handleAdd}>
+                    {addable[0].options.add.text}
                 </button>
             )}
         </>
     );
-}
-
+};
 
 /**
  * @function MultiSelect
- * @description - A function component for rendering multiple select elements in a form.
- *      It allows users to manage multiple selections, and supports adding or deleting select elements.
- *      If the addable prop is true, it will render an "Add" button to add new select elements, and each new element will have a "Delete" button.
- *      If the addable prop is false, it will only render the select elements based on the data prop.
- *      The component supports a callback function that will be called when the value of any select element changes.
- *      The component also supports a label prop that will be rendered as a label element, which can have its own props and can be set to position on the right or left of the select box.
- *      The label supports an incremental suffix or prefix text based on the active label text shown in the browser.
- *      If the user does not set the incremental text, it will refer to the active label text.
- *      The incremental type can be set to "number" or "alphabetical" and the user can define the prefix/suffix.
- *      If no label is set, no label will be rendered for the select element.
- * @param {object} props - The props object.
- * @param {array} [props.data] - An array of objects containing the name, options, className, id, and label for each select element.
- *      Each object must have a "name" property, an "options" array with the value and text for each option,
- *      a "className" for the select element, an "id" for the select element, and an optional "label" property with the label text and position.
- * @param {function} [props.onChange] - A callback function that will be called when the value of any select element changes.
- * @param {array} [props.addable] - An array with the following properties:
- *      - status: boolean - If true, allows adding multiple select elements.
- *      - options: object - An object with the add and delete button properties.
- *          - add: object - An object with the text, className, and id properties for the add button.
- *          - delete: object - An object with the text, className, and id properties for the delete button.
- *      - wrapper: object - An object with the tag, className, and id properties for the wrapper element.
- *      - default: object - An object with the default select element properties, such as the name, options, className, and id.
- *      - label: object - An optional object with properties for the label text, position, and increments for prefix/suffix.
+ * @description - Komponen fungsional untuk membuat beberapa elemen select dalam formulir.
+ *      - Komponen ini memungkinkan pengguna untuk mengelola beberapa pilihan, dan mendukung penambahan atau penghapusan elemen select.
+ *      - Jika properti addable bernilai true, maka akan ditampilkan tombol "Add" untuk menambahkan elemen select baru, dan setiap elemen baru akan memiliki tombol "Delete".
+ *      - Jika properti addable bernilai false, maka hanya akan ditampilkan elemen select berdasarkan data yang diberikan.
+ *      - Komponen ini juga mendukung fungsi callback yang akan dipanggil ketika nilai dari elemen select berubah.
+ *      - Komponen ini juga mendukung properti label yang akan ditampilkan sebagai elemen label, yang dapat memiliki properti sendiri dan dapat diatur untuk posisi di kanan atau kiri dari kotak select.
+ *      - Properti label dapat berupa objek dengan properti sebagai berikut:
+ *          - text: string - Teks label yang akan ditampilkan.
+ *          - position: string - Posisi label, dapat berupa "left" atau "right".
+ *          - increments: array - Array yang berisi objek-objek dengan properti sebagai berikut:
+ *              - type: string - Tipe awalan/akhiran label, dapat berupa "number" atau "alphabetical".
+ *              - prefix: boolean - Jika true, maka awalan/sufiks akan ditampilkan sebelum teks label.
+ *              - suffix: boolean - Jika true, maka awalan/sufiks akan ditampilkan setelah teks label.
+ *      - Jika tidak ada label yang diatur, maka tidak akan ditampilkan label untuk elemen select.
+ *      - Elemen wrapper dapat diatur dengan tag HTML yang berbeda. Jika tidak diatur, akan menggunakan elemen div secara default.
+ * @param {object} props - Objek properti.
+ * @param {array} [props.data] - Array yang berisi objek-objek dengan nama, opsi, className, id, dan label untuk setiap elemen select.
+ *      - Setiap objek harus memiliki properti "name", "options" yang berisi array dengan nilai dan teks untuk setiap opsi, "className" untuk elemen select, "id" untuk elemen select, dan label opsional dengan teks label dan posisi.
+ * @param {function} [props.onChange] - Fungsi callback yang akan dipanggil ketika nilai dari elemen select berubah.
+ * @param {array} [props.addable] - Array yang berisi objek-objek dengan properti sebagai berikut:
+ *      - status: boolean - Jika true, maka akan diizinkan menambahkan beberapa elemen select.
+ *      - options: object - Objek dengan properti add dan delete button.
+ *          - add: object - Objek dengan properti teks, className, dan id untuk tombol "Add".
+ *          - delete: object - Objek dengan properti teks, className, dan id untuk tombol "Delete".
+ *      - wrapper: object - Objek dengan properti tag, className, dan id untuk elemen wrapper.
+ *      - default: object - Objek dengan properti default untuk elemen select, seperti nama, opsi, className, dan id.
+ *      - label: object - Objek opsional dengan properti teks label, posisi, dan awalan/sufiks.
  * @example
     <MultiSelect
         data={[
@@ -269,15 +227,15 @@ export const Select = ({
                 className: "selection-method s-25 line-box",
                 id: "select-id",
                 label: {
-                    text: "Select Label", 
+                    text: "Label Select", 
                     position: "left",
                     increments: [
                         { 
                             type: "number", 
-                            prefix: "Prefix", 
-                            suffix: "Suffix" 
+                            prefix: true, 
+                            suffix: true 
                         }
-                    ]                
+                    ]
                 }
             }
         ]}
@@ -287,56 +245,64 @@ export const Select = ({
                 status: true, 
                 options: { 
                     add: { text: "Add", className: "add-button", id: "add-button-id" }, 
-                    delete: { text: "Remove", className: "remove-button", id: "remove-button-id" } 
+                    delete: { text: "Delete", className: "remove-button", id: "remove-button-id" } 
                 }, 
                 wrapper: { tag: "div", className: "multi-select-wrapper", id: "multi-select-wrapper-id" },
                 default: { 
-                    name: "select added", 
+                    name: "select-name-added", 
+                    id: "select-id-added", 
+                    className: "select-class-added", 
                     options: [
                         { value: "option3", text: "Option 3" }, 
                         { value: "option4", text: "Option 4" }, 
                     ]
                 },
                 label: { 
-                    text: "Select Label", 
+                    text: "Label Select", 
                     position: "left",
                     increments: [
                         { 
                             type: "number", 
-                            prefix: "Prefix", 
-                            suffix: "Suffix" 
+                            prefix: true, 
+                            suffix: true 
                         }
                     ]
                 }
             }
         ]}
+        wrapper={ [{ 
+            tag: "span", 
+            className: "multi-select-wrapper", 
+            id: "multi-select-wrapper-id", 
+            style: { 
+                display: "flex", 
+            } 
+        }]}
     />
  */
 export const MultiSelect = ({ 
     data = [], 
     onChange, 
+    wrapper = [], 
     addable = [], 
-    label = {}, 
     ...props 
 }) => {
 
-    const [selects, setSelects] = React.useState(data);
+    const [selects, setSelects] = React.useState(HandleDuplicateValues(data, ['name', 'id']));
 
     useEffect(() => {
-        setSelects(data);
+        setSelects(HandleDuplicateValues(data, ['name', 'id']));
     }, [data]);
 
-    const { status, options, wrapper, default: defaultSelect, label: addableLabel } = addable[0];
+    const { status, options, wrapper: addableWrapper, default: defaultSelect, label: addableLabel = {} } = addable[0] || {};
 
     const addableDefault = defaultSelect || data[data.length - 1];
 
-    /**
-     * Handles the change event of a select element.
-     * Updates the value of the select element in the state based on the event target's value.
-     * Calls the onChange callback function with the updated values.
-     * @param {number} index - The index of the select element that changed.
-     * @param {object} event - The event object containing the target and value properties.
-     */
+    const { prefix, suffix } = addableLabel?.increments? addableLabel?.increments[0] : '' || {};
+    const position = prefix && suffix ? 'prefix|suffix' : prefix ? 'prefix' : suffix ? 'suffix' : false;
+    
+    const getNextLabel = (baseLabel, index, increments, position) => NextIncrement(index, increments, baseLabel, position);
+    
     const handleChange = (index, event) => {
         const updatedSelects = selects.map((select, i) =>
             i === index ? { ...select, value: event.target.value } : select
@@ -348,41 +314,46 @@ export const MultiSelect = ({
     };
     
     /**
-     * Handles the addition of a new select element.
-     * If the addable prop is true, creates a new select object with an auto-generated name,
-     * and an empty value, className, and options based on the first select element.
-     * Adds the new select to the existing selects array.
+     * Menambahkan elemen select baru ke dalam array selects.
+     * Elemen select baru dibuat dengan nama yang di-generate otomatis berdasarkan nama elemen select terakhir,
+     * id yang di-generate otomatis berdasarkan nama elemen select terakhir,
+     * opsi yang sama dengan elemen select terakhir,
+     * kelas yang sama dengan elemen select terakhir,
+     * dan label yang sama dengan elemen select terakhir dengan teks yang diupdate berdasarkan incremental label.
+     * Kemudian, mengupdate array selects dengan menambahkan elemen select baru ke dalam array selects.
      */
     const handleAdd = () => {
         const newSelect = {
-            name: `select${selects.length + 1}`,
+            name: `${addableDefault?.name? addableDefault?.name : 'select'}[${selects.length + 1}]`,
+            id: `${addableDefault?.id ? addableDefault?.id : addableDefault?.name? addableDefault?.name : 'select'}[${selects.length + 1}]`,
             options: addableDefault.options,
             className: addableDefault.className,
-            id: `select-id${selects.length + 1}`,
             value: '',
-            label: addableLabel || addableDefault.label,
+            label: {
+                ...addableLabel,
+                text: getNextLabel(addableLabel?.text || '', selects.length, addableLabel?.increments?.[0], position),
+                ...addableLabel.props
+            },
         };
-
+        
         setSelects([...selects, newSelect]);
     };
 
-    /**
-     * Handles the delete button click event.
-     * Deletes the select element at the given index from the state.
-     * @param {number} index - The index of the select element to delete.
-     */
     const handleDelete = (index) => {
         setSelects(selects.filter((_, i) => i !== index));
     };
 
+    const WrapperTag = wrapper[0]?.tag || 'div';
+
     return (
         <>
             {selects.map((select, index) => (
-                <div key={index} {...wrapper}>
+                <WrapperTag key={index} {...wrapper[0]}>
                     {select.label && select.label.position === 'left' && (
                         <label
                             className={select.label.className}
                             style={select.label.style}
+                            {...select.label.props}
                         >
                             {select.label.text}
                         </label>
@@ -404,6 +375,7 @@ export const MultiSelect = ({
                         <label
                             className={select.label.className}
                             style={select.label.style}
+                            {...select.label.props}
                         >
                             {select.label.text}
                         </label>
@@ -413,7 +385,7 @@ export const MultiSelect = ({
                             {options.delete.text}
                         </button>
                     )}
-                </div>
+                </WrapperTag>
             ))}
             {status && (
                 <button type="button" {...options.add} onClick={handleAdd}>

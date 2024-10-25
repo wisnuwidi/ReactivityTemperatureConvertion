@@ -11,28 +11,28 @@
 import React, { useEffect } from 'react';
 
 /**
- * Logs the provided arguments to the console.
+ * Mencetak argumen yang diberikan ke konsol.
  *
- * @param {*} args - The arguments to be logged.
+ * @param {*} args - Argumen yang akan dicetak.
  */
 export const LogCons = (args) => {
     console.log(args);
 }
 
 /**
- * Returns the current date as a string formatted according to the specified options.
+ * Mengembalikan tanggal saat ini sebagai string yang diformat sesuai dengan opsi yang ditentukan.
  * 
- * This function uses React state to hold the current date and updates it every second using setInterval.
- * The date is formatted using toLocaleDateString with the provided options or defaults.
+ * Fungsi ini menggunakan state React untuk menyimpan tanggal saat ini dan memperbaruinya setiap detik menggunakan setInterval.
+ * Tanggal diformat menggunakan toLocaleDateString dengan opsi yang diberikan atau default.
  * 
- * @param {object} [options=false] - An object specifying the date formatting options.
- * @param {boolean} [options.weekday] - If true, includes the weekday in the formatted date.
- * @param {boolean} [options.year] - If true, includes the year in the formatted date.
- * @param {boolean} [options.month] - If true, includes the month in the formatted date.
- * @param {boolean} [options.day] - If true, includes the day in the formatted date.
- * @param {string} [options.locale='id'] - The locale to use for formatting the date string.
+ * @param {object} [options=false] - Sebuah objek yang menentukan opsi format tanggal.
+ * @param {boolean} [options.weekday] - Jika true, menyertakan hari dalam tanggal yang diformat.
+ * @param {boolean} [options.year] - Jika true, menyertakan tahun dalam tanggal yang diformat.
+ * @param {boolean} [options.month] - Jika true, menyertakan bulan dalam tanggal yang diformat.
+ * @param {boolean} [options.day] - Jika true, menyertakan hari dalam tanggal yang diformat.
+ * @param {string} [options.locale='id'] - Lokal yang digunakan untuk memformat string tanggal.
  * 
- * @returns {string} - The formatted current date string based on the specified options.
+ * @returns {string} - String tanggal saat ini yang diformat berdasarkan opsi yang ditentukan.
  */
 export const DateTime = (options) => {
     const [date, setDate] = React.useState(new Date());
@@ -68,19 +68,19 @@ export const DateTime = (options) => {
 }
 
 /**
- * Returns the current time as a string formatted according to the specified options.
+ * Mengembalikan waktu saat ini sebagai string yang diformat sesuai dengan opsi yang ditentukan.
  * 
- * This function uses React state to hold the current time and updates it every second using setInterval.
- * The time is formatted using toLocaleTimeString with the provided options or defaults.
+ * Fungsi ini menggunakan state React untuk menyimpan waktu saat ini dan memperbaruinya setiap detik menggunakan setInterval.
+ * Waktu diformat menggunakan toLocaleTimeString dengan opsi yang diberikan atau default.
  * 
- * @param {object} [options=false] - An object specifying the time formatting options.
- * @param {boolean} [options.hour] - If true, includes the hour in the formatted time.
- * @param {boolean} [options.minute] - If true, includes the minute in the formatted time.
- * @param {boolean} [options.second] - If true, includes the second in the formatted time.
- * @param {boolean} [options.timeZoneName] - If true, includes the time zone name in the formatted time.
- * @param {string} [options.locale='id'] - The locale to use for formatting the time string.
+ * @param {object} [options=false] - Sebuah objek yang menentukan opsi format waktu.
+ * @param {boolean} [options.hour] - Jika true, menyertakan jam dalam waktu yang diformat.
+ * @param {boolean} [options.minute] - Jika true, menyertakan menit dalam waktu yang diformat.
+ * @param {boolean} [options.second] - Jika true, menyertakan detik dalam waktu yang diformat.
+ * @param {boolean} [options.timeZoneName] - Jika true, menyertakan nama zona waktu dalam waktu yang diformat.
+ * @param {string} [options.locale='id'] - Lokal yang digunakan untuk memformat string waktu.
  * 
- * @returns {string} - The formatted current time string based on the specified options.
+ * @returns {string} - String waktu saat ini yang diformat berdasarkan opsi yang ditentukan.
  */
 export const Clock = (options = false) => {
     const [clock, setClock] = React.useState(new Date());
@@ -116,28 +116,28 @@ export const Clock = (options = false) => {
 }
 
 /**
- * Returns a function that returns a string of letters, incrementing by 1 letter
- * each time it is called. The letters are chosen from a given string. If the
- * given string is not provided, the english alphabet is used.
+ * Mengembalikan fungsi yang mengembalikan string huruf, menambah 1 huruf setiap
+ * kali dipanggil. Huruf-huruf tersebut dipilih dari string yang diberikan. Jika
+ * string yang diberikan tidak ada, maka alfabet bahasa inggris yang digunakan.
  *
- * @param {string} [chars] The string of characters to use.
- * @returns {function(): string} A function that returns a string of letters.
+ * @param {string} [chars] String karakter yang digunakan.
+ * @returns {function(): string} Fungsi yang mengembalikan string huruf.
  * @linkcode https://stackoverflow.com/a/12504061/27955486
  *
  * @example
  * const alphaNext = AlphaNext();
  * console.log(alphaNext()); // 'a'
  * console.log(alphaNext()); // 'b'
- * console.log(alphaNext()); // 'c'
- * console.log(alphaNext()); // 'd'
  */
-export const AlphaNext = (chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz') => {
+export const AlphaNext = (chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ') => {
     let nextId = [0];
+
     return () => {
         const r = [];
         for (const char of nextId) {
             r.unshift(chars[char]);
         }
+
         for (let i = 0; i < nextId.length; i++) {
             const val = ++nextId[i];
             if (val >= chars.length) {
@@ -146,7 +146,99 @@ export const AlphaNext = (chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs
                 return r.join('');
             }
         }
+
         nextId.push(0);
+
         return r.join('');
     };
+};
+
+/**
+ * Mengembalikan string berikutnya dalam urutan, berdasarkan parameter increment dan posisi yang diberikan.
+ * Jika teks berupa angka atau kosong, string increment digunakan sebagai konteks berikutnya.
+ * Jika teks bukan angka dan tidak kosong, konteks berikutnya ditentukan berdasarkan parameter posisi.
+ *
+ * @param {number} index - Indeks saat ini dalam urutan.
+ * @param {object} increments - Objek yang berisi jenis dan nilai increment.
+ * @param {string} text - Konteks saat ini.
+ * @param {string} pos - Posisi string increment dalam konteks berikutnya.
+ * @returns {string} Konteks berikutnya dalam urutan.
+ */
+export const NextIncrement = (index, increments, text, pos) => {
+    if (!increments) return false;
+
+    let incrementedPart = '';
+    if (increments.type === 'number') {
+        incrementedPart = index + 1;
+    } else if (increments.type === 'alphabetical') {
+        const alphaNext = AlphaNext();
+        let nextLoop = 0;
+        for (let i = 0; i < index; i++) {
+            nextLoop = index + 1;
+            alphaNext(nextLoop);
+        }
+
+        incrementedPart = alphaNext(nextLoop);
+    }
+
+    // create the next context based on the type of increment and the position of the increment string
+    // if the text is not a number and not empty, use the position to determine the placement of the increment string
+    // if the text is a number or empty, use the increment string as the next context
+    let nextContext = '';
+    if (pos === false) {
+        nextContext = '';
+    } else {
+        nextContext = isNaN(text) && text !== '' ?
+            pos === 'prefix' ? `${incrementedPart} ${text}` :
+            pos === 'suffix' ? `${text} ${incrementedPart}` :
+            `${incrementedPart} ${text} ${incrementedPart}` :
+            incrementedPart;
+    }
+
+
+    return nextContext;
+};
+
+/**
+ * Menghandle duplikasi nilai dalam array of object.
+ * Jika nilai duplicate ditemukan, maka akan ditambahkan suffix berupa indeks atau pointer yang diberikan.
+ * Jika pointer tidak diberikan maka akan menggunakan indeks array sebagai suffix.
+ * Jika pointer adalah string kosong maka tidak akan ditambahkan suffix.
+ * Fungsi ini akan mengembalikan array of object yang telah di rename.
+ *
+ * @param {array} data - Data yang akan dihandle.
+ * @param {array} [node=['name']] - Node yang akan di cek untuk duplikasi nilai.
+ * @param {string} [pointer='[]'] - Pointer yang akan digunakan sebagai suffix.
+ * @returns {array} - Array of object yang telah di rename.
+ */
+export const HandleDuplicateValues = (data, node = ['name'], pointer = '[]') => {
+    let renamedData = [];
+
+    if (node.length >= 1) {
+        node.map((key) => {
+            const lists      = data.map((item) => item[key]);
+            const duplicates = lists.filter((list, index) => lists.indexOf(list) !== index);
+
+            renamedData = data.map((item, index) => {
+                if (duplicates.includes(item[key])) {
+                    return Object.keys(item).reduce((acc, key) => {
+                        if (node.includes(key)) {
+                            if ('[]' === pointer) {
+                                acc[key] = `${item[key]}[${index}]`;
+                            } else {
+                                acc[key] = `${item[key]}${pointer}`;
+                            }
+                        } else {
+                            acc[key] = item[key];
+                        }
+                        return acc;
+                    }, {});
+                }
+
+                return item;
+            });
+        })
+    }
+    
+    return renamedData;
 };
