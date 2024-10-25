@@ -8,73 +8,68 @@
  * @description     : This file contains a function component for rendering a single or multiple select elements in a form.
  */
 
-import React, { useState, useEffect } from 'react';
-import { NextIncrement, HandleDuplicateValues } from '../../Helper/ConstantMotion';
-
+import React, { useEffect } from 'react';
+import { AlphaNext, NextIncrement, HandleDuplicateValues } from '../../Helper/ConstantMotion';
 
 /**
  * @function Select
- * 
- * @description
- *      A function component for rendering a single or multiple select elements in a form.
- *      It manages the state of each select based on the provided data.
- *      The user can also set the ability to add new select elements.
- *      The user can also set the minimum number of delete buttons to be shown.
- * @param {object} props - The props object.
- * @param {array} [props.options]
- *      - An array of objects containing the value and text for each option.
- *      - If not provided, it will render a single select element with no options.
- * @param {function} [props.onChange]
- *      - The function that will be called whenever the value of any select element changes.
- *      - It receives an object with the current values of all selects.
- * @param {boolean} [props.addable=false]
- *      - If true, the component will render a button for adding a new select element.
- *      - If the component was created with `addable` set to true, the button for adding a new select element will be enabled.
- *      - If the button is clicked, the component will create a new select element and append it to the select elements array.
- * @param {string} [props.addText="Add"]
- *      - The text content of the button for adding a new select element.
- * @param {function} [props.onAdd]
- *      - The function that will be called when the user clicks the button for adding a new select element.
- *      - It receives the new select element as an argument.
- * @param {function} [props.onDelete]
- *      - The function that will be called when the user clicks the button for deleting a select element.
- *      - It receives the select element that was deleted as an argument.
- * @param {string} [props.deleteText="Delete"]
- *      - The text content of the button for deleting a select element.
- * @param {object} [props.wrapperProps]
- *      - The props of the wrapper element that will be used to wrap the select elements.
- *      - If not provided, the component will use the default div tag.
- * @param {number} [props.minDeleteButton=0]
- *      - The minimum number of delete buttons to be shown.
- *      - If the number of delete buttons reaches this number, the delete button will be destroyed.
- *      - If the number of delete buttons is less than this number, the delete button will be shown again.
+ * @description - Komponen React untuk membuat select elemen dalam form.
+ *      - Komponen ini mendukung mengelola state setiap select elemen dan memungkinkan menambahkan elemen select baru secara dinamis.
+ *      - Pengguna dapat mengatur kemampuan untuk menambahkan elemen select baru dan menentukan jumlah minimal tombol hapus yang akan ditampilkan.
+ *      - Pengguna dapat juga melewati fungsi custom untuk menghandle event onChange setiap select elemen.
+ *      - Tag wrapper dapat diatur oleh pengguna. Jika tidak diatur, maka akan menggunakan tag div secara default.
+ * @param {object} props - Objek properti.
+ * @param {array} [props.options] - Array yang berisi objek-objek dengan properti sebagai berikut:
+ *      - value: string - Nilai dari opsi.
+ *      - text: string - Teks dari opsi.
+ *      - className: string - Nama kelas untuk opsi.
+ * @param {function} [props.onChange] - Fungsi yang akan dipanggil ketika nilai dari select elemen berubah.
+ *      - Fungsi ini menerima nilai-nilai saat ini dari semua select sebagai argument.
+ * @param {array} [props.wrapper] - Array yang berisi konfigurasi wrapper.
+ *      - Tag wrapper dapat diatur oleh pengguna.
+ *      - Jika tidak diatur, maka akan menggunakan tag div secara default.
+ *      - Pada setiap objeknya disarankan untuk diberikan beberapa properti sebagai berikut:
+ *          - tag: string - Tag HTML untuk membungkus select elemen.
+ *          - className: string - Nama kelas untuk wrapper elemen.
+ * @param {array} [props.addable] - Array yang berisi objek-objek dengan properti sebagai berikut:
+ *      - status: boolean - Jika true, maka akan ditampilkan tombol untuk menambahkan elemen select baru.
+ *      - increments: array - Array yang berisi objek-objek dengan properti sebagai berikut:
+ *          - type: string - Tipe awalan/sufiks, dapat berupa "number" atau "alphabetical".
+ *          - prefix: boolean - Jika true, maka awalan/sufiks akan ditampilkan sebelum nilai select elemen.
+ *          - suffix: boolean - Jika true, maka awalan/sufiks akan ditampilkan setelah nilai select elemen.
  * @example
-    <Select
-        name="mySelect"
-        value="option1"
-        options={[
-            { value: "option1", text: "Opsi 1" },
-            { value: "option2", text: "Opsi 2" }
-        ]}
-        className="selection-method s-25 line-box"
-        onChange={(event) => console.log(event.target.value)}
-        wrapper={[{ tag: "article", className: "multi-select-wrapper" }]}
-        addable={[{
-            status: true,
-            options: {
-                add: { text: "Tambahkan", className: "add-button" },
-                delete: { text: "Hapus", className: "remove-button" }
-            },
-            default: {
-                name: "selectadd",
-                className: "selection-method s-25 line-box",
-                options: [
-                    { value: "option1", text: "Opsi 1" },
-                    { value: "option2", text: "Opsi 2" }
-                ]
-            }
-        }]}
-    />
+ * <Select
+ *      name="mySelect"
+ *      value="option1"
+ *      options={[
+ *          { value: "option1", text: "Opsi 1" },
+ *          { value: "option2", text: "Opsi 2" }
+ *      ]}
+ *      className="selection-method s-25 line-box"
+ *      onChange={(event) => console.log(event.target.value)}
+ *      wrapper={[{ tag: "article", className: "multi-select-wrapper" }]}
+ *      addable={[{
+ *          status: true,
+ *          options: {
+ *              add: { text: "Tambahkan", className: "add-button" },
+ *              delete: { text: "Hapus", className: "remove-button" }
+ *          },
+ *          default: {
+ *              name: "selectadd",
+ *              className: "selection-method s-25 line-box",
+ *              options: [
+ *                  { value: "option3", text: "Opsi 3" },
+ *                  { value: "option4", text: "Opsi 4" }
+ *              ]
+ *          },
+ *          label: {
+ *              text: "Label Select",
+ *              position: "left",
+ *              increments: [{ type: "alphabetical", suffix: true }],
+ *              className: "multi-select-label-class"
+ *          }
+ *      }]}
+ * />
  */
 export const Select = ({
     options = [],
@@ -83,98 +78,55 @@ export const Select = ({
     addable = [],
     ...props
 }) => {
-    const [selects, setSelects] = useState(() => HandleDuplicateValues([{
-        value: props.value,
-        className: props.className,
-        options,
-        label: props.label || null,
-        name: props.name || '',
-        id: props.id || '',
-    }], ['name', 'id']));
+    const [selects, setSelects] = React.useState([
+        { value: props.value, className: props.className, options }
+    ]);
 
     useEffect(() => {
-        setSelects(HandleDuplicateValues([{
-            value: props.value,
-            className: props.className,
-            options,
-            label: props.label || null,
-            name: props.name || '',
-            id: props.id || '',
-        }], ['name', 'id']));
-    }, [props.value, props.className, options, props.label, props.name, props.id]);
-    
-    const addableDefault     = addable[0].default ?? selects[0];
-    const addableLabel       = addableDefault?.label ?? {};
-    const { prefix, suffix } = addableLabel?.increments? addableLabel?.increments[0] : '' || {};
-    const position           = prefix && suffix ? 'prefix|suffix' : prefix ? 'prefix' : suffix ? 'suffix' : false;
-
-    const getNextLabel = (baseLabel, index, increments, position) => NextIncrement(index, increments, baseLabel, position);
-
-    const handleAdd = () => {
-        if (!addable.length || !addable[0].status) return;
-        
-        let everFoundDuplicate = {};
-        let firstSelectCheck   = [selects[0].name, selects[0].id];
-        let firstAddableCheck  = [addableDefault.name, addableDefault.id];
-        const isSameName       = firstSelectCheck[0] === firstAddableCheck[0];
-        const isSameId         = firstSelectCheck[1] === firstAddableCheck[1];
-        
-        if (isSameName && isSameId) {
-            everFoundDuplicate.name = true;
-            everFoundDuplicate.id   = true;
-        } else if (isSameName) {
-            everFoundDuplicate.name = true;
-        } else if (isSameId) {
-            everFoundDuplicate.id   = true;
-        }
-
-        if (selects.length === 1) {
-            if (isSameName && isSameId) {
-                selects[0].name = `${selects[0].name}[0]`;
-                selects[0].id   = `${selects[0].id}[0]`;
-            } else if (isSameName) {
-                selects[0].name = `${selects[0].name}[0]`;
-            } else if (isSameId) {
-                selects[0].id   = `${selects[0].id}[0]`;
-            }
-        }
-        
-        if (selects.length === 2 && Object.values(everFoundDuplicate).some(value => value === true)) {
-            addableDefault.name = addableDefault.name.replace('[1]', '');
-            addableDefault.id   = addableDefault.id.replace('[1]', '');
-        }
-        
-        if (selects.length >= 2) {
-            everFoundDuplicate = {};
-        }
-        console.log(everFoundDuplicate);
-
-        const newSelect = {
-            name      : `${addableDefault?.name? addableDefault?.name : 'select'}[${selects.length}]`,
-            id        : `${addableDefault?.id ? addableDefault?.id : addableDefault?.name? addableDefault?.name : 'select'}[${selects.length}]`,
-            options   : addableDefault.options,
-            className : addableDefault.className,
-            value     : '',
-            label     : {
-                ...addableLabel,
-                text: getNextLabel(addableLabel?.text || '', selects.length, addableLabel?.increments?.[0], position),
-                ...addableLabel.props
-            },
-        };
-       
-        setSelects([...selects, newSelect]);
-    };
-
-    const handleDelete = (index) => {
-        setSelects(selects.filter((_, i) => i !== index));
-    };
+        setSelects([{ value: props.value, className: props.className, options }]);
+    }, [props.value, props.className, options]);
 
     const handleChange = (index, event) => {
         const updatedSelects = selects.map((select, i) =>
             i === index ? { ...select, value: event.target.value } : select
         );
-        setSelects(HandleDuplicateValues(updatedSelects, ['name', 'id']));
-        onChange && onChange(event);
+        setSelects(updatedSelects);
+        if (onChange) {
+            onChange(event);
+        }
+    };
+
+    const handleAdd = () => {
+        if (addable.length && addable[0].status) {
+            const newSelect = { ...addable[0].default, value: '' };
+            const defaultName = addable[0].default.name;
+            const defaultId = addable[0].default.id;
+            const defaultClass = addable[0].default.className;
+            const updatedSelects = HandleDuplicateValues(selects, ['name', 'id']);
+            const newLabelIndex = updatedSelects.length;
+            const labelData = addable[0].label || { text: '', increments: [] };
+
+            newSelect.name = defaultName ? `${defaultName}[]` : `${props.name}[]`;
+            newSelect.id = defaultId ? `${defaultId}[]` : `${props.id}[]`;
+            newSelect.className = defaultClass || props.className;
+
+            newSelect.label = {
+                ...labelData,
+                text: `${labelData.text} ${labelData.increments.length ? labelData.increments.reduce((acc, inc) => {
+                    if (inc.type === 'alphabetical') {
+                        acc += String.fromCharCode('A'.charCodeAt(0) + newLabelIndex % 26);
+                    } else if (inc.type === 'number') {
+                        acc += newLabelIndex;
+                    }
+                    return acc;
+                }, '') : ''}`
+            };
+            setSelects([...selects, newSelect]);
+        }
+    };
+
+    const handleDelete = (index) => {
+        setSelects(selects.filter((_, i) => i !== index));
     };
 
     const WrapperTag = wrapper[0]?.tag || 'div';
@@ -183,15 +135,20 @@ export const Select = ({
         <>
             {selects.map((select, index) => (
                 <WrapperTag key={index} {...wrapper[0]}>
-                    {select.label && select.label.position === 'left' && (
-                        <label className={select.label.className}>{select.label.text}</label>
+                    {addable.length && addable[0].label && addable[0].label.position === 'left' && (
+                        <label
+                            className={addable[0].label.className}
+                            style={{ float: addable[0].label.position }}
+                        >
+                            {select.label ? select.label.text : ''}
+                        </label>
                     )}
                     <select
                         name={select.name}
+                        id={select.id}
                         value={select.value}
                         onChange={(event) => handleChange(index, event)}
                         className={select.className}
-                        id={select.id}
                     >
                         {select.options.map((option, idx) => (
                             <option key={idx} value={option.value}>
@@ -199,25 +156,29 @@ export const Select = ({
                             </option>
                         ))}
                     </select>
-                    {select.label && select.label.position === 'right' && (
-                        <label className={select.label.className}>{select.label.text}</label>
+                    {addable.length && addable[0].label && addable[0].label.position === 'right' && (
+                        <label
+                            className={addable[0].label.className}
+                            style={{ float: addable[0].label.position }}
+                        >
+                            {select.label ? select.label.text : ''}
+                        </label>
                     )}
-                    {addable.length && addable[0].status && (
-                        <button onClick={() => handleDelete(index)} className={addable[0].options.delete.className}>
+                    {addable.length && addable[0].status && selects.length > 1 && (
+                        <button type="button" {...addable[0].options.delete} onClick={() => handleDelete(index)}>
                             {addable[0].options.delete.text}
                         </button>
                     )}
                 </WrapperTag>
             ))}
             {addable.length && addable[0].status && (
-                <button onClick={handleAdd} className={addable[0].options.add.className}>
+                <button type="button" {...addable[0].options.add} onClick={handleAdd}>
                     {addable[0].options.add.text}
                 </button>
             )}
         </>
     );
 };
-
 
 
 
