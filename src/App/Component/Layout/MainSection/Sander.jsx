@@ -13,7 +13,7 @@ export default function Sander () {
                             { value: "option1", label: "Option 1" },
                             { value: "option2", label: "Option 2" }
                         ],
-                        label: { text: "Select your option", className: "select-label" },
+                        label: { text: "Select your option", className: "select-label", position:"right" },
                         className: "custom-select",
                         placeholder: "Please select",
                         value: ["option1"],
@@ -45,7 +45,7 @@ export default function Sander () {
                     }
                 ]}
                 wrapper={[{
-                    tag: "span",
+                    tag: "article",
                     className: "custom-wrapper",
                     style: {
                         display: "flex"

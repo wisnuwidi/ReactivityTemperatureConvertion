@@ -19,7 +19,7 @@ import { HandleDuplicateValues } from '../../Helper/ConstantMotion';
             {
                 name: "select1",
                 id: "select1-id", 
-                label: { text: "Select your option", className: "select-label" },
+                label: { text: "Select your option", className: "select-label", position:"left" },
                 options: [
                     { value: "option1", label: "Option 1" },
                     { value: "option2", label: "Option 2" }
@@ -67,18 +67,18 @@ export const Select = ({ data = [], onChange, wrapper = [], ...props }) => {
         <>
             {selects.map((select, index) => (
                 <WrapperTag key={index} {...wrapper[0]}>
-                    {select.label && (
+                    {select.label && (!select.label?.position || select.label?.position === 'left') && (
                         <label htmlFor={select.id} {...select.label.props}>
                             {select.label.text}
                         </label>
                     )}
                     <select
-                        name={select.name}
-                        id={select.id}
-                        className={select.className}
-                        value={selectedValues[select.name] || ''}
-                        required={select.required}
-                        onChange={event => handleChange(index, event)}
+                        name      = {select.name}
+                        id        = {select.id}
+                        className = {select.className}
+                        value     = {selectedValues[select.name] || ''}
+                        required  = {select.required}
+                        onChange  = {event => handleChange(index, event)}
                         {...select.props}
                     >
                         {!selectedValues[select.name] && <option value="" disabled>{select.placeholder}</option>}
@@ -86,6 +86,11 @@ export const Select = ({ data = [], onChange, wrapper = [], ...props }) => {
                             <option key={i} value={option.value}>{option.label}</option>
                         ))}
                     </select>
+                    {select.label && select.label?.position === 'right' && (
+                        <label htmlFor={select.id} {...select.label.props}>
+                            {select.label.text}
+                        </label>
+                    )}
                 </WrapperTag>
             ))}
         </>
