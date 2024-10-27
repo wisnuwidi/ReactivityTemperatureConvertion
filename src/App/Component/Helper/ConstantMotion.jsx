@@ -211,34 +211,83 @@ export const NextIncrement = (index, increments, text, pos) => {
  * @param {string} [pointer='[]'] - Pointer yang akan digunakan sebagai suffix.
  * @returns {array} - Array of object yang telah di rename.
  */
-export const HandleDuplicateValues = (data, node = ['name'], pointer = '[]') => {
-    let renamedData = [];
+export const HandleDuplicateValues = (data, node = ['name', 'id'], pointer = '[]') => {
+    let renamedData = data;
 
     if (node.length >= 1) {
-        node.map((key) => {
-            const lists      = data.map((item) => item[key]);
+        node.forEach((key) => {
+            const lists = data.map((item) => item[key]);
             const duplicates = lists.filter((list, index) => lists.indexOf(list) !== index);
-
-            renamedData = data.map((item, index) => {
+            let increment = 0;
+            
+            renamedData = renamedData.map((item, index) => {
                 if (duplicates.includes(item[key])) {
-                    return Object.keys(item).reduce((acc, key) => {
-                        if (node.includes(key)) {
-                            if ('[]' === pointer) {
-                                acc[key] = `${item[key]}[${index}]`;
-                            } else {
-                                acc[key] = `${item[key]}${pointer}`;
-                            }
-                        } else {
-                            acc[key] = item[key];
-                        }
-                        return acc;
-                    }, {});
+                    item[key] = `${item[key]}[${increment}]`;
+                    increment++;
                 }
-
                 return item;
             });
-        })
+        });
     }
-    
+
+
     return renamedData;
 };
+
+/**
+ * Checks for duplicate values between two or more objects or arrays in the given data.
+ * Modifies the names and ids of the selects to ensure uniqueness.
+ * 
+ * @param {Array} selects - The array of select objects.
+ * @param {Array} addable - The array of addable objects containing status and default properties.
+ * @example
+ * const selects = [
+ *   { name: 'select1', id: 'id1' },
+ *   { name: 'select2', id: 'id2' }
+ * ];
+ * const addable = [
+ *   {
+ *     status: true,
+ *     default: { name: 'select1', id: 'id1' }
+ *   }
+ * ];
+ * handleDuplicateCheck(selects, addable);
+ *
+export const HandleDuplicateArray = (selects, addable) => {console.log(selects)
+    if (!addable.length || !addable[0].status) return;
+    
+    let everFoundDuplicate = {};
+    let firstSelectCheck = [selects[0].name, selects[0].id];
+    let firstAddableCheck = [addable[0].default.name, addable[0].default.id];
+    const isSameName = firstSelectCheck[0] === firstAddableCheck[0];
+    const isSameId = firstSelectCheck[1] === firstAddableCheck[1];
+    
+    if (isSameName && isSameId) {
+        everFoundDuplicate.name = true;
+        everFoundDuplicate.id = true;
+    } else if (isSameName) {
+        everFoundDuplicate.name = true;
+    } else if (isSameId) {
+        everFoundDuplicate.id = true;
+    }
+
+    if (selects.length === 1) {
+        if (isSameName && isSameId) {
+            selects[0].name = `${selects[0].name}[0]`;
+            selects[0].id = `${selects[0].id}[0]`;
+        } else if (isSameName) {
+            selects[0].name = `${selects[0].name}[0]`;
+        } else if (isSameId) {
+            selects[0].id = `${selects[0].id}[0]`;
+        }
+    }
+    
+    if (selects.length === 2 && Object.values(everFoundDuplicate).some(value => value === true)) {
+        addable[0].default.name = addable[0].default.name.replace('[1]', '');
+        addable[0].default.id = addable[0].default.id.replace('[1]', '');
+    }
+    
+    if (selects.length >= 2) {
+        everFoundDuplicate = {};
+    }
+};*/
