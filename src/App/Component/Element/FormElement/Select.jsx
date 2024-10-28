@@ -10,7 +10,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { HandleDuplicateValues, NextIncrement, GetPrefixSuffix } from '../../Helper/ConstantMotion';
-
+import Label from '../FormElement/Label';
 
 /**
  * @example
@@ -19,6 +19,12 @@ import { HandleDuplicateValues, NextIncrement, GetPrefixSuffix } from '../../Hel
             {
                 name: "select1",
                 id: "select1-id", 
+                options: [
+                    { value: "option1", label: "Option 1" },
+                    { value: "option2", label: "Option 2" }
+                ],
+                className: "custom-select",
+                placeholder: "Please select",
                 label: { 
                     text: "Select your option", 
                     className: "select-label", 
@@ -29,24 +35,18 @@ import { HandleDuplicateValues, NextIncrement, GetPrefixSuffix } from '../../Hel
                         suffix: false
                     }
                 },
-                options: [
-                    { value: "option1", label: "Option 1" },
-                    { value: "option2", label: "Option 2" }
-                ],
-                className: "custom-select",
-                placeholder: "Please select",
                 value: ["option1"],
                 required: true
             }
         ]}
         onChange={(event) => console.log(event.target.value)}
-        wrapper={[{
+        wrapper={{
             tag: "span",
             className: "custom-wrapper",
             style: {
                 display: "flex"
             }
-        }]}
+        }}
     />
  */
 export const Select = ({ data = [], onChange, wrapper = [], ...props }) => {
@@ -59,8 +59,7 @@ export const Select = ({ data = [], onChange, wrapper = [], ...props }) => {
         setSelectedValues(selects.reduce((acc, select) => ({ ...acc, [select.name]: select.value ? select.value[0] : '' }), {}));
     }, [data]);
     
-    const WrapperTag   = wrapper[0]?.tag || 'div';
-    const getNextLabel = (text, index, increments, position) => NextIncrement(index, increments, text, position);
+    const WrapperTag = wrapper?.tag || 'div';
 
     const handleChange = (index, event) => {
         const updatedSelects = selects.map((select, i) =>
@@ -76,19 +75,15 @@ export const Select = ({ data = [], onChange, wrapper = [], ...props }) => {
     return (
         <>
             {selects.map((select, index) => (
-                <WrapperTag key={index} {...wrapper[0]}>
+                <WrapperTag key={index} {...wrapper}>
                     {select.label && (!select.label?.position || select.label?.position === 'left') && (
-                        <label htmlFor={select.id} {...select.label.props}>
-                            { 
-                                select.label.increments ? 
-                                getNextLabel (
-                                    select.label.text, 
-                                    selects.length, 
-                                    select.label.increments,
-                                    GetPrefixSuffix(select.label.increments?.prefix, select.label.increments?.suffix)
-                                ) : select.label.text
-                            }
-                        </label>
+                        <Label
+                            text       = {select.label.text}
+                            htmlFor    = {select.id}
+                            increments = {select.label.increments}
+                            position   = {select.label.position}
+                            {...select.label.props}
+                        />
                     )}
                     <select
                         name      = {select.name}
@@ -105,17 +100,13 @@ export const Select = ({ data = [], onChange, wrapper = [], ...props }) => {
                         ))}
                     </select>
                     {select.label && select.label?.position === 'right' && (
-                        <label htmlFor={select.id} {...select.label.props}>
-                            { 
-                                select.label.increments ? 
-                                getNextLabel (
-                                    select.label.text, 
-                                    selects.length, 
-                                    select.label.increments,
-                                    GetPrefixSuffix(select.label.increments?.prefix, select.label.increments?.suffix)
-                                ) : select.label.text
-                            }
-                        </label>
+                        <Label
+                            text       = {select.label.text}
+                            htmlFor    = {select.id}
+                            increments = {select.label.increments}
+                            position   = {select.label.position}
+                            {...select.label.props}
+                        />
                     )}
                 </WrapperTag>
             ))}

@@ -25,7 +25,7 @@ export default function Sander () {
                         },
                         className: "custom-select",
                         placeholder: "Please select",
-                        value: ["option1"],
+                        value: [],
                         required: true
                     }, {
                         name: "namabeda",
@@ -71,13 +71,13 @@ export default function Sander () {
                         required: true
                     }
                 ]}
-                wrapper={[{
+                wrapper={{
                     tag: "article",
                     className: "custom-wrapper",
                     style: {
                         display: "flex"
                     }
-                }]}
+                }}
                 onChange={(event) => console.log(event.target.value)}
             />
         </div>

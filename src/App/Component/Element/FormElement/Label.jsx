@@ -9,6 +9,7 @@
  */
 
 import React, { useEffect } from 'react';
+import { HandleDuplicateValues, NextIncrement, GetPrefixSuffix } from '../../Helper/ConstantMotion';
 
 /**
  * @function Label
@@ -19,12 +20,30 @@ import React, { useEffect } from 'react';
  * @example
  * <Label className="my-label">My Label</Label>
  */
-function Label ({ children, ...props }) {
+function Labelx ({ children, ...props }) {
     return (
         <label {...props}>
             {children}
         </label>
     );
 }
+
+const Label = ({text, htmlFor, increments, position, ...props}) => {
+    const getNextLabel = (text, index, increments, position) => NextIncrement(index, increments, text, position);
+    
+    return (
+        <label htmlFor={htmlFor} {...props}>
+            { 
+                increments ? 
+                getNextLabel (
+                    text, 
+                    position === 'left' ? 0 : 1,
+                    increments,
+                    GetPrefixSuffix(increments?.prefix, increments?.suffix)
+                ) : text
+            }
+        </label>
+    );
+};
 
 export default Label;
