@@ -46,7 +46,7 @@ export default function Sander () {
                         },
                         className: "custom-select",
                         placeholder: "Please select",
-                        value: ["option1"],
+                        value: ["option2"],
                         required: true
                     }, {
                         name: "namasama",
@@ -71,6 +71,44 @@ export default function Sander () {
                         required: true
                     }
                 ]}
+                addable={{
+                    status: true,
+                    selectProps: {
+                        name: "namasama1",
+                        id: "idbeda1",
+                        options: [
+                            { value: "option3", label: "Option 3" },
+                            { value: "option4", label: "Option 4" }
+                        ],
+                        className: "custom-select",
+                        placeholder: "Please select"
+                    },
+                    label: {
+                        text: "Add new select",
+                        className: "select-label",
+                        position: "left",
+                        increments: {
+                            type: "alphabetical",
+                            prefix: true,
+                            suffix: false
+                        }
+                    },
+                    button: {
+                        text: "Add",
+                        type: "button",
+                        id: "add-select-button",
+                        className: "custom-button",
+                        name: "add-select",
+                        style: {
+                            marginLeft: "10px"
+                        }
+                    },
+                    deleteButton: {
+                        text: "Delete"
+                    },
+                    deleteOnlyAdded: false,
+                    minButtonLeft: 1
+                }}
                 wrapper={{
                     tag: "article",
                     className: "custom-wrapper",
@@ -78,7 +116,7 @@ export default function Sander () {
                         display: "flex"
                     }
                 }}
-                onChange={(event) => console.log(event.target.value)}
+                onChange={(event) => ''}//console.log(event.target.value)}
             />
         </div>
     );

@@ -9,7 +9,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { HandleDuplicateValues, NextIncrement, GetPrefixSuffix } from '../../Helper/ConstantMotion';
+import { FindDuplicateArrayValue, NextIncrement, HandleDuplicateElementValue } from '../../Helper/ConstantMotion';
 import Label from '../FormElement/Label';
 
 /**
@@ -39,6 +39,44 @@ import Label from '../FormElement/Label';
                 required: true
             }
         ]}
+        addable={{
+            status: true,
+            selectProps: {
+                name: "selectNew",
+                id: "selectNew-id",
+                options: [
+                    { value: "option3", label: "Option 3" },
+                    { value: "option4", label: "Option 4" }
+                ],
+                className: "custom-select",
+                placeholder: "Please select"
+            },
+            label: {
+                text: "Add new select",
+                className: "select-label",
+                position: "left",
+                increments: {
+                    type: "alphabetical",
+                    prefix: true,
+                    suffix: false
+                }
+            },
+            button: {
+                text: "Add",
+                type: "button",
+                id: "add-select-button",
+                className: "custom-button",
+                name: "add-select",
+                style: {
+                    marginLeft: "10px"
+                }
+            },
+            deleteButton: {
+                text: "Delete"
+            },
+            minButtonLeft: 1,
+            deleteOnlyAdded: false
+        }}
         onChange={(event) => console.log(event.target.value)}
         wrapper={{
             tag: "span",
@@ -49,16 +87,15 @@ import Label from '../FormElement/Label';
         }}
     />
  */
-export const Select = ({ data = [], onChange, wrapper = [], ...props }) => {
-    const [selects, setSelects] = useState(() => HandleDuplicateValues(data, ['name', 'id'], ''));
-
+export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...props }) => {
+    const [selects, setSelects] = useState(() => FindDuplicateArrayValue(data, ['name', 'id'], ''));
     const [selectedValues, setSelectedValues] = useState(selects.reduce((acc, select) => ({ ...acc, [select.name]: select.value ? select.value[0] : '' }), {}));
 
     useEffect(() => {
-        setSelects(HandleDuplicateValues(data, ['name', 'id'], ''));
+        setSelects(FindDuplicateArrayValue(data, ['name', 'id'], ''));
         setSelectedValues(selects.reduce((acc, select) => ({ ...acc, [select.name]: select.value ? select.value[0] : '' }), {}));
-    }, [data]);
-    
+    }, [data, addable]);
+
     const WrapperTag = wrapper?.tag || 'div';
 
     const handleChange = (index, event) => {
@@ -69,6 +106,55 @@ export const Select = ({ data = [], onChange, wrapper = [], ...props }) => {
         setSelectedValues(updatedSelects.reduce((acc, select) => ({ ...acc, [select.name]: select.value ? select.value[0] : '' }), {}));
         if (onChange) {
             onChange(event);
+        }
+    };
+
+    const { prefix, suffix } = addable.label?.increments? addable.label?.increments : '' || {};
+    const position           = prefix && suffix ? 'prefix|suffix' : prefix ? 'prefix' : suffix ? 'suffix' : false;
+    const getNextLabel       = (baseLabel, index, increments, position) => NextIncrement(index, increments, baseLabel, position);
+    
+    const handleAddSelect = () => {
+        if (addable.status) {
+
+            let duplicateData  = data.find((item) => item.name === addable.selectProps.name);
+            let countElements  = selects.length - data.length + 2;
+            let newElementName = addable.selectProps.name + `[${countElements}]`;
+            let newElementid   = addable.selectProps.id   + `[${countElements}]`;
+            
+            data.map((item, index) => {
+                if (item.name === addable.selectProps.name) {
+                    data[index].name = `${data[index].name}[0]`;
+                    newElementName   = addable.selectProps.name + `[${countElements - 1}]`;
+                }
+
+                if (item.id === addable.selectProps.id) {    
+                    data[index].id = data[index].id + '[0]';
+                    newElementid   = addable.selectProps.id + `[${countElements - 1}]`;
+                }
+            })
+            
+            const newSelect = {
+                ...addable.selectProps,
+                name    : duplicateData ? newElementName : newElementName.replace(/(\[|\]|\d+)/g, '') + `[${selects.length - data.length + 1}]`,
+                id      : duplicateData ? newElementid   : newElementid.replace(/(\[|\]|\d+)/g, '')   + `[${selects.length - data.length + 1}]`,
+                options : addable?.selectProps?.options || [],
+                value   : '',
+                label: {
+                    ...addable.label,
+                    text: getNextLabel(addable.label?.text || '', selects.length, addable.label?.increments? addable.label?.increments : '', position),
+                    ...addable.label.selectProps
+                }
+            };
+        
+            setSelects([...selects, newSelect]);
+        }
+    };
+
+    const handleDeleteSelect = (index) => {
+        if (selects.length > (addable.minButtonLeft || 0) && (!addable.deleteOnlyAdded || selects[index].name !== (data[index] || {}).name)) {
+            const updatedSelects = selects.filter((_, i) => i !== index);
+            setSelects(updatedSelects);
+            setSelectedValues(updatedSelects.reduce((acc, select) => ({ ...acc, [select.name]: select.value ? select.value[0] : '' }), {}));
         }
     };
 
@@ -89,9 +175,9 @@ export const Select = ({ data = [], onChange, wrapper = [], ...props }) => {
                         name      = {select.name}
                         id        = {select.id}
                         className = {select.className}
-                        value     = {selectedValues[select.name] || ''}
+                        value     = {select.value || ''}
                         required  = {select.required}
-                        onChange  ={event => handleChange(index, event)}
+                        onChange  = {event => handleChange(index, event)}
                         {...select.props}
                     >
                         {!selectedValues[select.name] && <option value="" disabled>{select.placeholder}</option>}
@@ -108,8 +194,14 @@ export const Select = ({ data = [], onChange, wrapper = [], ...props }) => {
                             {...select.label.props}
                         />
                     )}
+                    {selects.length > (addable.minButtonLeft || 0) && (!addable.deleteOnlyAdded || selects[index].name !== (data[index] || {}).name) && (
+                        <button {...addable.deleteButton} onClick={() => handleDeleteSelect(index)}>{addable.deleteButton?.text || "Delete"}</button>
+                    )}
                 </WrapperTag>
             ))}
+            {addable.status && (
+                <button {...addable.button} onClick={handleAddSelect}>{addable.button?.text || "Add"}</button>
+            )}
         </>
     );
 };

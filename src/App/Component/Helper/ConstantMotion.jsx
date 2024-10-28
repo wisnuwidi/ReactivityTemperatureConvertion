@@ -213,7 +213,7 @@ export const GetPrefixSuffix = (prefix, suffix) => prefix && suffix ? 'prefix|su
  * @param {string} [pointer='[]'] - Pointer yang akan digunakan sebagai suffix.
  * @returns {array} - Array of object yang telah di rename.
  */
-export const HandleDuplicateValues = (data, node = ['name', 'id'], pointer = '[]') => {
+export const FindDuplicateArrayValue = (data, node = ['name', 'id'], pointer = '[]') => {
     let renamedData = data;
 
     if (node.length >= 1) {
@@ -222,7 +222,7 @@ export const HandleDuplicateValues = (data, node = ['name', 'id'], pointer = '[]
             const duplicates = lists.filter((list, index) => lists.indexOf(list) !== index);
             let increment = 0;
             
-            renamedData = renamedData.map((item, index) => {
+            renamedData = renamedData.map((item) => {
                 if (duplicates.includes(item[key])) {
                     item[key] = `${item[key]}[${increment}]`;
                     increment++;
