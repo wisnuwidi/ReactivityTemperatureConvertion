@@ -9,7 +9,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { HandleDuplicateValues } from '../../Helper/ConstantMotion';
+import { HandleDuplicateValues, NextIncrement, GetPrefixSuffix } from '../../Helper/ConstantMotion';
 
 
 /**
@@ -19,7 +19,16 @@ import { HandleDuplicateValues } from '../../Helper/ConstantMotion';
             {
                 name: "select1",
                 id: "select1-id", 
-                label: { text: "Select your option", className: "select-label", position:"left" },
+                label: { 
+                    text: "Select your option", 
+                    className: "select-label", 
+                    position:"left", 
+                    increments: {
+                        type: "alphabetical",
+                        prefix: true,
+                        suffix: false
+                    }
+                },
                 options: [
                     { value: "option1", label: "Option 1" },
                     { value: "option2", label: "Option 2" }
@@ -49,6 +58,9 @@ export const Select = ({ data = [], onChange, wrapper = [], ...props }) => {
         setSelects(HandleDuplicateValues(data, ['name', 'id'], ''));
         setSelectedValues(selects.reduce((acc, select) => ({ ...acc, [select.name]: select.value ? select.value[0] : '' }), {}));
     }, [data]);
+    
+    const WrapperTag   = wrapper[0]?.tag || 'div';
+    const getNextLabel = (text, index, increments, position) => NextIncrement(index, increments, text, position);
 
     const handleChange = (index, event) => {
         const updatedSelects = selects.map((select, i) =>
@@ -61,15 +73,21 @@ export const Select = ({ data = [], onChange, wrapper = [], ...props }) => {
         }
     };
 
-    const WrapperTag = wrapper[0]?.tag || 'div';
-
     return (
         <>
             {selects.map((select, index) => (
                 <WrapperTag key={index} {...wrapper[0]}>
                     {select.label && (!select.label?.position || select.label?.position === 'left') && (
                         <label htmlFor={select.id} {...select.label.props}>
-                            {select.label.text}
+                            { 
+                                select.label.increments ? 
+                                getNextLabel (
+                                    select.label.text, 
+                                    selects.length, 
+                                    select.label.increments,
+                                    GetPrefixSuffix(select.label.increments?.prefix, select.label.increments?.suffix)
+                                ) : select.label.text
+                            }
                         </label>
                     )}
                     <select
@@ -78,7 +96,7 @@ export const Select = ({ data = [], onChange, wrapper = [], ...props }) => {
                         className = {select.className}
                         value     = {selectedValues[select.name] || ''}
                         required  = {select.required}
-                        onChange  = {event => handleChange(index, event)}
+                        onChange  ={event => handleChange(index, event)}
                         {...select.props}
                     >
                         {!selectedValues[select.name] && <option value="" disabled>{select.placeholder}</option>}
@@ -88,7 +106,15 @@ export const Select = ({ data = [], onChange, wrapper = [], ...props }) => {
                     </select>
                     {select.label && select.label?.position === 'right' && (
                         <label htmlFor={select.id} {...select.label.props}>
-                            {select.label.text}
+                            { 
+                                select.label.increments ? 
+                                getNextLabel (
+                                    select.label.text, 
+                                    selects.length, 
+                                    select.label.increments,
+                                    GetPrefixSuffix(select.label.increments?.prefix, select.label.increments?.suffix)
+                                ) : select.label.text
+                            }
                         </label>
                     )}
                 </WrapperTag>

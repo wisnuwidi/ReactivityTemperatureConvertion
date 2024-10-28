@@ -199,6 +199,8 @@ export const NextIncrement = (index, increments, text, pos) => {
     return nextContext;
 };
 
+export const GetPrefixSuffix = (prefix, suffix) => prefix && suffix ? 'prefix|suffix' : prefix ? 'prefix' : suffix ? 'suffix' : false;
+
 /**
  * Menghandle duplikasi nilai dalam array of object.
  * Jika nilai duplicate ditemukan, maka akan ditambahkan suffix berupa indeks atau pointer yang diberikan.

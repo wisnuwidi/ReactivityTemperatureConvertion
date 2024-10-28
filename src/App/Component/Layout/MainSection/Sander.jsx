@@ -13,7 +13,16 @@ export default function Sander () {
                             { value: "option1", label: "Option 1" },
                             { value: "option2", label: "Option 2" }
                         ],
-                        label: { text: "Select your option", className: "select-label", position:"right" },
+                        label: { 
+                            text: "Select your option", 
+                            className: "select-label", 
+                            position:"left",
+                            increments: {
+                                type: "number",
+                                prefix: true,
+                                suffix: true
+                            } 
+                        },
                         className: "custom-select",
                         placeholder: "Please select",
                         value: ["option1"],
@@ -25,7 +34,16 @@ export default function Sander () {
                             { value: "option1", label: "Option 1" },
                             { value: "option2", label: "Option 2" }
                         ],
-                        label: { text: "Select your option", className: "select-label" },
+                        label: { 
+                            text: "Select your option", 
+                            className: "select-label", 
+                            position:"left",
+                            increments: {
+                                type: "alphabetical",
+                                prefix: false,
+                                suffix: true
+                            } 
+                        },
                         className: "custom-select",
                         placeholder: "Please select",
                         value: ["option1"],
@@ -37,7 +55,16 @@ export default function Sander () {
                             { value: "option1", label: "Option 1" },
                             { value: "option2", label: "Option 2" }
                         ],
-                        label: { text: "Select your option", className: "select-label" },
+                        label: { 
+                            text: "Select your option", 
+                            className: "select-label", 
+                            position:"right",
+                            increments: {
+                                type: "alphabetical",
+                                prefix: true,
+                                suffix: true
+                            } 
+                        },
                         className: "custom-select",
                         placeholder: "Please select",
                         value: ["option1"],
