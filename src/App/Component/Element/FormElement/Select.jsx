@@ -9,7 +9,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { FindDuplicateArrayValue, NextIncrement, HandleDuplicateElementValue } from '../../Helper/ConstantMotion';
+import { FindDuplicateArrayValue, NextIncrement } from '../../Helper/ConstantMotion';
 import Label from '../FormElement/Label';
 
 /**
@@ -112,35 +112,48 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
     const { prefix, suffix } = addable.label?.increments? addable.label?.increments : '' || {};
     const position           = prefix && suffix ? 'prefix|suffix' : prefix ? 'prefix' : suffix ? 'suffix' : false;
     const getNextLabel       = (baseLabel, index, increments, position) => NextIncrement(index, increments, baseLabel, position);
-    
+    const maxElements        = selects.length;
+
     const handleAddSelect = () => {
         if (addable.status) {
-
+            
             let duplicateData  = data.find((item) => item.name === addable.selectProps.name);
-            let countElements  = selects.length - data.length + 2;
-            let newElementName = addable.selectProps.name + `[${countElements}]`;
-            let newElementid   = addable.selectProps.id   + `[${countElements}]`;
-            
-            data.map((item, index) => {
-                if (item.name === addable.selectProps.name) {
-                    data[index].name = `${data[index].name}[0]`;
-                    newElementName   = addable.selectProps.name + `[${countElements - 1}]`;
-                }
+            let countElements  = selects.length - data.length;
+            let newElementName = `${addable.selectProps.name}[${countElements}]`;
+            let newElementid   = `${addable.selectProps.id}[${countElements}]`;
 
-                if (item.id === addable.selectProps.id) {    
-                    data[index].id = data[index].id + '[0]';
-                    newElementid   = addable.selectProps.id + `[${countElements - 1}]`;
-                }
+            let dataDuplicated = [];
+            data.map((item, index) => {
+                
+                
+                if (item.name === addable.selectProps.name) data[index].name = `${data[index].name}[${countElements}]`;
+                if (item.id   === addable.selectProps.id)   data[index].id   = `${data[index].id}[${countElements}]`;
             })
+
+            selects.map((item, index) => {
+                dataDuplicated[index] = {
+                    name : item.name.replace(/\[(\d+)\]/g, ''),
+                    id   : item.id.replace(/\[(\d+)\]/g, '')
+                };
+            })
+
+            let maxName = 0;
+            let maxId   = 0;
+            if (dataDuplicated.find((item) => item.name === addable.selectProps.name)) {
+                maxName = dataDuplicated.filter((item) => item.name === addable.selectProps.name).length;
+                maxId   = dataDuplicated.filter((item) => item.id   === addable.selectProps.id).length;
+            }
             
+            const newSelectName = duplicateData ? newElementName : newElementName.replace(/\[(\d+)\]/g, '') + `[${maxName}]`;
+            const newSelectId   = duplicateData ? newElementid   : newElementid.replace(/\[(\d+)\]/g, '')   + `[${maxId}]`;
+            // Kalo di delete, masih error
             const newSelect = {
                 ...addable.selectProps,
-                name    : duplicateData ? newElementName : newElementName.replace(/(\[|\]|\d+)/g, '') + `[${selects.length - data.length + 1}]`,
-                id      : duplicateData ? newElementid   : newElementid.replace(/(\[|\]|\d+)/g, '')   + `[${selects.length - data.length + 1}]`,
+                name    : newSelectName,
+                id      : newSelectId,
                 options : addable?.selectProps?.options || [],
                 value   : '',
                 label: {
-                    ...addable.label,
                     text: getNextLabel(addable.label?.text || '', selects.length, addable.label?.increments? addable.label?.increments : '', position),
                     ...addable.label.selectProps
                 }
@@ -154,7 +167,10 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
         if (selects.length > (addable.minButtonLeft || 0) && (!addable.deleteOnlyAdded || selects[index].name !== (data[index] || {}).name)) {
             const updatedSelects = selects.filter((_, i) => i !== index);
             setSelects(updatedSelects);
-            setSelectedValues(updatedSelects.reduce((acc, select) => ({ ...acc, [select.name]: select.value ? select.value[0] : '' }), {}));
+            setSelectedValues(updatedSelects.reduce((acc, select) => {
+            //    console.log(acc);
+                return { ...acc, [select.name]: select.value ? select.value[0] : '' };
+            }, {}));
         }
     };
 
@@ -175,7 +191,7 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
                         name      = {select.name}
                         id        = {select.id}
                         className = {select.className}
-                        value     = {select.value || ''}
+                        value     = {Array.isArray(select.value) ? select.value[0] : select.value}
                         required  = {select.required}
                         onChange  = {event => handleChange(index, event)}
                         {...select.props}
