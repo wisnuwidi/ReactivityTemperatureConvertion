@@ -74,7 +74,7 @@ export default function Sander () {
                 addable={{
                     status: true,
                     selectProps: {
-                        name: "namasama",
+                        name: "namabeda",
                         id: "idsama",
                         options: [
                             { value: "option3", label: "Option 3" },

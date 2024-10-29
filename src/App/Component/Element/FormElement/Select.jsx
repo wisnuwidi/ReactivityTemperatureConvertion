@@ -308,7 +308,14 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
     }, [data, addable]);
 
     const WrapperTag = wrapper?.tag || 'div';
-
+    
+    /**
+     * Handles the change event of a select element.
+     * Updates the value of the select element in the state based on the event target's name and value.
+     * Calls the onChange callback function with the event.
+     * @param {number} index - The index of the select element that changed.
+     * @param {object} event - The event object.
+     */
     const handleChange = (index, event) => {
         const updatedSelects = selects.map((select, i) =>
             i === index ? { ...select, value: event.target.value } : select
@@ -323,58 +330,76 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
     const { prefix, suffix } = addable.label?.increments? addable.label?.increments : '' || {};
     const position           = prefix && suffix ? 'prefix|suffix' : prefix ? 'prefix' : suffix ? 'suffix' : false;
     const getNextLabel       = (baseLabel, index, increments, position) => NextIncrement(index, increments, baseLabel, position);
-    const maxElements        = selects.length;
-
+    
+    const [lastAddedElement, setLastAddedElement] = useState(null);
+    /**
+     * Handles the addition of a new select element when the add button is clicked.
+     * If the addable prop is true, it will create a new select element with an incremented name and id.
+     * If the addable prop is false and the selects array is not empty, it will create a new select element with the same name and id as the last element in the selects array.
+     * If the addable prop is false and the selects array is empty, it will create a new select element with the same name and id as the data array if it is not empty.
+     * If the addable prop is false and the selects array is empty and the data array is empty, it will create a new select element with a default name and id.
+     * It will then update the selects state with the new select element.
+     */
     const handleAddSelect = () => {
-        if (addable.status) {
-            
-            let duplicateData  = data.find((item) => item.name === addable.selectProps.name);
-            let countElements  = selects.length - data.length;
-            let newElementName = `${addable.selectProps.name}[${countElements}]`;
-            let newElementid   = `${addable.selectProps.id}[${countElements}]`;
+        const lastElementIndex = selects.length - 1;
+        const lastAddedElementName = lastAddedElement?.name || selects[lastElementIndex]?.name || '';
+        const lastAddedElementId   = lastAddedElement?.id || selects[lastElementIndex]?.id || '';
 
-            let dataDuplicated = [];
+        if (addable.status) {
+            const newSelectName = `${addable.selectProps.name}[${lastAddedElementName.match(/\[(\d+)\]/) ? Number(lastAddedElementName.match(/\[(\d+)\]/)[1]) + 1 : 0}]`;
+            const newSelectId   = `${addable.selectProps.id}[${lastAddedElementId.match(/\[(\d+)\]/) ? Number(lastAddedElementId.match(/\[(\d+)\]/)[1]) + 1 : 0}]`;
+
+            // Add The Incremental Bracket For Duplicate Name And ID For The Un-Bracketed First Element Found In The Selects Array
+            let countElements   = selects.length - data.length;
             data.map((item, index) => {
-                
-                
                 if (item.name === addable.selectProps.name) data[index].name = `${data[index].name}[${countElements}]`;
                 if (item.id   === addable.selectProps.id)   data[index].id   = `${data[index].id}[${countElements}]`;
             })
 
-            selects.map((item, index) => {
-                dataDuplicated[index] = {
-                    name : item.name.replace(/\[(\d+)\]/g, ''),
-                    id   : item.id.replace(/\[(\d+)\]/g, '')
-                };
-            })
-
-            let maxName = 0;
-            let maxId   = 0;
-            if (dataDuplicated.find((item) => item.name === addable.selectProps.name)) {
-                maxName = dataDuplicated.filter((item) => item.name === addable.selectProps.name).length;
-                maxId   = dataDuplicated.filter((item) => item.id   === addable.selectProps.id).length;
-            }
-            
-            const newSelectName = duplicateData ? newElementName : newElementName.replace(/\[(\d+)\]/g, '') + `[${maxName}]`;
-            const newSelectId   = duplicateData ? newElementid   : newElementid.replace(/\[(\d+)\]/g, '')   + `[${maxId}]`;
-            // Kalo di delete, masih error
             const newSelect = {
                 ...addable.selectProps,
-                name    : newSelectName,
-                id      : newSelectId,
-                options : addable?.selectProps?.options || [],
-                value   : '',
-                label: {
-                    text: getNextLabel(addable.label?.text || '', selects.length, addable.label?.increments? addable.label?.increments : '', position),
+                name     : newSelectName,
+                id       : newSelectId,
+                options  : addable?.selectProps?.options || [],
+                value    : '',
+                label    : {
+                    text : getNextLabel(addable.label?.text || '', selects.length, addable.label?.increments? addable.label?.increments : '', position),
                     ...addable.label.selectProps
                 }
             };
-        
+
+            setLastAddedElement(newSelect);
             setSelects([...selects, newSelect]);
         }
     };
 
+    const [deletedElementInfo, setDeletedElementInfo] = useState(null);
+    /**
+     * Handles the deletion of a select element.
+     * If the element has the same id and name as the data[index], it will be removed from the selects array.
+     * If the element was added by the user, it will be removed from the selects array.
+     * If the element is the last one, and the addable.minButtonLeft is set to 0, it will be removed from the selects array.
+     * If the element is not the last one, it will be removed from the selects array, and the selected values will be updated.
+     * @param {number} index - The index of the element to be deleted.
+     */
     const handleDeleteSelect = (index) => {
+        const deletedElement = selects[index];
+        const deletedElementInfo = {
+            index: index,
+            id: deletedElement.id,
+            name: deletedElement.name,
+        };
+
+        const nameIncrement = deletedElement.name.match(/\[(\d+)\]/);
+        const idIncrement   = deletedElement.id.match(/\[(\d+)\]/);
+
+        if (nameIncrement && idIncrement) {
+            deletedElementInfo.nameIncrement = parseInt(nameIncrement[1], 10);
+            deletedElementInfo.idIncrement   = parseInt(idIncrement[1], 10);
+        }
+
+        setDeletedElementInfo(deletedElementInfo);
+
         if (selects.length > (addable.minButtonLeft || 0) && (!addable.deleteOnlyAdded || selects[index].name !== (data[index] || {}).name)) {
             const updatedSelects = selects.filter((_, i) => i !== index);
             setSelects(updatedSelects);
@@ -383,7 +408,7 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
             }, {}));
         }
     };
-
+   
     return (
         <>
             {selects.map((select, index) => (
