@@ -1,5 +1,5 @@
 /**
- * @filename        : Table.js
+ * @filename        : Table.jsx
  * @license         : MIT
  * @copyright       : 2023 IncoDIY
  * @time Created at : 23-10-2024, 21:44:57
@@ -10,11 +10,11 @@
  */
 
 import React, { useEffect } from 'react';
+import { Pagination } from '../Widget/Pagination';
 
 /**
- * @function Table
+ * @function Tablem - A function component for rendering a dynamic table.
  * 
- * @description A function component for rendering a dynamic table.
  * @param {object} props - The props object.
  * @param {string} [props.className] - The class name of the table element.
  * @param {object} [props.head] - An object with key-value pairs for the table head.
@@ -31,10 +31,19 @@ import React, { useEffect } from 'react';
  *     - lastPage: A boolean to render a button for the last page.
  *     - maxItems: The maximum number of items to display per page.
  *     - displayedButtons: The maximum number of buttons that will be displayed between the previous and next buttons.
+ *     - properties: An object for setting custom styles or classes for pagination buttons and other elements.
+ *     - text: An object containing the text for the buttons. It can include:
+ *       - button: An object containing the text for the buttons. It can include:
+ *         - firstPage: The text for the first page button.
+ *         - previous: The text for the previous page button.
+ *         - next: The text for the next page button.
+ *         - lastPage: The text for the last page button.
  * @param {function} [props.onRowClick] - A callback function that will be called when a table row is clicked.
  * @param {function} [props.onCellClick] - A callback function that will be called when a table cell is clicked.
  * @param {object} [props.cellProps] - An object with key-value pairs for the table cells.
  * @param {function} [props.customCell] - A callback function that will be called when a table cell is rendered. The function must return a React component.
+ * @returns {JSX.Element} A JSX element representing the table component.
+ * 
  * @example
     <Table
         head={{
@@ -76,6 +85,43 @@ import React, { useEffect } from 'react';
                 lastPage: true,
                 maxItems: 5,
                 displayedButtons: 5,
+                text: {
+                    button: {
+                        firstPage: 'First Page',
+                        previous: 'Previous',
+                        next: 'Next',
+                        lastPage: 'Last Page',
+                    },
+                },
+                properties: {
+                    wrapper: {
+                        type: 'div',
+                        props: {
+                            style: {
+                                display: 'flex',
+                                justifyContent: 'center',
+                            },
+                        },
+                    },
+                    button: {
+                        className: 'btn btn-primary',
+                        style: {
+                            margin: '0 5px',
+                        },
+                    },
+                    ul: {
+                        style: {
+                            listStyle: 'none',
+                            padding: 0,
+                            margin: 0,
+                        },
+                    },
+                    li: {
+                        style: {
+                            margin: '0 5px',
+                        },
+                    },
+                },
             },
             properties: {
                 thead: {
@@ -125,106 +171,90 @@ import React, { useEffect } from 'react';
     />
  */
 export const Table = ({ className, head = {}, data = [], footer = [], options = {}, onRowClick, onCellClick, cellProps = {}, customCell }) => {
-  const [tableData, setTableData] = React.useState(data);
+    const [tableData, setTableData] = React.useState(data);
 
-  useEffect(() => {
-    setTableData(data);
-  }, [data]);
+    useEffect(() => {
+        setTableData(data);
+    }, [data]);
 
-  const handleRowClick = (event, row) => {
-    if (onRowClick) {
-      onRowClick(event, row);
-    }
-  };
+    const handleRowClick = (event, row) => {
+        if (onRowClick) {
+            onRowClick(event, row);
+        }
+    };
 
-  const handleCellClick = (event, row, cell) => {
-    if (onCellClick) {
-      onCellClick(event, row, cell);
-    }
-  };
+    const handleCellClick = (event, row, cell) => {
+        if (onCellClick) {
+            onCellClick(event, row, cell);
+        }
+    };
 
-  const [currentPage, setCurrentPage] = React.useState(0);
+    const { maxItems = 10, displayedButtons = 5, firstPage, previous, next, lastPage, text = {}, properties: paginationProperties = {} } = options.paginate || { maxItems: 10, displayedButtons: 5, firstPage: false, previous: false, next: false, lastPage: false };
 
-  const { maxItems = 10, displayedButtons = 5, firstPage, previous, next, lastPage } = options.paginate || { maxItems: 10, displayedButtons: 5, firstPage: false, previous: false, next: false, lastPage: false };
+    const [currentPage, setCurrentPage] = React.useState(0);
 
-  const handlePageChange = (event) => {
-    const newPage = Number(event.target.value);
-    setCurrentPage(newPage);
-  };
+    const handlePageChange = (event) => {
+        const newPage = Number(event.target.value);
+        setCurrentPage(newPage);
+    };
 
-  const tableDataToDisplay = tableData.slice(currentPage * maxItems, (currentPage + 1) * maxItems);
+    const tableDataToDisplay = options.paginate ? tableData.slice(currentPage * maxItems, (currentPage + 1) * maxItems) : tableData;
 
-  const buttons = [];
-
-  if (firstPage) {
-    buttons.push(<button key="first" onClick={() => setCurrentPage(0)}>First</button>);
-  }
-
-  if (previous) {
-    buttons.push(<button key="prev" onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>);
-  }
-
-  const start = Math.max(0, currentPage - displayedButtons + 1);
-  const end = Math.min(Math.ceil(tableData.length / maxItems), currentPage + displayedButtons);
-
-  for (let i = start; i < end; i++) {
-    buttons.push(<button key={i} onClick={() => setCurrentPage(i)}>{i + 1}</button>);
-  }
-
-  if (next) {
-    buttons.push(<button key="next" onClick={() => setCurrentPage(currentPage + 1)}>Next</button>);
-  }
-
-  if (lastPage) {
-    buttons.push(<button key="last" onClick={() => setCurrentPage(Math.ceil(tableData.length / maxItems) - 1)}>Last</button>);
-  }
-
-  return (
-    <div>
-      <table className={className} {...options.properties.table}>
-        <thead {...options.properties.thead.props}>
-          <tr {...options.properties.thead.tr}>
-            {options.increment && <th {...options.properties.thead.td}>{options.incrementText || '#'}</th>}
-            {Object.keys(head).map((key) => (
-              <th key={key} {...options.properties.thead.td}>{head[key]}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody {...options.properties.tbody.props}>
-          {tableDataToDisplay.map((row, index) => {
-            return (
-              <tr key={index} onClick={(event) => handleRowClick(event, row)} {...options.properties.tbody.tr}>
-                {options.increment && <td {...options.properties.tbody.td}>{index + 1}</td>}
-                {Object.keys(head).map((key) => {
-                  return (
-                    <td key={key} onClick={(event) => handleCellClick(event, row, row[key])} {...cellProps} {...options.properties.tbody.td}>
-                      {customCell ? customCell(row, key) : row[key]}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-        {footer.length > 0 && (
-          <tfoot {...options.properties.tfooter.props}>
-            <tr {...options.properties.tfooter.tr}>
-              {Object.keys(head).map((key) => {
-                return (
-                  <td key={key} {...options.properties.tfooter.td}>
-                    {footer[0][key]}
-                  </td>
-                );
-              })}
-            </tr>
-          </tfoot>
-        )}
-      </table>
-      <div style={{ marginTop: '10px' }}>
-        {buttons}
-      </div>
-    </div>
-  );
+    return (
+        <React.Fragment>
+            <table className={className} {...options.properties ? options.properties.table : {}}>
+                <thead {...options.properties ? options.properties.thead.props : {}}>
+                    <tr {...options.properties ? options.properties.thead.tr : {}}>
+                        {options.increment && <th {...options.properties ? options.properties.thead.td : {}}>{options.incrementText || '#'}</th>}
+                        {Object.keys(head).map((key) => (
+                            <th key={key} {...options.properties ? options.properties.thead.td : {}}>{head[key]}</th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody {...options.properties ? options.properties.tbody.props : {}}>
+                    {tableDataToDisplay.map((row, index) => {
+                        return (
+                            <tr key={index} onClick={(event) => handleRowClick(event, row)} {...options.properties ? options.properties.tbody.tr : {}}>
+                                {options.increment && <td {...options.properties ? options.properties.tbody.td : {}} {...cellProps}>{index + 1}</td>}
+                                {Object.keys(head).map((key) => {
+                                    return (
+                                        <td key={key} onClick={(event) => handleCellClick(event, row, row[key])} {...options.properties ? options.properties.tbody.td : {}} {...cellProps}>
+                                            {customCell ? customCell(row, key) : row[key]}
+                                        </td>
+                                    );
+                                })}
+                            </tr>
+                        );
+                    })}
+                </tbody>
+                {footer.length > 0 && (
+                    <tfoot {...options.properties ? options.properties.tfooter.props : {}}>
+                        <tr {...options.properties ? options.properties.tfooter.tr : {}}>
+                            {Object.keys(head).map((key) => {
+                                return (
+                                    <td key={key} {...options.properties ? options.properties.tfooter.td : {}}>
+                                        {footer[0][key]}
+                                    </td>
+                                );
+                            })}
+                        </tr>
+                    </tfoot>
+                )}
+            </table>
+            {options.paginate && (
+                <Pagination
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    maxItems={tableData.length}
+                    displayedButtons={displayedButtons}
+                    firstPage={firstPage}
+                    previous={previous}
+                    next={next}
+                    lastPage={lastPage}
+                    text={text}
+                    properties={paginationProperties}
+                />
+            )}
+        </React.Fragment>
+    );
 }
-
-

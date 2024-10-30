@@ -79,6 +79,49 @@ export const SenderTable = () => {
                 lastPage: true,
                 maxItems: 5,
                 displayedButtons: 5,
+                text: {
+                    button: {
+                        firstPage: 'First',
+                        previous: 'Prev',
+                        next: 'Next',
+                        lastPage: 'Last',
+                    },
+                },
+                properties: {
+                    wrapper: {
+                        type: 'nav',
+                        props: {
+                            style: {
+                                display: 'flex',
+                                justifyContent: 'center',
+                            },
+                        },
+                    },
+                    button: {
+                        type: 'a',
+                        className: 'page-link',
+                    },
+                    ul: {
+                        className: 'pagination',
+                    },
+                    li: {
+                        className: 'page-item',
+                    },
+                    currentButton: {
+                        li: {
+                            className: 'page-item current-page-li',
+                            style: {
+                                fontWeight: 'bold',
+                            },
+                        },
+                        button: {
+                            className: 'page-link current-page-btn',
+                            style: {
+                                pointerEvents: 'none',
+                            },
+                        },
+                    },
+                },
             },
             properties: {
                 thead: {

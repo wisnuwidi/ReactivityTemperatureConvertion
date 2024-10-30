@@ -1,8 +1,8 @@
 /**
- * @filename        : ToggleMode.js
+ * @filename        : ToggleMode.jsx
  * @license         : MIT
  * @copyright       : 2023 IncoDIY
- * @time Created at : 23-10-2024, 03:52:03
+ * @time Created at : 24-10-2024, 03:52:03
  * @email           : IncoDIY<incodiy@gmail.com>
  * @author          : IncoDIY<incodiy@gmail.com>
  * @description     : This file contains a function component for rendering a label element in a form.
