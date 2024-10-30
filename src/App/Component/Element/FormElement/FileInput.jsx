@@ -1,53 +1,54 @@
 /**
- * @filename        : Input.js
+ * @filename        : FileInput.js
  * @license         : MIT
  * @copyright       : 2023 IncoDIY
- * @time Created at : 23-10-2024, 21:43:19
+ * @time Created at : 30-10-2024, 00:50:16
  * @email           : IncoDIY<incodiy@gmail.com>
  * @author          : IncoDIY<incodiy@gmail.com>
  * @description     : This file contains a function component for rendering input elements in a form.
  *                    It supports managing the state of multiple input elements and allows adding new inputs dynamically.
+ *                    It also supports file inputs, which can be added or removed dynamically.
  */
 
 import React, { useState, useEffect } from 'react';
 import { FindDuplicateArrayValue, NextIncrement } from '../../Helper/ConstantMotion';
-import Label from '../FormElement/Label';
+import Label from './Label';
 
 /**
- * @function Input
+ * @function FileInput
  * 
  * @description
- *      A function component for rendering multiple input elements in a form.
- *      It manages the state of each input based on the provided data.
- *      The user can also set the ability to add new input elements.
+ *      A function component for rendering multiple file input elements in a form.
+ *      It manages the state of each file input based on the provided data.
+ *      The user can also set the ability to add new file input elements.
  *      The user can also set the minimum number of delete buttons to be shown.
  * 
  * @param {object} props - The props object.
- * @param {array} [props.data] - An array of objects containing the name, value, and className for each input element.
- *      - If not provided, it will render a single input element with an empty name, value, and className.
- * @param {function} [props.onChange] - The function that will be called whenever the value of any input element changes.
- *      - It receives an object with the current values of all inputs.
+ * @param {array} [props.data] - An array of objects containing the name, value, and className for each file input element.
+ *      - If not provided, it will render a single file input element with an empty name, value, and className.
+ * @param {function} [props.onChange] - The function that will be called whenever the value of any file input element changes.
+ *      - It receives an object with the current values of all file inputs.
  * @param {object} [props.wrapper] - An object containing the tag name and props for the wrapper element.
  *      - The tag name is the type of the wrapper element.
  *      - The props is an object containing the props that will be passed to the wrapper element.
- * @param {boolean} [props.addable=false] - If true, the component will render a button for adding a new input element.
- *      - If the component was created with `addable` set to true, the button for adding a new input element will be enabled.
- *      - If the button is clicked, the component will create a new input element and append it to the input elements array.
- * @param {string} [props.addText="Add"] - The text content of the button for adding a new input element.
- * @param {function} [props.onAdd] - The function that will be called when the user clicks the button for adding a new input element.
- *      - It receives the new input element as an argument.
+ * @param {boolean} [props.addable=false] - If true, the component will render a button for adding a new file input element.
+ *      - If the component was created with `addable` set to true, the button for adding a new file input element will be enabled.
+ *      - If the button is clicked, the component will create a new file input element and append it to the file input elements array.
+ * @param {string} [props.addText="Add"] - The text content of the button for adding a new file input element.
+ * @param {function} [props.onAdd] - The function that will be called when the user clicks the button for adding a new file input element.
+ *      - It receives the new file input element as an argument.
  * @param {number} [props.minDeleteButton=0] - The minimum number of delete buttons to be shown.
  *      - If the number of delete buttons reaches this number, the delete button will be destroyed.
- * @param {string} [props.deleteText="Delete"] - The text content of the button for deleting a input element.
- * @param {function} [props.onDelete] - The function that will be called when the user clicks the button for deleting a input element.
- *      - It receives the input element that was deleted as an argument.
+ * @param {string} [props.deleteText="Delete"] - The text content of the button for deleting a file input element.
+ * @param {function} [props.onDelete] - The function that will be called when the user clicks the button for deleting a file input element.
+ *      - It receives the file input element that was deleted as an argument.
  * @param {object} [props.wrapperProps] - An object containing the props that will be passed to the wrapper element.
  *      - If not provided, the wrapper element will not have any props.
  * @param {array} [props.wrapperClass] - An array of strings containing the class names for the wrapper element.
  *      - If not provided, the wrapper element will not have any class names.
  * 
  * @example
- *  <Input
+ *  <FileInput
         data={[
             {
                 name: "namasama",
@@ -146,7 +147,7 @@ import Label from '../FormElement/Label';
         onChange={(event) => ''}//console.log(event.target.value)}
     />
  */
-export const Input = ({ data = [], onChange, wrapper = [], addable = {}, ...props }) => {
+export const FileInput = ({ data = [], onChange, wrapper = [], addable = {}, ...props }) => {
     const [inputs, setInputs] = useState(() => FindDuplicateArrayValue(data, ['name', 'id'], ''));
     const [inputValues, setInputValues] = useState(() => inputs.reduce((acc, input) => ({ ...acc, [input.name]: input.value || '' }), {}));
 
@@ -160,10 +161,10 @@ export const Input = ({ data = [], onChange, wrapper = [], addable = {}, ...prop
 
     const handleChange = (index, event) => {
         const updatedInputs = inputs.map((input, i) =>
-            i === index ? { ...input, value: event.target.value } : input
+            i === index ? { ...input, value: event.target.files } : input
         );
         setInputs(updatedInputs);
-        setInputValues(updatedInputs.reduce((acc, input) => ({ ...acc, [input.name]: input.value || '' }), {}));
+        setInputValues(updatedInputs.reduce((acc, input) => ({ ...acc, [input.name]: input.files || '' }), {}));
         if (onChange) {
             onChange(event);
         }
@@ -247,10 +248,10 @@ export const Input = ({ data = [], onChange, wrapper = [], addable = {}, ...prop
                         />
                     )}
                     <input
+                        type="file"
                         name={input.name}
                         id={input.id}
                         className={input.className}
-                        value={inputValues[input.name] || ''}
                         onChange={event => handleChange(index, event)}
                         {...input.props}
                     />

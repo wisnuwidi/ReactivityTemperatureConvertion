@@ -5,7 +5,7 @@
  * @time Created at : 23-10-2024, 21:41:19
  * @email           : IncoDIY<incodiy@gmail.com>
  * @author          : IncoDIY<incodiy@gmail.com>
- * @description     : This file contains a function component for rendering a single or multiple select elements in a form.
+ * @description     : This file contains a React function component for rendering single or multiple select elements in a form. It supports dynamic addition and deletion of select elements and manages their state efficiently.
  */
 
 import React, { useState, useEffect } from 'react';
