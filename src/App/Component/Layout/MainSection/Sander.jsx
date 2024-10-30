@@ -16,6 +16,7 @@ export default function Sander () {
 
 export const SenderTable = () => {
     return <Table
+        className='table-sender'
         head={{
             "name": "Nama",
             "first_name": "Panggilan",
@@ -70,6 +71,20 @@ export const SenderTable = () => {
             );
         }}
         options={{
+            search: {
+                input: {
+                    className: 'form-control',
+                },
+                label: 'Cari',
+                wrapper: {
+                    className: 'form-group',
+                    style: {
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                    },
+                },
+            },// Enable search functionality
             increment: true,
             incrementText: 'Row #',
             paginate: {
@@ -120,6 +135,16 @@ export const SenderTable = () => {
                                 pointerEvents: 'none',
                             },
                         },
+                    },
+                },
+                listDataInfo: {
+                    type: 'div',
+                    position: 'left',
+                    props: {
+                        style: {
+                            textAlign: 'center',
+                        },
+                        className: 'list-data-info',
                     },
                 },
             },

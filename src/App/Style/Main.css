@@ -99,7 +99,7 @@ background color, border radius of 8px for rounded corners, and a box shadow for
 effect. */
 section {
     width: 100%;
-    max-width: 600px;
+    /* max-width: 600px; */
     margin: 10px 0;
     padding: 15px;
     background-color: #fff;

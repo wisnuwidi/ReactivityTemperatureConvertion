@@ -13,7 +13,7 @@ import React, { useEffect } from 'react';
 import { Pagination } from '../Widget/Pagination';
 
 /**
- * @function Tablem - A function component for rendering a dynamic table.
+ * @function Table - A function component for rendering a dynamic table with search functionality.
  * 
  * @param {object} props - The props object.
  * @param {string} [props.className] - The class name of the table element.
@@ -23,6 +23,7 @@ import { Pagination } from '../Widget/Pagination';
  * @param {object} [props.options] - An object containing options for the table. It can include:
  *   - incrementText: The text for the increment column's header.
  *   - increment: A boolean to render a column with row numbers.
+ *   - search: A boolean to enable search functionality across all data entries.
  *   - properties: An object containing the properties for the table, thead, tbody, tr, and td elements.
  *   - paginate: An object containing the properties for the pagination. It can include:
  *     - firstPage: A boolean to render a button for the first page.
@@ -46,6 +47,7 @@ import { Pagination } from '../Widget/Pagination';
  * 
  * @example
     <Table
+        className='table-class'
         head={{
             name: 'Name',
             age: 'Age',
@@ -71,11 +73,27 @@ import { Pagination } from '../Widget/Pagination';
             const cellValue = row[cellKey];
             return (
                 <a href="#" style={{ color: 'blue' }}>
-                {cellValue}
+                    {cellValue}
                 </a>
             );
         }}
         options={{
+            search: {
+                input: {
+                    style: {
+                        width: '100%',
+                        padding: '5px',
+                    },
+                },
+                label: 'Search By Name',
+                wrapper: {
+                    style: {
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                    },
+                },
+            }, // Enable search functionality
             increment: true,
             incrementText: 'Row #',
             paginate: {
@@ -170,8 +188,10 @@ import { Pagination } from '../Widget/Pagination';
         }}
     />
  */
-export const Table = ({ className, head = {}, data = [], footer = [], options = {}, onRowClick, onCellClick, cellProps = {}, customCell }) => {
-    const [tableData, setTableData] = React.useState(data);
+export const Table = ({ className, head = {}, data = [], footer = [], options = {}, onRowClick, onCellClick, cellProps = {}, customCell, ...tableProps }) => {
+    const [tableData, setTableData]     = React.useState(data);
+    const [searchQuery, setSearchQuery] = React.useState('');
+    const [currentPage, setCurrentPage] = React.useState(0);
 
     useEffect(() => {
         setTableData(data);
@@ -189,20 +209,39 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
         }
     };
 
-    const { maxItems = 10, displayedButtons = 5, firstPage, previous, next, lastPage, text = {}, properties: paginationProperties = {} } = options.paginate || { maxItems: 10, displayedButtons: 5, firstPage: false, previous: false, next: false, lastPage: false };
-
-    const [currentPage, setCurrentPage] = React.useState(0);
-
-    const handlePageChange = (event) => {
-        const newPage = Number(event.target.value);
-        setCurrentPage(newPage);
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+        setCurrentPage(0); // Reset to first page on new search
     };
 
-    const tableDataToDisplay = options.paginate ? tableData.slice(currentPage * maxItems, (currentPage + 1) * maxItems) : tableData;
+    const { maxItems = 10, displayedButtons = 5, firstPage, previous, next, lastPage, text = {}, properties: paginationProperties = {}, listDataInfo = { type: 'span', position: 'left', props: { style: { display: 'block', textAlign: 'center', marginTop: '10px' } } } } = options.paginate || {};
+
+    const { input = {}, label = 'Search', wrapper = {} } = options.search || {};
+
+    const filteredData = tableData.filter(row => {
+        return Object.values(row).some(value => 
+            String(value).toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    });
+
+    const tableDataToDisplay = options.paginate ? filteredData.slice(currentPage * maxItems, (currentPage + 1) * maxItems) : filteredData;
 
     return (
         <React.Fragment>
-            <table className={className} {...options.properties ? options.properties.table : {}}>
+            {options.search && (
+                <div {...wrapper}>
+                    <label htmlFor="search-input">{label}</label>
+                    <input
+                        type="text"
+                        id="search-input"
+                        placeholder="Search..."
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        {...input}
+                    />
+                </div>
+            )}
+            <table className={className} {...options.properties ? options.properties.table : {}} {...tableProps}>
                 <thead {...options.properties ? options.properties.thead.props : {}}>
                     <tr {...options.properties ? options.properties.thead.tr : {}}>
                         {options.increment && <th {...options.properties ? options.properties.thead.td : {}}>{options.incrementText || '#'}</th>}
@@ -245,7 +284,7 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                 <Pagination
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
-                    maxItems={tableData.length}
+                    maxItems={filteredData.length}
                     displayedButtons={displayedButtons}
                     firstPage={firstPage}
                     previous={previous}
@@ -253,6 +292,7 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                     lastPage={lastPage}
                     text={text}
                     properties={paginationProperties}
+                    listDataInfo={listDataInfo}
                 />
             )}
         </React.Fragment>
