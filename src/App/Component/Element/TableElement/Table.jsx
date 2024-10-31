@@ -13,7 +13,7 @@ import React, { useEffect } from 'react';
 import { Pagination } from '../Widget/Pagination';
 
 /**
- * @function Table - A function component for rendering a dynamic table with search functionality.
+ * @function Table - A function component for rendering a dynamic table with search functionality and page size selection.
  * 
  * @param {object} props - The props object.
  * @param {string} [props.className] - The class name of the table element.
@@ -39,6 +39,7 @@ import { Pagination } from '../Widget/Pagination';
  *         - previous: The text for the previous page button.
  *         - next: The text for the next page button.
  *         - lastPage: The text for the last page button.
+ *   - pageSizeOptions: An array of numbers representing the page size options for the dropdown.
  * @param {function} [props.onRowClick] - A callback function that will be called when a table row is clicked.
  * @param {function} [props.onCellClick] - A callback function that will be called when a table cell is clicked.
  * @param {object} [props.cellProps] - An object with key-value pairs for the table cells.
@@ -101,7 +102,7 @@ import { Pagination } from '../Widget/Pagination';
                 previous: true,
                 next: true,
                 lastPage: true,
-                maxItems: 5,
+                maxItems: 10,
                 displayedButtons: 5,
                 text: {
                     button: {
@@ -141,6 +142,7 @@ import { Pagination } from '../Widget/Pagination';
                     },
                 },
             },
+            pageSizeOptions: [10, 25, 50],
             properties: {
                 thead: {
                     props: {
@@ -189,9 +191,10 @@ import { Pagination } from '../Widget/Pagination';
     />
  */
 export const Table = ({ className, head = {}, data = [], footer = [], options = {}, onRowClick, onCellClick, cellProps = {}, customCell, ...tableProps }) => {
-    const [tableData, setTableData]     = React.useState(data);
+    const [tableData, setTableData] = React.useState(data);
     const [searchQuery, setSearchQuery] = React.useState('');
     const [currentPage, setCurrentPage] = React.useState(0);
+    const [maxItems, setMaxItems] = React.useState(options.paginate?.maxItems || 10);
 
     useEffect(() => {
         setTableData(data);
@@ -211,18 +214,30 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
 
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value);
-        setCurrentPage(0); // Reset to first page on new search
+        setCurrentPage(0);
+        setFilteredData(tableData.filter(row => {
+            return Object.values(row).some(value => 
+                String(value).toLowerCase().includes(event.target.value.toLowerCase())
+            );
+        }));
     };
 
-    const { maxItems = 10, displayedButtons = 5, firstPage, previous, next, lastPage, text = {}, properties: paginationProperties = {}, listDataInfo = { type: 'span', position: 'left', props: { style: { display: 'block', textAlign: 'center', marginTop: '10px' } } } } = options.paginate || {};
+    const handlePageSizeChange = (event) => {
+        const newMaxItems = Number(event.target.value);
+        setMaxItems(newMaxItems);
+        setCurrentPage(0);
+        setFilteredData(tableData.filter(row => {
+            return Object.values(row).some(value => 
+                String(value).toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        }));
+    };
+
+    const [filteredData, setFilteredData] = React.useState(tableData);
+
+    const { displayedButtons = 5, firstPage, previous, next, lastPage, text = {}, properties: paginationProperties = {}, listDataInfo = { type: 'span', position: 'left', props: { style: { display: 'block', textAlign: 'center', marginTop: '10px' } } } } = options.paginate || {};
 
     const { input = {}, label = 'Search', wrapper = {} } = options.search || {};
-
-    const filteredData = tableData.filter(row => {
-        return Object.values(row).some(value => 
-            String(value).toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    });
 
     const tableDataToDisplay = options.paginate ? filteredData.slice(currentPage * maxItems, (currentPage + 1) * maxItems) : filteredData;
 
@@ -239,6 +254,17 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                         onChange={handleSearchChange}
                         {...input}
                     />
+                </div>
+            )}
+            {options.paginate && (
+                <div style={{ marginBottom: '10px' }}>
+                    Show 
+                    <select onChange={handlePageSizeChange} value={maxItems}>
+                        {options.pageSizeOptions.map(size => (
+                            <option key={size} value={size}>{size} rows</option>
+                        ))}
+                    </select> 
+                    entries
                 </div>
             )}
             <table className={className} {...options.properties ? options.properties.table : {}} {...tableProps}>
@@ -293,6 +319,7 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                     text={text}
                     properties={paginationProperties}
                     listDataInfo={listDataInfo}
+                    maxItemsPerPage={maxItems}
                 />
             )}
         </React.Fragment>

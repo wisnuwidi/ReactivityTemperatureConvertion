@@ -66,7 +66,7 @@ export const SenderTable = () => {
             const cellValue = row[cellKey];
             return (
                 <a href="#" style={{ color: 'blue' }}>
-                {cellValue}
+                    {cellValue}
                 </a>
             );
         }}
@@ -87,6 +87,7 @@ export const SenderTable = () => {
             },// Enable search functionality
             increment: true,
             incrementText: 'Row #',
+            pageSizeOptions: [5, 10, 25, 50, 100],
             paginate: {
                 firstPage: true,
                 previous: true,
@@ -145,6 +146,16 @@ export const SenderTable = () => {
                             textAlign: 'center',
                         },
                         className: 'list-data-info',
+                    },
+                    showingText: 'Displaying',
+                    toText: 'to',
+                    ofText: 'of',
+                    entriesText: 'items',
+                    showTextWrappers: {
+                        showingText: { tag: 'span', props: { className: 'showing-class' } },
+                        toText: { tag: 'em', props: { className: 'to-class' } },
+                        ofText: { tag: 'strong', props: { className: 'of-class' } },
+                        entriesText: { tag: 'span', props: { className: 'entries-class' } },
                     },
                 },
             },

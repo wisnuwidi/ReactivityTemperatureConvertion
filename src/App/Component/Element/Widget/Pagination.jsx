@@ -7,8 +7,6 @@
  * @author          : IncoDIY<incodiy@gmail.com>
  * @description     : This file contains a function component for rendering a label element in a form.
  */
-
-import { Button } from "../FormElement/Button";
 import React from 'react';
 
 /**
@@ -28,6 +26,12 @@ import React from 'react';
  *   - type: The type of the HTML tag (default is 'p').
  *   - props: An object containing the props that will be passed to the HTML tag (default is an empty object).
  *   - position: The position of the list data info tag relative to the ul element. It can be 'left' or 'right' (default is 'left').
+ *   - showingText: The text of the 'Showing' part of the list data info tag. (default is 'Showing')
+ *   - toText: The text of the 'to' part of the list data info tag. (default is 'to')
+ *   - ofText: The text of the 'of' part of the list data info tag. (default is 'of')
+ *   - entriesText: The text of the 'entries' part of the list data info tag. (default is 'entries')
+ *   - showTextWrappers: An object specifying tags to wrap the showingText, toText, ofText and entriesText, along with their props. 
+ *     E.g., { showingText: { tag: 'span', props: { className: 'showing-class' } }, ... } (default tags are all 'span' with empty props).
  * @returns {ReactElement} A React element representing the pagination buttons.
  * 
  * @example
@@ -102,10 +106,20 @@ import React from 'react';
                     marginTop: '10px',
                 },
             },
+            showingText: 'Displaying',
+            toText: 'to',
+            ofText: 'of',
+            entriesText: 'items',
+            showTextWrappers: {
+                showingText: { tag: 'span', props: { className: 'showing-class' } },
+                toText: { tag: 'em', props: { className: 'to-class' } },
+                ofText: { tag: 'strong', props: { className: 'of-class' } },
+                entriesText: { tag: 'span', props: { className: 'entries-class' } },
+            },
         }}
     />
  */
-export const Pagination = ({ currentPage, setCurrentPage, maxItems, displayedButtons, firstPage, previous, next, lastPage, text, properties, listDataInfo }) => {
+export const Pagination = ({ currentPage, setCurrentPage, maxItems, displayedButtons, firstPage, previous, next, lastPage, text, properties, listDataInfo, maxItemsPerPage }) => {
     const { 
         firstPage: firstPageText = 'First', 
         previous: previousText = 'Previous', 
@@ -124,17 +138,34 @@ export const Pagination = ({ currentPage, setCurrentPage, maxItems, displayedBut
     const { 
         type: ListDataInfoTag = 'p', 
         props: listDataInfoProps = { style: { textAlign: 'center', marginTop: '10px' } }, 
-        position 
+        position, 
+        showingText = 'Showing', 
+        toText = 'to', 
+        ofText = 'of', 
+        entriesText = 'entries', 
+        showTextWrappers = { 
+            showingText: { tag: 'span', props: {} }, 
+            toText: { tag: 'span', props: {} }, 
+            ofText: { tag: 'span', props: {} }, 
+            entriesText: { tag: 'span', props: {} }
+        },
     } = listDataInfo || {};
-
-    const numPages = Math.ceil(maxItems / displayedButtons);
+    const numPages = Math.ceil(maxItems / maxItemsPerPage);
     const start = Math.max(0, Math.min(numPages - displayedButtons, currentPage - Math.floor(displayedButtons / 2)));
     const end = Math.min(numPages, start + displayedButtons);
+
+    const showingStart = currentPage * maxItemsPerPage + 1;
+    const showingEnd = Math.min(showingStart + maxItemsPerPage - 1, maxItems);
+
+    const ShowingTextTag = showTextWrappers.showingText.tag || 'span';
+    const ToTextTag = showTextWrappers.toText.tag || 'span';
+    const OfTextTag = showTextWrappers.ofText.tag || 'span';
+    const EntriesTextTag = showTextWrappers.entriesText.tag || 'span';
 
     return (
         <Wrapper {...wrapperProps}>
             {position === 'left' && <ListDataInfoTag {...listDataInfoProps}>
-                Showing {start * displayedButtons + 1} to {Math.min((start + 1) * displayedButtons, maxItems)} of {maxItems} entries
+                <ShowingTextTag {...showTextWrappers.showingText.props}>{showingText}</ShowingTextTag> {showingStart} <ToTextTag {...showTextWrappers.toText.props}>{toText}</ToTextTag> {showingEnd} <OfTextTag {...showTextWrappers.ofText.props}>{ofText}</OfTextTag> {maxItems} <EntriesTextTag {...showTextWrappers.entriesText.props}>{entriesText}</EntriesTextTag>
             </ListDataInfoTag>}
             <ul {...ulProps}>
                 {firstPage && <li key="first" {...liProps}><ButtonTag {...buttonProps} onClick={() => setCurrentPage(0)}>{firstPageText}</ButtonTag></li>}
@@ -160,7 +191,7 @@ export const Pagination = ({ currentPage, setCurrentPage, maxItems, displayedBut
                 {lastPage && <li key="last" {...liProps}><ButtonTag {...buttonProps} onClick={() => setCurrentPage(numPages - 1)}>{lastPageText}</ButtonTag></li>}
             </ul>
             {position === 'right' && <ListDataInfoTag {...listDataInfoProps}>
-                Showing {start * displayedButtons + 1} to {Math.min((start + 1) * displayedButtons, maxItems)} of {maxItems} entries
+                <ShowingTextTag {...showTextWrappers.showingText.props}>{showingText}</ShowingTextTag> {showingStart} <ToTextTag {...showTextWrappers.toText.props}>{toText}</ToTextTag> {showingEnd} <OfTextTag {...showTextWrappers.ofText.props}>{ofText}</OfTextTag> {maxItems} <EntriesTextTag {...showTextWrappers.entriesText.props}>{entriesText}</EntriesTextTag>
             </ListDataInfoTag>}
         </Wrapper>
     );
