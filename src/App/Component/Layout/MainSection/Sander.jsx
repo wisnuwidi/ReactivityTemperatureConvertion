@@ -7,16 +7,15 @@ import { Table } from '../../Element/TableElement/Table';
 
 export default function Sander () {  
     return (
-        <div className="sander" style={{ overflow: 'auto' }}>
+        <div className="sander container" style={{ overflow: 'auto' }}>
             <SenderTable />
         </div>
     );
 }
 
-
 export const SenderTable = () => {
     return <Table
-        className='table-sender'
+        className='table table-hover table-bordered'
         head={{
             "name": "Nama",
             "first_name": "Panggilan",
@@ -59,7 +58,6 @@ export const SenderTable = () => {
         cellProps={{
             style: {
                 padding: '10px',
-                border: '1px solid #ccc'
             }
         }}
         customCell={(row, cellKey) => {
@@ -75,9 +73,9 @@ export const SenderTable = () => {
                 input: {
                     className: 'form-control',
                 },
-                label: 'Cari',
+                label: 'Cari ',
                 wrapper: {
-                    className: 'form-group',
+                    className: 'col-6',
                     style: {
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -161,30 +159,18 @@ export const SenderTable = () => {
             },
             properties: {
                 thead: {
-                    props: {
-                        className: 'thead-class',
-                        style: { backgroundColor: '#f0f0f0' },
-                    },
-                    tr: {
-                        className: 'thead-row-class',
-                        style: {},
-                    },
+                    props: {},
+                    tr: {},
                     td: {
-                        className: 'thead-column-class',
+                        className: 'border border-slate-600',
                         style: {},
                     }
                 },
                 tbody: {
-                    props: {
-                        className: 'tbody-props-class',
-                        style: {},
-                    },
-                    tr: {
-                        className: 'tbody-row-class',
-                        style: {},
-                    },
+                    props: {},
+                    tr: {},
                     td: {
-                        className: 'tbody-column-class',
+                        className: 'border border-slate-600',
                         style: {},
                     }
                 },
@@ -516,15 +502,25 @@ export const SenderInputElement = () => {
             {
                 name: "namasama",
                 id: "idbeda", 
-                label: { 
-                    text: "Input your option", 
-                    className: "input-label", 
-                    position:"left",
-                    increments: {
-                        type: "number",
-                        prefix: true,
-                        suffix: true
-                    } 
+                label: {
+                    left: {
+                        text: "Input left label", 
+                        className: "input-left-label", 
+                        increments: {
+                            type: "number",
+                            prefix: true,
+                            suffix: true
+                        } 
+                    },
+                    right: {
+                        text: "Input right label", 
+                        className: "input-right-label", 
+                        increments: {
+                            type: "alphabetical",
+                            prefix: true,
+                            suffix: true
+                        } 
+                    }
                 },
                 className: "custom-input",
                 placeholder: "Please input",
@@ -534,14 +530,24 @@ export const SenderInputElement = () => {
                 name: "namabeda",
                 id: "idsama", 
                 label: { 
-                    text: "Input your option", 
-                    className: "input-label", 
-                    position:"left",
-                    increments: {
-                        type: "alphabetical",
-                        prefix: false,
-                        suffix: true
-                    } 
+                    left: {
+                        text: "Input left label", 
+                        className: "input-left-label", 
+                        increments: {
+                            type: "number",
+                            prefix: true,
+                            suffix: true
+                        } 
+                    },
+                    right: {
+                        text: "Input right label", 
+                        className: "input-right-label", 
+                        increments: {
+                            type: "alphabetical",
+                            prefix: true,
+                            suffix: true
+                        } 
+                    }
                 },
                 className: "custom-input",
                 placeholder: "Please input",
@@ -551,14 +557,24 @@ export const SenderInputElement = () => {
                 name: "namasama",
                 id: "idsama", 
                 label: { 
-                    text: "Input your option", 
-                    className: "input-label", 
-                    position:"right",
-                    increments: {
-                        type: "alphabetical",
-                        prefix: true,
-                        suffix: true
-                    } 
+                    left: {
+                        text: "Input left label", 
+                        className: "input-left-label", 
+                        increments: {
+                            type: "number",
+                            prefix: true,
+                            suffix: true
+                        } 
+                    },
+                    right: {
+                        text: "Input right label", 
+                        className: "input-right-label", 
+                        increments: {
+                            type: "alphabetical",
+                            prefix: true,
+                            suffix: true
+                        } 
+                    }
                 },
                 className: "custom-input",
                 placeholder: "Please input",
@@ -575,13 +591,23 @@ export const SenderInputElement = () => {
                 placeholder: "Please input"
             },
             label: {
-                text: "Add new input",
-                className: "input-label",
-                position: "left",
-                increments: {
-                    type: "alphabetical",
-                    prefix: true,
-                    suffix: false
+                left: {
+                    text: "Input left added", 
+                    className: "input-left-label", 
+                    increments: {
+                        type: "number",
+                        prefix: true,
+                        suffix: true
+                    } 
+                },
+                right: {
+                    text: "Input right added", 
+                    className: "input-right-label", 
+                    increments: {
+                        type: "alphabetical",
+                        prefix: true,
+                        suffix: true
+                    } 
                 }
             },
             button: {
@@ -622,14 +648,16 @@ export const SenderSelectElement = () => {
                     { value: "option2", label: "Option 2" }
                 ],
                 label: { 
-                    text: "Select your option", 
-                    className: "select-label", 
-                    position:"left",
-                    increments: {
-                        type: "number",
-                        prefix: true,
-                        suffix: true
-                    } 
+                    left: {
+                        text: "Select your option", 
+                        className: "select-label", 
+                        position:"left",
+                        increments: {
+                            type: "number",
+                            prefix: true,
+                            suffix: true
+                        }
+                    }
                 },
                 className: "custom-select",
                 placeholder: "Please select",
@@ -692,13 +720,25 @@ export const SenderSelectElement = () => {
                 placeholder: "Please select"
             },
             label: {
-                text: "Add new select",
-                className: "select-label",
-                position: "left",
-                increments: {
-                    type: "alphabetical",
-                    prefix: true,
-                    suffix: false
+                left: {
+                    text: "Add new select",
+                    className: "select-label",
+                    position: "left",
+                    increments: {
+                        type: "number",
+                        prefix: true,
+                        suffix: false
+                    }
+                },
+                right: {
+                    text: "Add new select",
+                    className: "select-label",
+                    position: "left",
+                    increments: {
+                        type: "alphabetical",
+                        prefix: true,
+                        suffix: false
+                    }
                 }
             },
             button: {
@@ -707,6 +747,148 @@ export const SenderSelectElement = () => {
                 id: "add-select-button",
                 className: "custom-button",
                 name: "add-select",
+                style: {
+                    marginLeft: "10px"
+                }
+            },
+            deleteButton: {
+                text: "Delete"
+            },
+            deleteOnlyAdded: false,
+            minButtonLeft: 1
+        }}
+        wrapper={{
+            tag: "article",
+            className: "custom-wrapper",
+            style: {
+                display: "flex"
+            }
+        }}
+        onChange={(event) => ''}//console.log(event.target.value)}
+    />
+}
+
+export const SenderTextAreaElement = () => {
+    return <Input
+        data={[
+            {
+                type: "textarea",
+                name: "namasama",
+                id: "idbeda", 
+                label: {
+                    left: {
+                        text: "Input left label", 
+                        className: "input-left-label", 
+                        increments: {
+                            type: "number",
+                            prefix: true,
+                            suffix: true
+                        } 
+                    },
+                    right: {
+                        text: "Input right label", 
+                        className: "input-right-label", 
+                        increments: {
+                            type: "alphabetical",
+                            prefix: true,
+                            suffix: true
+                        } 
+                    }
+                },
+                className: "custom-input",
+                placeholder: "Please input",
+                value: [],
+                required: true
+            }, {
+                name: "namabeda",
+                id: "idsama", 
+                label: { 
+                    left: {
+                        text: "Input left label", 
+                        className: "input-left-label", 
+                        increments: {
+                            type: "number",
+                            prefix: true,
+                            suffix: true
+                        } 
+                    },
+                    right: {
+                        text: "Input right label", 
+                        className: "input-right-label", 
+                        increments: {
+                            type: "alphabetical",
+                            prefix: true,
+                            suffix: true
+                        } 
+                    }
+                },
+                className: "custom-input",
+                placeholder: "Please input",
+                value: ["input text 1", "input text 2"],
+                required: true
+            }, {
+                name: "namasama",
+                id: "idsama", 
+                label: { 
+                    left: {
+                        text: "Input left label", 
+                        className: "input-left-label", 
+                        increments: {
+                            type: "number",
+                            prefix: true,
+                            suffix: true
+                        } 
+                    },
+                    right: {
+                        text: "Input right label", 
+                        className: "input-right-label", 
+                        increments: {
+                            type: "alphabetical",
+                            prefix: true,
+                            suffix: true
+                        } 
+                    }
+                },
+                className: "custom-input",
+                placeholder: "Please input",
+                value: ["input 1", "input 2"],
+                required: true
+            }
+        ]}
+        addable={{
+            status: true,
+            inputProps: {
+                name: "namabeda",
+                id: "idsama",
+                className: "custom-input",
+                placeholder: "Please input"
+            },
+            label: {
+                left: {
+                    text: "Input left added", 
+                    className: "input-left-label", 
+                    increments: {
+                        type: "number",
+                        prefix: true,
+                        suffix: true
+                    } 
+                },
+                right: {
+                    text: "Input right added", 
+                    className: "input-right-label", 
+                    increments: {
+                        type: "alphabetical",
+                        prefix: true,
+                        suffix: true
+                    } 
+                }
+            },
+            button: {
+                text: "Add",
+                type: "button",
+                id: "add-input-button",
+                className: "custom-button",
+                name: "add-input",
                 style: {
                     marginLeft: "10px"
                 }

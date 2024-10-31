@@ -11,6 +11,8 @@
 
 import React, { useEffect } from 'react';
 import { Pagination } from '../Widget/Pagination';
+import { Select } from '../FormElement/Select';
+import { Input } from '../FormElement/Input';
 
 /**
  * @function Table - A function component for rendering a dynamic table with search functionality and page size selection.
@@ -243,85 +245,109 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
 
     return (
         <React.Fragment>
-            {options.search && (
-                <div {...wrapper}>
-                    <label htmlFor="search-input">{label}</label>
-                    <input
-                        type="text"
-                        id="search-input"
-                        placeholder="Search..."
-                        value={searchQuery}
-                        onChange={handleSearchChange}
-                        {...input}
-                    />
+            <div className="table-responsive">
+                <div className="row">
+                    {options.paginate && (
+                        <Select
+                            data={[{
+                                id       : 'row-data-table',
+                                className: 'form-control',
+                                options: options.pageSizeOptions.map(size => ({
+                                    value: size,
+                                    label: `${size} rows`
+                                })),
+                                label: {
+                                    left : {text: 'Show ', className: 'p-2',},
+                                    right: {text: ' Entries', className: 'p-2',}
+                                }
+                            }]}
+                            value    = {maxItems}
+                            onChange = {handlePageSizeChange}
+                            addable  = {{status: false}}
+                            wrapper={{
+                                tag: "div",
+                                className: "col-3",
+                                style: {
+                                    display: "flex"
+                                }
+                            }}
+                        />
+                    )}
+                    {options.search && (
+                        <Input 
+                            data={[{
+                                type        : "text",
+                                id          : "search-input",
+                                className   : "form-control",
+                                name        : "search",
+                                value       : searchQuery ? searchQuery : "",
+                                label       : {
+                                    left    : {text: label,}
+                                },
+                                placeholder : "Search..."
+                            }]}
+                            onChange ={handleSearchChange}
+                            wrapper  ={wrapper}
+                            {...input} 
+                        />
+                    )}
                 </div>
-            )}
-            {options.paginate && (
-                <div style={{ marginBottom: '10px' }}>
-                    Show 
-                    <select onChange={handlePageSizeChange} value={maxItems}>
-                        {options.pageSizeOptions.map(size => (
-                            <option key={size} value={size}>{size} rows</option>
-                        ))}
-                    </select> 
-                    entries
-                </div>
-            )}
-            <table className={className} {...options.properties ? options.properties.table : {}} {...tableProps}>
-                <thead {...options.properties ? options.properties.thead.props : {}}>
-                    <tr {...options.properties ? options.properties.thead.tr : {}}>
-                        {options.increment && <th {...options.properties ? options.properties.thead.td : {}}>{options.incrementText || '#'}</th>}
-                        {Object.keys(head).map((key) => (
-                            <th key={key} {...options.properties ? options.properties.thead.td : {}}>{head[key]}</th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody {...options.properties ? options.properties.tbody.props : {}}>
-                    {tableDataToDisplay.map((row, index) => {
-                        return (
-                            <tr key={index} onClick={(event) => handleRowClick(event, row)} {...options.properties ? options.properties.tbody.tr : {}}>
-                                {options.increment && <td {...options.properties ? options.properties.tbody.td : {}} {...cellProps}>{index + 1}</td>}
+                <table className={className} {...options.properties ? options.properties.table : {}} {...tableProps}>
+                    <thead {...options.properties ? options.properties.thead.props : {}}>
+                        <tr {...options.properties ? options.properties.thead.tr : {}}>
+                            {options.increment && <th {...options.properties ? options.properties.thead.td : {}}>{options.incrementText || '#'}</th>}
+                            {Object.keys(head).map((key) => (
+                                <th key={key} {...options.properties ? options.properties.thead.td : {}}>{head[key]}</th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody {...options.properties ? options.properties.tbody.props : {}}>
+                        {tableDataToDisplay.map((row, index) => {
+                            return (
+                                <tr key={index} onClick={(event) => handleRowClick(event, row)} {...options.properties ? options.properties.tbody.tr : {}}>
+                                    {options.increment && <td {...options.properties ? options.properties.tbody.td : {}} {...cellProps}>{index + 1}</td>}
+                                    {Object.keys(head).map((key) => {
+                                        return (
+                                            <td key={key} onClick={(event) => handleCellClick(event, row, row[key])} {...options.properties ? options.properties.tbody.td : {}} {...cellProps}>
+                                                {customCell ? customCell(row, key) : row[key]}
+                                            </td>
+                                        );
+                                    })}
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                    {footer.length > 0 && (
+                        <tfoot {...options.properties ? options.properties.tfooter.props : {}}>
+                            <tr {...options.properties ? options.properties.tfooter.tr : {}}>
                                 {Object.keys(head).map((key) => {
                                     return (
-                                        <td key={key} onClick={(event) => handleCellClick(event, row, row[key])} {...options.properties ? options.properties.tbody.td : {}} {...cellProps}>
-                                            {customCell ? customCell(row, key) : row[key]}
+                                        <td key={key} {...options.properties ? options.properties.tfooter.td : {}}>
+                                            {footer[0][key]}
                                         </td>
                                     );
                                 })}
                             </tr>
-                        );
-                    })}
-                </tbody>
-                {footer.length > 0 && (
-                    <tfoot {...options.properties ? options.properties.tfooter.props : {}}>
-                        <tr {...options.properties ? options.properties.tfooter.tr : {}}>
-                            {Object.keys(head).map((key) => {
-                                return (
-                                    <td key={key} {...options.properties ? options.properties.tfooter.td : {}}>
-                                        {footer[0][key]}
-                                    </td>
-                                );
-                            })}
-                        </tr>
-                    </tfoot>
+                        </tfoot>
+                    )}
+                </table>
+                {options.paginate && (
+                    <Pagination
+                        currentPage      = {currentPage}
+                        setCurrentPage   = {setCurrentPage}
+                        maxItems         = {filteredData.length}
+                        displayedButtons = {displayedButtons}
+                        firstPage        = {firstPage}
+                        previous         = {previous}
+                        next             = {next}
+                        lastPage         = {lastPage}
+                        text             = {text}
+                        properties       = {paginationProperties}
+                        listDataInfo     = {listDataInfo}
+                        maxItemsPerPage  = {maxItems}
+                    />
                 )}
-            </table>
-            {options.paginate && (
-                <Pagination
-                    currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
-                    maxItems={filteredData.length}
-                    displayedButtons={displayedButtons}
-                    firstPage={firstPage}
-                    previous={previous}
-                    next={next}
-                    lastPage={lastPage}
-                    text={text}
-                    properties={paginationProperties}
-                    listDataInfo={listDataInfo}
-                    maxItemsPerPage={maxItems}
-                />
-            )}
+            </div>
         </React.Fragment>
     );
 }

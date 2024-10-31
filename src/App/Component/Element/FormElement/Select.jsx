@@ -236,14 +236,24 @@ import Label from '../FormElement/Label';
                 ],
                 className: "custom-select",
                 placeholder: "Please select",
-                label: { 
-                    text: "Select your option", 
-                    className: "select-label", 
-                    position:"left", 
-                    increments: {
-                        type: "alphabetical",
-                        prefix: true,
-                        suffix: false
+                label: {
+                    left: {
+                        text: "Add left select",
+                        className: "select-label",
+                        increments: {
+                            type: "alphabetical",
+                            prefix: true,
+                            suffix: false
+                        }
+                    },
+                    right: {
+                        text: "Add right select",
+                        className: "select-label",
+                        increments: {
+                            type: "alphabetical",
+                            prefix: true,
+                            suffix: false
+                        }
                     }
                 },
                 value: ["option1"],
@@ -263,13 +273,23 @@ import Label from '../FormElement/Label';
                 placeholder: "Please select"
             },
             label: {
-                text: "Add new select",
-                className: "select-label",
-                position: "left",
-                increments: {
-                    type: "alphabetical",
-                    prefix: true,
-                    suffix: false
+                left: {
+                    text: "Add left select",
+                    className: "select-label",
+                    increments: {
+                        type: "alphabetical",
+                        prefix: true,
+                        suffix: false
+                    }
+                },
+                right: {
+                    text: "Add right select",
+                    className: "select-label",
+                    increments: {
+                        type: "alphabetical",
+                        prefix: true,
+                        suffix: false
+                    }
                 }
             },
             button: {
@@ -308,7 +328,7 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
     }, [data, addable]);
 
     const WrapperTag = wrapper?.tag || 'div';
-    
+
     /**
      * Handles the change event of a select element.
      * Updates the value of the select element in the state based on the event target's name and value.
@@ -327,9 +347,8 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
         }
     };
 
-    const { prefix, suffix } = addable.label?.increments? addable.label?.increments : '' || {};
-    const position           = prefix && suffix ? 'prefix|suffix' : prefix ? 'prefix' : suffix ? 'suffix' : false;
-    const getNextLabel       = (baseLabel, index, increments, position) => NextIncrement(index, increments, baseLabel, position);
+    const { left, right } = addable.label || { left: {}, right: {} };
+    const getNextLabel = (baseLabel, index, increments, position) => NextIncrement(index, increments, baseLabel, position);
     
     const [lastAddedElement, setLastAddedElement] = useState(null);
     /**
@@ -341,13 +360,13 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
      * It will then update the selects state with the new select element.
      */
     const handleAddSelect = () => {
-        const lastElementIndex = selects.length - 1;
+        const lastElementIndex     = selects.length - 1;
         const lastAddedElementName = lastAddedElement?.name || selects[lastElementIndex]?.name || '';
-        const lastAddedElementId   = lastAddedElement?.id || selects[lastElementIndex]?.id || '';
+        const lastAddedElementId   = lastAddedElement?.id   || selects[lastElementIndex]?.id   || '';
 
         if (addable.status) {
             const newSelectName = `${addable.selectProps.name}[${lastAddedElementName.match(/\[(\d+)\]/) ? Number(lastAddedElementName.match(/\[(\d+)\]/)[1]) + 1 : 0}]`;
-            const newSelectId   = `${addable.selectProps.id}[${lastAddedElementId.match(/\[(\d+)\]/) ? Number(lastAddedElementId.match(/\[(\d+)\]/)[1]) + 1 : 0}]`;
+            const newSelectId   = `${addable.selectProps.id}[${lastAddedElementId.match(/\[(\d+)\]/)     ? Number(lastAddedElementId.match(/\[(\d+)\]/)[1]) + 1 : 0}]`;
 
             // Add The Incremental Bracket For Duplicate Name And ID For The Un-Bracketed First Element Found In The Selects Array
             let countElements   = selects.length - data.length;
@@ -363,8 +382,18 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
                 options  : addable?.selectProps?.options || [],
                 value    : '',
                 label    : {
-                    text : getNextLabel(addable.label?.text || '', selects.length, addable.label?.increments? addable.label?.increments : '', position),
-                    ...addable.label.selectProps
+                    left : {
+                        text : getNextLabel(left?.text || '', selects.length, left?.increments, 'left'),
+                        className: left?.className,
+                        id: left?.id,
+                        ...left?.props
+                    },
+                    right: {
+                        text : getNextLabel(right?.text || '', selects.length, right?.increments, 'right'),
+                        className: right?.className,
+                        id: right?.id,
+                        ...right?.props
+                    }
                 }
             };
 
@@ -413,13 +442,14 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
         <>
             {selects.map((select, index) => (
                 <WrapperTag key={index} {...wrapper}>
-                    {select.label && (!select.label?.position || select.label?.position === 'left') && (
+                    {select.label?.left && (
                         <Label
-                            text       = {select.label.text}
+                            text       = {select.label.left.text}
                             htmlFor    = {select.id}
-                            increments = {select.label.increments}
-                            position   = {select.label.position}
-                            {...select.label.props}
+                            increments = {select.label.left.increments}
+                            className  = {select.label.left.className}
+                            id         = {select.label.left.id}
+                            {...select.label.left.props}
                         />
                     )}
                     <select
@@ -436,16 +466,18 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
                             <option key={i} value={option.value}>{option.label}</option>
                         ))}
                     </select>
-                    {select.label && select.label?.position === 'right' && (
+                    {select.label?.right && (
                         <Label
-                            text       = {select.label.text}
+                            text       = {select.label.right.text}
                             htmlFor    = {select.id}
-                            increments = {select.label.increments}
-                            position   = {select.label.position}
-                            {...select.label.props}
+                            increments = {select.label.right.increments}
+                            className  = {select.label.right.className}
+                            id         = {select.label.right.id}
+                            {...select.label.right.props}
                         />
                     )}
-                    {selects.length > (addable.minButtonLeft || 0) && (!addable.deleteOnlyAdded || selects[index].name !== (data[index] || {}).name) && (
+                    {addable.status && selects.length > (addable.minButtonLeft || 0) && (!addable.deleteOnlyAdded || selects[index].name !== (data[index] || {}).name) && (
+                //    {selects.length > (addable.minButtonLeft || 0) && (!addable.deleteOnlyAdded || selects[index].name !== (data[index] || {}).name) && (
                         <button {...addable.deleteButton} onClick={() => handleDeleteSelect(index)}>{addable.deleteButton?.text || "Delete"}</button>
                     )}
                 </WrapperTag>

@@ -5,9 +5,9 @@ import FooterSection from './App/Layout/FooterSection';
 function App() {
   return (
     <>
-    <HeaderSection />
-    <MainSection />
-    <FooterSection />
+      <HeaderSection />
+      <MainSection />
+      <FooterSection />
     </>
   );
 }

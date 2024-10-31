@@ -20,13 +20,6 @@ import { HandleDuplicateValues, NextIncrement, GetPrefixSuffix } from '../../Hel
  * @example
  * <Label className="my-label">My Label</Label>
  */
-function Labelx ({ children, ...props }) {
-    return (
-        <label {...props}>
-            {children}
-        </label>
-    );
-}
 
 const Label = ({text, htmlFor, increments, position, ...props}) => {
     const getNextLabel = (text, index, increments, position) => NextIncrement(index, increments, text, position);
