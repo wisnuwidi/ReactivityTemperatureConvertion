@@ -56,6 +56,7 @@ import React from 'react';
             wrapper: {
                 type: 'div',
                 props: {
+                    className: 'pagination',
                     style: {
                         display: 'flex',
                         justifyContent: 'center',
@@ -125,7 +126,7 @@ export const Pagination = ({ currentPage, setCurrentPage, maxItems, displayedBut
         previous: previousText = 'Previous', 
         next: nextText = 'Next', 
         lastPage: lastPageText = 'Last' 
-    } = text || {};
+    } = text.button || {};
 
     const { 
         wrapper: { type: Wrapper = 'div', props: wrapperProps = {} } = {}, 
@@ -133,7 +134,7 @@ export const Pagination = ({ currentPage, setCurrentPage, maxItems, displayedBut
         ul: ulProps = {}, 
         li: liProps = {}, 
         currentButton: { li: currentLiProps = {}, button: currentBtnProps = {} } = {}
-    } = properties;
+    } = properties || {};
 
     const { 
         type: ListDataInfoTag = 'p', 
@@ -150,6 +151,19 @@ export const Pagination = ({ currentPage, setCurrentPage, maxItems, displayedBut
             entriesText: { tag: 'span', props: {} }
         },
     } = listDataInfo || {};
+
+    let wrapperClassName = wrapperProps?.className;
+    if (!wrapperProps?.className)  wrapperClassName = 'flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6';
+    
+    let ulClassName = ulProps?.className;
+    if (!ulProps?.className) ulClassName = 'isolate inline-flex -space-x-px rounded-md shadow-sm';
+    
+    let buttonClassName = buttonProps?.className;
+    if (!buttonProps?.className) buttonClassName = 'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 hover:cursor-pointer';
+    
+    let curentBtnClassName = currentBtnProps?.className;
+    if (!currentBtnProps?.className) curentBtnClassName = 'relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600';
+    
     const numPages = Math.ceil(maxItems / maxItemsPerPage);
     const start = Math.max(0, Math.min(numPages - displayedButtons, currentPage - Math.floor(displayedButtons / 2)));
     const end = Math.min(numPages, start + displayedButtons);
@@ -163,13 +177,13 @@ export const Pagination = ({ currentPage, setCurrentPage, maxItems, displayedBut
     const EntriesTextTag = showTextWrappers.entriesText.tag || 'span';
 
     return (
-        <Wrapper {...wrapperProps}>
+        <Wrapper className={wrapperClassName} {...wrapperProps}>
             {position === 'left' && <ListDataInfoTag {...listDataInfoProps}>
                 <ShowingTextTag {...showTextWrappers.showingText.props}>{showingText}</ShowingTextTag> {showingStart} <ToTextTag {...showTextWrappers.toText.props}>{toText}</ToTextTag> {showingEnd} <OfTextTag {...showTextWrappers.ofText.props}>{ofText}</OfTextTag> {maxItems} <EntriesTextTag {...showTextWrappers.entriesText.props}>{entriesText}</EntriesTextTag>
             </ListDataInfoTag>}
-            <ul {...ulProps}>
-                {firstPage && <li key="first" {...liProps}><ButtonTag {...buttonProps} onClick={() => setCurrentPage(0)}>{firstPageText}</ButtonTag></li>}
-                {previous && <li key="prev" {...liProps}><ButtonTag {...buttonProps} onClick={() => currentPage > 0 && setCurrentPage(currentPage - 1)}>{previousText}</ButtonTag></li>}
+            <ul className={ulClassName} {...ulProps}>
+                {firstPage && <li key="first" {...liProps}><ButtonTag className={buttonClassName} {...buttonProps} onClick={() => setCurrentPage(0)}>{firstPageText}</ButtonTag></li>}
+                {previous && <li key="prev" {...liProps}><ButtonTag className={buttonClassName} {...buttonProps} onClick={() => currentPage > 0 && setCurrentPage(currentPage - 1)}>{previousText}</ButtonTag></li>}
 
                 {[...Array(end - start)].map((_, i) => {
                     const page = start + i;
@@ -177,6 +191,7 @@ export const Pagination = ({ currentPage, setCurrentPage, maxItems, displayedBut
                     return (
                         <li key={page} {...liProps} {...(isCurrent ? currentLiProps : {})}>
                             <ButtonTag 
+                                className={isCurrent ? curentBtnClassName : buttonClassName} 
                                 {...buttonProps} 
                                 {...(isCurrent ? currentBtnProps : {})}
                                 onClick={isCurrent ? null : () => setCurrentPage(page)}
@@ -187,8 +202,8 @@ export const Pagination = ({ currentPage, setCurrentPage, maxItems, displayedBut
                     );
                 })}
 
-                {next && <li key="next" {...liProps}><ButtonTag {...buttonProps} onClick={() => currentPage < numPages - 1 && setCurrentPage(currentPage + 1)}>{nextText}</ButtonTag></li>}
-                {lastPage && <li key="last" {...liProps}><ButtonTag {...buttonProps} onClick={() => setCurrentPage(numPages - 1)}>{lastPageText}</ButtonTag></li>}
+                {next && <li key="next" {...liProps}><ButtonTag className={buttonClassName} {...buttonProps} onClick={() => currentPage < numPages - 1 && setCurrentPage(currentPage + 1)}>{nextText}</ButtonTag></li>}
+                {lastPage && <li key="last" {...liProps}><ButtonTag className={buttonClassName} {...buttonProps} onClick={() => setCurrentPage(numPages - 1)}>{lastPageText}</ButtonTag></li>}
             </ul>
             {position === 'right' && <ListDataInfoTag {...listDataInfoProps}>
                 <ShowingTextTag {...showTextWrappers.showingText.props}>{showingText}</ShowingTextTag> {showingStart} <ToTextTag {...showTextWrappers.toText.props}>{toText}</ToTextTag> {showingEnd} <OfTextTag {...showTextWrappers.ofText.props}>{ofText}</OfTextTag> {maxItems} <EntriesTextTag {...showTextWrappers.entriesText.props}>{entriesText}</EntriesTextTag>

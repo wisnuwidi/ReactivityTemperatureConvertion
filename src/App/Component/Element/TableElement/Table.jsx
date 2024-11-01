@@ -9,10 +9,12 @@
  *                    It supports row and cell click events and allows custom rendering of table cells.
  */
 
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Pagination } from '../Widget/Pagination';
 import { Select } from '../FormElement/Select';
 import { Input } from '../FormElement/Input';
+import { Button } from '../FormElement/Button';
+import { copyToClipboard, exportToCsv, exportToExcel, generatePdf } from '../../Helper/ConstantMotion';
 
 /**
  * @function Table - A function component for rendering a dynamic table with search functionality and page size selection.
@@ -192,11 +194,12 @@ import { Input } from '../FormElement/Input';
         }}
     />
  */
+
 export const Table = ({ className, head = {}, data = [], footer = [], options = {}, onRowClick, onCellClick, cellProps = {}, customCell, ...tableProps }) => {
-    const [tableData, setTableData] = React.useState(data);
-    const [searchQuery, setSearchQuery] = React.useState('');
-    const [currentPage, setCurrentPage] = React.useState(0);
-    const [maxItems, setMaxItems] = React.useState(options.paginate?.maxItems || 10);
+    const [tableData, setTableData] = useState(data);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [currentPage, setCurrentPage] = useState(0);
+    const [maxItems, setMaxItems] = useState(options.paginate?.maxItems || 10);
 
     useEffect(() => {
         setTableData(data);
@@ -235,7 +238,7 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
         }));
     };
 
-    const [filteredData, setFilteredData] = React.useState(tableData);
+    const [filteredData, setFilteredData] = useState(tableData);
 
     const { displayedButtons = 5, firstPage, previous, next, lastPage, text = {}, properties: paginationProperties = {}, listDataInfo = { type: 'span', position: 'left', props: { style: { display: 'block', textAlign: 'center', marginTop: '10px' } } } } = options.paginate || {};
 
@@ -243,56 +246,123 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
 
     const tableDataToDisplay = options.paginate ? filteredData.slice(currentPage * maxItems, (currentPage + 1) * maxItems) : filteredData;
 
+    const handleCopy = () => {
+        copyToClipboard(data, 'data.txt', 'Data copied to clipboard', {
+            fontSize: '20px',
+            fontWeight: 'bold',
+        });
+    };
+
+    const handleExportToCsv = () => {
+        exportToCsv(tableData, 'customData.csv', {
+            0: { halign: 'center', cellWidth: 40 },
+            1: { halign: 'center', cellWidth: 50 }
+        });
+    };
+
+    const handlePrint = () => {
+        window.print();
+    };
+
+    const handleExportToPdf = () => {
+        generatePdf(
+            Object.keys(head),
+            tableData,
+            'customData.pdf',
+            {
+                0: { halign: 'center', cellWidth: 40 },
+                1: { halign: 'center', cellWidth: 50 }
+            }
+        );
+    };
+
+    const handleExportToExcel = () => {
+        exportToExcel(tableData, 'customData.xlsx', 'CustomSheet');
+    };
+
     return (
         <React.Fragment>
-            <div className="table-responsive">
-                <div className="row">
-                    {options.paginate && (
-                        <Select
-                            data={[{
-                                id       : 'row-data-table',
-                                className: 'form-control',
-                                options: options.pageSizeOptions.map(size => ({
-                                    value: size,
-                                    label: `${size} rows`
-                                })),
-                                label: {
-                                    left : {text: 'Show ', className: 'p-2',},
-                                    right: {text: ' Entries', className: 'p-2',}
-                                }
-                            }]}
-                            value    = {maxItems}
-                            onChange = {handlePageSizeChange}
-                            addable  = {{status: false}}
-                            wrapper={{
-                                tag: "div",
-                                className: "col-3",
-                                style: {
-                                    display: "flex"
-                                }
-                            }}
-                        />
-                    )}
-                    {options.search && (
-                        <Input 
-                            data={[{
-                                type        : "text",
-                                id          : "search-input",
-                                className   : "form-control",
-                                name        : "search",
-                                value       : searchQuery ? searchQuery : "",
-                                label       : {
-                                    left    : {text: label,}
-                                },
-                                placeholder : "Search..."
-                            }]}
-                            onChange ={handleSearchChange}
-                            wrapper  ={wrapper}
-                            {...input} 
-                        />
-                    )}
-                </div>
-                <table className={className} {...options.properties ? options.properties.table : {}} {...tableProps}>
+            <div className="w-full md:w-auto">
+                <header className="flex justify-between">
+                    <div className="w-1/5">
+                        {options.paginate && (
+                            <Select
+                                data={[{
+                                    id: 'row-data-table',
+                                    className: 'border border-gray-500 rounded-md p-2 w-full',
+                                    options: options.pageSizeOptions.map(size => ({
+                                        value: size,
+                                        label: `${size} rows`
+                                    })),
+                                    label: {
+                                        left : {text: 'Show ', className: 'p-2',},
+                                        right: {text: ' Entries', className: 'p-2',}
+                                    }
+                                }]}
+                                value={maxItems}
+                                onChange={handlePageSizeChange}
+                                addable={{status: false}}
+                                wrapper={{
+                                    tag: "div",
+                                    className: "w-full",
+                                    style: {
+                                        display: "flex"
+                                    }
+                                }}
+                            />
+                        )}
+                    </div>
+                    <div className="w-2/5">
+                        <div className="flex justify-center">
+                            <Button
+                                children="Print"
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                onClick={handlePrint}
+                            />
+                            <Button
+                                children="Export To PDF"
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                onClick={handleExportToPdf}
+                            />
+                            <Button
+                                children="Export To Excel"
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                onClick={handleExportToExcel}
+                            />
+                            <Button
+                                children="Copy"
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                onClick={handleCopy}
+                            />
+                            <Button
+                                children="Export To CSV"
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                onClick={handleExportToCsv}
+                            />
+                        </div>
+                    </div>
+                    <div className="w-1/5">
+                        {options.search && (
+                            <Input 
+                                data={[{
+                                    type: "text",
+                                    id: "search-input",
+                                    className: "border border-gray-500 rounded-md p-2 w-full",
+                                    name: "search",
+                                    value: searchQuery ? searchQuery : "",
+                                    label: {
+                                        left: {text: label,}
+                                    },
+                                    placeholder: "Search..."
+                                }]}
+                                onChange={handleSearchChange}
+                                wrapper={wrapper}
+                                {...input} 
+                            />
+                        )}
+                    </div>
+                </header>
+                <table className="table-auto w-full" {...options.properties ? options.properties.table : {}} {...tableProps}>
                     <thead {...options.properties ? options.properties.thead.props : {}}>
                         <tr {...options.properties ? options.properties.thead.tr : {}}>
                             {options.increment && <th {...options.properties ? options.properties.thead.td : {}}>{options.incrementText || '#'}</th>}

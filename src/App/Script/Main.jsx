@@ -6,3 +6,9 @@ export const BootstrapScripts = () => {
         </>
     )
 }
+
+export const JSPDFScript = () => {
+    return (
+        <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+    )
+}

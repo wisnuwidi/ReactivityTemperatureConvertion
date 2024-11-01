@@ -9,6 +9,9 @@
  */
 
 import React, { useEffect } from 'react';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 
 /**
  * Mencetak argumen yang diberikan ke konsol.
@@ -236,60 +239,125 @@ export const FindDuplicateArrayValue = (data, node = ['name', 'id'], pointer = '
     return renamedData;
 };
 
-/**
- * Checks for duplicate values between two or more objects or arrays in the given data.
- * Modifies the names and ids of the selects to ensure uniqueness.
- * 
- * @param {Array} selects - The array of select objects.
- * @param {Array} addable - The array of addable objects containing status and default properties.
- * @example
- * const selects = [
- *   { name: 'select1', id: 'id1' },
- *   { name: 'select2', id: 'id2' }
- * ];
- * const addable = [
- *   {
- *     status: true,
- *     default: { name: 'select1', id: 'id1' }
- *   }
- * ];
- * handleDuplicateCheck(selects, addable);
- *
-export const HandleDuplicateArray = (selects, addable) => {console.log(selects)
-    if (!addable.length || !addable[0].status) return;
-    
-    let everFoundDuplicate = {};
-    let firstSelectCheck = [selects[0].name, selects[0].id];
-    let firstAddableCheck = [addable[0].default.name, addable[0].default.id];
-    const isSameName = firstSelectCheck[0] === firstAddableCheck[0];
-    const isSameId = firstSelectCheck[1] === firstAddableCheck[1];
-    
-    if (isSameName && isSameId) {
-        everFoundDuplicate.name = true;
-        everFoundDuplicate.id = true;
-    } else if (isSameName) {
-        everFoundDuplicate.name = true;
-    } else if (isSameId) {
-        everFoundDuplicate.id = true;
-    }
+export const exportToExcel = (data, outputName = 'dataExported.xlsx', sheetName = 'Sheet1') => {
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+    const workbookBlob = XLSX.write(workbook, { type: 'array', bookType: 'xlsx' });
+    const url = window.URL.createObjectURL(new Blob([workbookBlob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = outputName;
+    link.click();
+    window.URL.revokeObjectURL(url);
+};
 
-    if (selects.length === 1) {
-        if (isSameName && isSameId) {
-            selects[0].name = `${selects[0].name}[0]`;
-            selects[0].id = `${selects[0].id}[0]`;
-        } else if (isSameName) {
-            selects[0].name = `${selects[0].name}[0]`;
-        } else if (isSameId) {
-            selects[0].id = `${selects[0].id}[0]`;
-        }
-    }
+/**
+* @function generatePdf
+*
+* @description
+*      Generates a PDF document from the provided table data using the specified options.
+*      The user can set the output name and column styles for the generated PDF.
+*
+* @param {array} head - An array of table header names.
+* @param {array} tableData - An array of table row data.
+* @param {string} [outputName='data.pdf'] - The name for the output PDF file.
+* @param {object} [columnStyles={}] - An object mapping column indices to style objects.
+*
+* @example
+*      generatePdf(
+*          Object.keys(head),
+*          tableData,
+*          'customData.pdf',
+*          {
+*              0: { halign: 'center', cellWidth: 40 },
+*              1: { halign: 'center', cellWidth: 50 }
+*          }
+*      );
+*/
+export const generatePdf = (head, tableData, outputName = 'data.pdf', columnStyles = {}) => {
+   const pdf = new jsPDF();
+   pdf.autoTable({
+       head: [head],
+       body: tableData.map(row => Object.values(row)),
+       theme: 'striped',
+       styles: {
+           overflow: 'linebreak',
+           fontSize: 12,
+       },
+       columnStyles,
+   });
+   const pdfBlob = pdf.output("blob");
+   const url = window.URL.createObjectURL(pdfBlob);
+   const link = document.createElement('a');
+   link.href = url;
+   link.download = outputName;
+   link.click();
+   window.URL.revokeObjectURL(url);
+};
+
+export const copyToClipboard = (data, notificationText = 'Copied to clipboard', notificationStyle = {}, outputName = false) => {
+    const textArea = document.createElement('textarea');
+    textArea.value = data.map(row => Object.values(row).join('\t')).join('\n');
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    textArea.remove();
     
-    if (selects.length === 2 && Object.values(everFoundDuplicate).some(value => value === true)) {
-        addable[0].default.name = addable[0].default.name.replace('[1]', '');
-        addable[0].default.id = addable[0].default.id.replace('[1]', '');
+    const notification = document.createElement('div');
+    notification.textContent = notificationText;
+    Object.assign(notification.style, {
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        background: '#fff',
+        padding: '10px',
+        borderRadius: '10px',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
+        ...notificationStyle
+    });
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 2000);
+
+    if (outputName) {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(new Blob([data.map(row => Object.values(row).join('\t')).join('\n')], { type: 'text/plain' }));
+        link.download = outputName;
+        link.click();
+        URL.revokeObjectURL(link.href);
     }
-    
-    if (selects.length >= 2) {
-        everFoundDuplicate = {};
-    }
-};*/
+};
+
+/**
+     * @function exportToCsv
+     *
+     * @description
+     *      Generates a CSV file from the provided table data using the specified options.
+     *      The user can set the output name, column styles for the generated CSV.
+     *
+     * @param {array} tableData - An array of table row data.
+     * @param {string} [outputName='data.csv'] - The name for the output CSV file.
+     * @param {object} [columnStyles={}] - An object mapping column indices to style objects.
+     *
+     * @example
+     *      exportToCsv(
+     *          tableData,
+     *          'customData.csv',
+     *          {
+     *              0: { halign: 'center', cellWidth: 40 },
+     *              1: { halign: 'center', cellWidth: 50 }
+     *          }
+     *      );
+     */
+export const exportToCsv = (tableData, outputName = 'data.csv', columnStyles = {}) => {
+    const csv = tableData.map(row => Object.values(row).join(',')).join('\n');
+    const url = window.URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = outputName;
+    link.click();
+
+    window.URL.revokeObjectURL(url);
+};

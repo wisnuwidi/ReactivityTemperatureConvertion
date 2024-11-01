@@ -7,7 +7,7 @@ import { Table } from '../../Element/TableElement/Table';
 
 export default function Sander () {  
     return (
-        <div className="sander container" style={{ overflow: 'auto' }}>
+        <div className="sander container">
             <SenderTable />
         </div>
     );
@@ -15,7 +15,7 @@ export default function Sander () {
 
 export const SenderTable = () => {
     return <Table
-        className='table table-hover table-bordered'
+        className='table table-compact table-zebra border-collapse'
         head={{
             "name": "Nama",
             "first_name": "Panggilan",
@@ -71,11 +71,11 @@ export const SenderTable = () => {
         options={{
             search: {
                 input: {
-                    className: 'form-control',
+                    className: 'input input-bordered',
                 },
                 label: 'Cari ',
                 wrapper: {
-                    className: 'col-6',
+                    className: 'flex justify-center',
                     style: {
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -95,41 +95,37 @@ export const SenderTable = () => {
                 displayedButtons: 5,
                 text: {
                     button: {
-                        firstPage: 'First',
-                        previous: 'Prev',
-                        next: 'Next',
-                        lastPage: 'Last',
+                        firstPage: 'Awal',
+                        previous: 'Sebelumnya',
+                        next: 'Selanjutnya',
+                        lastPage: 'Terakhir',
                     },
                 },
                 properties: {
                     wrapper: {
                         type: 'nav',
                         props: {
-                            style: {
-                                display: 'flex',
-                                justifyContent: 'center',
-                            },
+                         //   className: 'flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6',
                         },
                     },
                     button: {
                         type: 'a',
-                        className: 'page-link',
+                      //  className: 'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 hover:cursor-pointer',
+                        style: {},
                     },
                     ul: {
-                        className: 'pagination',
+                     //   className: 'isolate inline-flex -space-x-px rounded-md shadow-sm',
                     },
                     li: {
-                        className: 'page-item',
+                        className: ''
                     },
                     currentButton: {
                         li: {
-                            className: 'page-item current-page-li',
-                            style: {
-                                fontWeight: 'bold',
-                            },
+                            className: 'active',
+                            style: {},
                         },
                         button: {
-                            className: 'page-link current-page-btn',
+                         //   className: 'relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600',
                             style: {
                                 pointerEvents: 'none',
                             },
@@ -143,17 +139,17 @@ export const SenderTable = () => {
                         style: {
                             textAlign: 'center',
                         },
-                        className: 'list-data-info',
+                        className: 'text-sm',
                     },
                     showingText: 'Displaying',
                     toText: 'to',
                     ofText: 'of',
                     entriesText: 'items',
                     showTextWrappers: {
-                        showingText: { tag: 'span', props: { className: 'showing-class' } },
-                        toText: { tag: 'em', props: { className: 'to-class' } },
-                        ofText: { tag: 'strong', props: { className: 'of-class' } },
-                        entriesText: { tag: 'span', props: { className: 'entries-class' } },
+                        showingText: { tag: 'span', props: { className: 'font-bold' } },
+                        toText: { tag: 'em', props: { className: 'font-semibold' } },
+                        ofText: { tag: 'strong', props: { className: 'font-bold' } },
+                        entriesText: { tag: 'span', props: { className: 'font-bold' } },
                     },
                 },
             },
@@ -162,7 +158,7 @@ export const SenderTable = () => {
                     props: {},
                     tr: {},
                     td: {
-                        className: 'border border-slate-600',
+                        className: 'border',
                         style: {},
                     }
                 },
@@ -170,7 +166,7 @@ export const SenderTable = () => {
                     props: {},
                     tr: {},
                     td: {
-                        className: 'border border-slate-600',
+                        className: 'border',
                         style: {},
                     }
                 },

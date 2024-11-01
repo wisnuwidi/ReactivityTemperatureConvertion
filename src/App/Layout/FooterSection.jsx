@@ -1,6 +1,6 @@
 import Info from "../Component/Layout/FooterSection/Info";
 import Notification from "../Component/Layout/FooterSection/Notification";
-import { BootstrapScripts } from "../Script/Main";
+import { BootstrapScripts, JSPDFScript } from "../Script/Main";
 
 function FooterSection() {
     return (
@@ -10,6 +10,7 @@ function FooterSection() {
             </footer>
 
             <BootstrapScripts />
+            <JSPDFScript />
         </>
     );
 }
