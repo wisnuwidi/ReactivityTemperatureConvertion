@@ -17,39 +17,49 @@ import { Button } from '../FormElement/Button';
 import { copyToClipboard, exportToCsv, exportToExcel, generatePdf } from '../../Helper/ConstantMotion';
 
 /**
- * @function Table - A function component for rendering a dynamic table with search functionality and page size selection.
+ * @function Table
+ * 
+ * @description
+ *      A React function component for rendering a dynamic table. It provides functionalities like pagination, searching, 
+ *      custom actions, and exporting data.
  * 
  * @param {object} props - The props object.
- * @param {string} [props.className] - The class name of the table element.
- * @param {object} [props.head] - An object with key-value pairs for the table head.
- * @param {array} [props.data] - An array of objects with key-value pairs for the table body.
- * @param {array} [props.footer] - An array of objects with key-value pairs for the table footer.
- * @param {object} [props.options] - An object containing options for the table. It can include:
- *   - incrementText: The text for the increment column's header.
- *   - increment: A boolean to render a column with row numbers.
- *   - search: A boolean to enable search functionality across all data entries.
- *   - properties: An object containing the properties for the table, thead, tbody, tr, and td elements.
- *   - paginate: An object containing the properties for the pagination. It can include:
- *     - firstPage: A boolean to render a button for the first page.
- *     - previous: A boolean to render a button for the previous page.
- *     - next: A boolean to render a button for the next page.
- *     - lastPage: A boolean to render a button for the last page.
- *     - maxItems: The maximum number of items to display per page.
- *     - displayedButtons: The maximum number of buttons that will be displayed between the previous and next buttons.
- *     - properties: An object for setting custom styles or classes for pagination buttons and other elements.
- *     - text: An object containing the text for the buttons. It can include:
- *       - button: An object containing the text for the buttons. It can include:
- *         - firstPage: The text for the first page button.
- *         - previous: The text for the previous page button.
- *         - next: The text for the next page button.
- *         - lastPage: The text for the last page button.
- *   - pageSizeOptions: An array of numbers representing the page size options for the dropdown.
- *   - actionButtons: An array of objects representing action buttons with dynamic props and text, except for onClick.
- * @param {function} [props.onRowClick] - A callback function that will be called when a table row is clicked.
- * @param {function} [props.onCellClick] - A callback function that will be called when a table cell is clicked.
- * @param {object} [props.cellProps] - An object with key-value pairs for the table cells.
- * @param {function} [props.customCell] - A callback function that will be called when a table cell is rendered. The function must return a React component.
- * @returns {JSX.Element} A JSX element representing the table component.
+ *      - className: {string} The class name for the table wrapper.
+ *      - head: {object} An object representing table headers, where keys are column keys and values are column names.
+ *      - data: {array} An array of objects representing the table data.
+ *      - footer: {array} An array of objects representing footer data for the table.
+ *      - options: {object} A configuration object for customizing the table's features:
+ *          - paginate: {object} Configuration for pagination.
+ *              - maxItems: {number} The maximum number of items per page.
+ *              - displayedButtons: {number} The number of pagination buttons to display.
+ *              - firstPage: {boolean} Whether to show the 'First Page' button.
+ *              - previous: {boolean} Whether to show the 'Previous' button.
+ *              - next: {boolean} Whether to show the 'Next' button.
+ *              - lastPage: {boolean} Whether to show the 'Last Page' button.
+ *              - text: {object} Text configuration for pagination buttons.
+ *              - properties: {object} Styling properties for pagination elements.
+ *              - listDataInfo: {object} Configuration for the list data info tag.
+ *          - pageSizeOptions: {array} Options for page size selection.
+ *          - pageSizeProps: {object} Styling properties for the page size select element.
+ *          - search: {object} Configuration for the search functionality.
+ *              - input: {object} Input properties for the search bar.
+ *              - label: {string} Label text for the search bar.
+ *              - wrapper: {object} Wrapper properties for the search bar.
+ *          - actionButtons: {array} An array of action buttons with properties like id, onClick, className, and text.
+ *          - increment: {boolean} Whether to show an increment column.
+ *          - incrementText: {string} The header text for the increment column.
+ *          - properties: {object} Styling properties for table elements.
+ *              - table: {object} Table properties.
+ *              - thead: {object} Thead properties.
+ *              - tbody: {object} Tbody properties.
+ *              - tfooter: {object} Tfooter properties.
+ *      - onRowClick: {function} Callback function to be called when a table row is clicked.
+ *      - onCellClick: {function} Callback function to be called when a table cell is clicked.
+ *      - cellProps: {object} Properties for each table cell.
+ *      - customCell: {function} Customization function for rendering table cells.
+ *      - tableProps: {object} Additional properties for the table element.
+ * 
+ * @returns {ReactElement} A React element representing the table.
  * 
  * @example
     <Table
@@ -91,7 +101,12 @@ import { copyToClipboard, exportToCsv, exportToExcel, generatePdf } from '../../
                         padding: '5px',
                     },
                 },
-                label: 'Search By Name',
+                label: {
+                    left: {
+                        text: 'Cari ',
+                        className: 'input-label',
+                    }
+                },
                 wrapper: {
                     style: {
                         display: 'flex',
@@ -383,11 +398,15 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                                 data={[{
                                     type: "text",
                                     id: "search-input",
-                                    className: "border border-gray-500 rounded-md p-2 w-full",
+                                    className: `${options.search?.input?.className || "text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm px-2 py-1 rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-500"}`,
                                     name: "search",
                                     value: searchQuery ? searchQuery : "",
                                     label: {
-                                        left: {text: label,}
+                                        left: {
+                                            text: options.search?.label?.text || "Search",
+                                            className: options.search?.label?.className || "text-sm font-medium text-gray-700 p-2"
+                                        },
+                                        ...options.search?.label
                                     },
                                     placeholder: "Search..."
                                 }]}

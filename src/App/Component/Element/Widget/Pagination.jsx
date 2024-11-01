@@ -160,7 +160,7 @@ export const Pagination = ({ currentPage, setCurrentPage, maxItems, displayedBut
     const baseClassNames = {
         wrapper    : 'flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6',
         ul         : 'isolate inline-flex -space-x-px rounded-md shadow-sm',
-        button     : 'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0',
+        button     : 'relative inline-flex items-center px-4 py-2 text-sm font-light ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0',
         currentBtn : 'relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600',
     };
 
@@ -197,8 +197,8 @@ export const Pagination = ({ currentPage, setCurrentPage, maxItems, displayedBut
             </ListDataInfoTag>}
 
             <ul className={ulClassName} {...ulProps}>
-                {firstPage && <li key="first" {...liProps}><ButtonTag className={currentPage >= 1 ? `${buttonClassName} hover:cursor-pointer` : `${buttonClassName} text-gray-400`} {...buttonProps} onClick={() => setCurrentPage(0)} disabled={currentPage >= 1 ? false : true}>{firstPageText}</ButtonTag></li>}
-                {previous  && <li key="prev" {...liProps}><ButtonTag className={currentPage >= 1 ? `${buttonClassName} hover:cursor-pointer` : `${buttonClassName} text-gray-400`} {...buttonProps} onClick={() => currentPage > 0 && setCurrentPage(currentPage - 1)} disabled={currentPage >= 1 ? false : true}>{previousText}</ButtonTag></li>}
+                {firstPage && <li key="first" {...liProps}><ButtonTag className={currentPage >= 1 ? `${buttonClassName} text-gray-900 hover:cursor-pointer` : `${buttonClassName} bg-gray-50 text-gray-400`} {...buttonProps} onClick={() => setCurrentPage(0)} disabled={currentPage >= 1 ? false : true}>{firstPageText}</ButtonTag></li>}
+                {previous  && <li key="prev" {...liProps}><ButtonTag className={currentPage >= 1 ? `${buttonClassName} text-gray-900 hover:cursor-pointer` : `${buttonClassName} bg-gray-50 text-gray-400`} {...buttonProps} onClick={() => currentPage > 0 && setCurrentPage(currentPage - 1)} disabled={currentPage >= 1 ? false : true}>{previousText}</ButtonTag></li>}
                 {currentPage >= displayedButtons - 1 && <li key="first_visible" {...liProps}><ButtonTag className={currentPage > 1 ? `${buttonClassName} hover:cursor-pointer` : buttonClassName} {...buttonProps} onClick={() => setCurrentPage(0)}>1</ButtonTag></li>}
                 {currentPage >= displayedButtons - 1 && <li key="ellipsis_prev" {...liProps}><ButtonTag className={buttonClassName} {...buttonProps}>...</ButtonTag></li>}
                 
@@ -222,8 +222,8 @@ export const Pagination = ({ currentPage, setCurrentPage, maxItems, displayedBut
 
                 {currentPage < numPages - 1 && <li key="ellipsis_next" {...liProps}><ButtonTag className={buttonClassName} {...buttonProps}>...</ButtonTag></li>}
                 {currentPage < numPages - (displayedButtons - 1) && <li key={numPages - 1} {...liProps}><ButtonTag className={currentPage !== numPages - 1 ? `${buttonClassName} hover:cursor-pointer` : buttonClassName} {...buttonProps} onClick={() => setCurrentPage(numPages - 1)} disabled={currentPage !== numPages - 1 ? false : true}>{numPages}</ButtonTag></li>}
-                {next     && <li key="next" {...liProps}><ButtonTag className={currentPage !== numPages - 1 ? `${buttonClassName} hover:cursor-pointer` : `${buttonClassName} text-gray-400`} {...buttonProps} onClick={() => currentPage < numPages - 1 && setCurrentPage(currentPage + 1)} disabled={currentPage !== numPages - 1 ? false : true}>{nextText}</ButtonTag></li>}
-                {lastPage && <li key="last" {...liProps}><ButtonTag className={currentPage !== numPages - 1 ? `${buttonClassName} hover:cursor-pointer` : `${buttonClassName} text-gray-400`} {...buttonProps} onClick={() => setCurrentPage(numPages - 1)}>{lastPageText}</ButtonTag></li>}
+                {next     && <li key="next" {...liProps}><ButtonTag className={currentPage !== numPages - 1 ? `${buttonClassName} text-gray-900 hover:cursor-pointer` : `${buttonClassName} bg-gray-50 text-gray-400`} {...buttonProps} onClick={() => currentPage < numPages - 1 && setCurrentPage(currentPage + 1)} disabled={currentPage !== numPages - 1 ? false : true}>{nextText}</ButtonTag></li>}
+                {lastPage && <li key="last" {...liProps}><ButtonTag className={currentPage !== numPages - 1 ? `${buttonClassName} text-gray-900 hover:cursor-pointer` : `${buttonClassName} bg-gray-50 text-gray-400`} {...buttonProps} onClick={() => setCurrentPage(numPages - 1)}>{lastPageText}</ButtonTag></li>}
             </ul>
 
             {position === 'right' && <ListDataInfoTag {...listDataInfoProps}>

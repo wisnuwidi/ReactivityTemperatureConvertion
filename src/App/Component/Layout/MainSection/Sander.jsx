@@ -71,9 +71,14 @@ export const SenderTable = () => {
         options={{
             search: {
                 input: {
-                    className: 'input input-bordered',
+                //    className: 'input input-bordered',
                 },
-                label: 'Cari ',
+                label: {
+                //    left: {
+                    //    text: 'Cari ',
+                   //     className: 'input-label',
+                //    }
+                },
                 wrapper: {
                     className: 'flex justify-center',
                     style: {
