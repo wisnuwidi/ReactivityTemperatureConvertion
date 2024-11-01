@@ -121,77 +121,95 @@ import React from 'react';
     />
  */
 export const Pagination = ({ currentPage, setCurrentPage, maxItems, displayedButtons, firstPage, previous, next, lastPage, text, properties, listDataInfo, maxItemsPerPage }) => {
+    
+    // Destructure button text options with default values
     const { 
-        firstPage: firstPageText = 'First', 
-        previous: previousText = 'Previous', 
-        next: nextText = 'Next', 
-        lastPage: lastPageText = 'Last' 
+        firstPage : firstPageText = 'First', 
+        previous  : previousText  = 'Previous', 
+        next      : nextText      = 'Next', 
+        lastPage  : lastPageText  = 'Last' 
     } = text.button || {};
-
+    
+    // Destructure and default properties for wrapper, buttons, and list items
     const { 
-        wrapper: { type: Wrapper = 'div', props: wrapperProps = {} } = {}, 
-        button: { type: ButtonTag = 'button', ...buttonProps } = {}, 
-        ul: ulProps = {}, 
-        li: liProps = {}, 
-        currentButton: { li: currentLiProps = {}, button: currentBtnProps = {} } = {}
+        wrapper       : { type: Wrapper      = 'div', props: wrapperProps  = {} } = {}, 
+        button        : { type: ButtonTag    = 'a', ...buttonProps }       = {}, 
+        ul            : ulProps = {}, 
+        li            : liProps = {}, 
+        currentButton : { li: currentLiProps = {}, button: currentBtnProps = {} } = {}
     } = properties || {};
-
+    
+    // Destructure list data info with default values
     const { 
-        type: ListDataInfoTag = 'p', 
-        props: listDataInfoProps = { style: { textAlign: 'center', marginTop: '10px' } }, 
+        type  : ListDataInfoTag   = 'p', 
+        props : listDataInfoProps = { className: 'text-sm text-gray-700' }, 
         position, 
-        showingText = 'Showing', 
-        toText = 'to', 
-        ofText = 'of', 
-        entriesText = 'entries', 
+        showingText      = 'Showing', 
+        toText           = 'to', 
+        ofText           = 'of', 
+        entriesText      = 'entries', 
         showTextWrappers = { 
-            showingText: { tag: 'span', props: {} }, 
-            toText: { tag: 'span', props: {} }, 
-            ofText: { tag: 'span', props: {} }, 
-            entriesText: { tag: 'span', props: {} }
+            showingText : { tag: 'span', props: { className: 'default-showing-class' } }, 
+            toText      : { tag: 'span', props: {} }, 
+            ofText      : { tag: 'span', props: {} }, 
+            entriesText : { tag: 'span', props: {} }
         },
     } = listDataInfo || {};
+    
+    // Base class names for styling
+    const baseClassNames = {
+        wrapper    : 'flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6',
+        ul         : 'isolate inline-flex -space-x-px rounded-md shadow-sm',
+        button     : 'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0',
+        currentBtn : 'relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600',
+    };
 
-    let wrapperClassName = wrapperProps?.className;
-    if (!wrapperProps?.className)  wrapperClassName = 'flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6';
-    
-    let ulClassName = ulProps?.className;
-    if (!ulProps?.className) ulClassName = 'isolate inline-flex -space-x-px rounded-md shadow-sm';
-    
-    let buttonClassName = buttonProps?.className;
-    if (!buttonProps?.className) buttonClassName = 'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 hover:cursor-pointer';
-    
-    let curentBtnClassName = currentBtnProps?.className;
-    if (!currentBtnProps?.className) curentBtnClassName = 'relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600';
-    
-    const numPages = Math.ceil(maxItems / maxItemsPerPage);
-    const start = Math.max(0, Math.min(numPages - displayedButtons, currentPage - Math.floor(displayedButtons / 2)));
-    const end = Math.min(numPages, start + displayedButtons);
+    // Resolve class names with provided properties or defaults
+    const wrapperClassName   = wrapperProps?.className    || baseClassNames.wrapper;
+    const ulClassName        = ulProps?.className         || baseClassNames.ul;
+    const buttonClassName    = buttonProps?.className     || baseClassNames.button;
+    const curentBtnClassName = currentBtnProps?.className || baseClassNames.currentBtn;
 
-    const showingStart = currentPage * maxItemsPerPage + 1;
-    const showingEnd = Math.min(showingStart + maxItemsPerPage - 1, maxItems);
-
-    const ShowingTextTag = showTextWrappers.showingText.tag || 'span';
-    const ToTextTag = showTextWrappers.toText.tag || 'span';
-    const OfTextTag = showTextWrappers.ofText.tag || 'span';
-    const EntriesTextTag = showTextWrappers.entriesText.tag || 'span';
+    // Calculate pagination related variables
+    const numPages           = Math.ceil(maxItems / maxItemsPerPage);
+    const start              = Math.max(0, Math.min(numPages - displayedButtons, currentPage - Math.floor(displayedButtons / 2)));
+    const end                = Math.min(numPages, start + displayedButtons);
+    const showingStart       = currentPage * maxItemsPerPage + 1;
+    const showingEnd         = Math.min(showingStart + maxItemsPerPage - 1, maxItems);
+    
+    // Resolve tags for text wrappers
+    const ShowingTextTag     = showTextWrappers?.showingText?.tag || 'span';
+    const ToTextTag          = showTextWrappers?.toText?.tag      || 'span';
+    const OfTextTag          = showTextWrappers?.ofText?.tag      || 'span';
+    const EntriesTextTag     = showTextWrappers?.entriesText?.tag || 'span';
+    const showTextWrapClass  = 'font-medium';
 
     return (
         <Wrapper className={wrapperClassName} {...wrapperProps}>
             {position === 'left' && <ListDataInfoTag {...listDataInfoProps}>
-                <ShowingTextTag {...showTextWrappers.showingText.props}>{showingText}</ShowingTextTag> {showingStart} <ToTextTag {...showTextWrappers.toText.props}>{toText}</ToTextTag> {showingEnd} <OfTextTag {...showTextWrappers.ofText.props}>{ofText}</OfTextTag> {maxItems} <EntriesTextTag {...showTextWrappers.entriesText.props}>{entriesText}</EntriesTextTag>
+                <ShowingTextTag className={showTextWrappers?.showingText?.className || showTextWrapClass} {...showTextWrappers?.showingText?.props}>{showingText} </ShowingTextTag> 
+                {showingStart} 
+                <ToTextTag className={showTextWrappers?.toText?.className || showTextWrapClass} {...showTextWrappers?.toText?.props}> {toText} </ToTextTag> 
+                {showingEnd} 
+                <OfTextTag className={showTextWrappers?.ofText?.className || showTextWrapClass} {...showTextWrappers?.ofText?.props}> {ofText} </OfTextTag> 
+                {maxItems} 
+                <EntriesTextTag className={showTextWrappers?.entriesText?.className || showTextWrapClass} {...showTextWrappers?.entriesText?.props}> {entriesText}</EntriesTextTag>
             </ListDataInfoTag>}
-            <ul className={ulClassName} {...ulProps}>
-                {firstPage && <li key="first" {...liProps}><ButtonTag className={buttonClassName} {...buttonProps} onClick={() => setCurrentPage(0)}>{firstPageText}</ButtonTag></li>}
-                {previous && <li key="prev" {...liProps}><ButtonTag className={buttonClassName} {...buttonProps} onClick={() => currentPage > 0 && setCurrentPage(currentPage - 1)}>{previousText}</ButtonTag></li>}
 
+            <ul className={ulClassName} {...ulProps}>
+                {firstPage && <li key="first" {...liProps}><ButtonTag className={currentPage >= 1 ? `${buttonClassName} hover:cursor-pointer` : `${buttonClassName} text-gray-400`} {...buttonProps} onClick={() => setCurrentPage(0)} disabled={currentPage >= 1 ? false : true}>{firstPageText}</ButtonTag></li>}
+                {previous  && <li key="prev" {...liProps}><ButtonTag className={currentPage >= 1 ? `${buttonClassName} hover:cursor-pointer` : `${buttonClassName} text-gray-400`} {...buttonProps} onClick={() => currentPage > 0 && setCurrentPage(currentPage - 1)} disabled={currentPage >= 1 ? false : true}>{previousText}</ButtonTag></li>}
+                {currentPage >= displayedButtons - 1 && <li key="first_visible" {...liProps}><ButtonTag className={currentPage > 1 ? `${buttonClassName} hover:cursor-pointer` : buttonClassName} {...buttonProps} onClick={() => setCurrentPage(0)}>1</ButtonTag></li>}
+                {currentPage >= displayedButtons - 1 && <li key="ellipsis_prev" {...liProps}><ButtonTag className={buttonClassName} {...buttonProps}>...</ButtonTag></li>}
+                
                 {[...Array(end - start)].map((_, i) => {
-                    const page = start + i;
+                    const page      = start + i;
                     const isCurrent = page === currentPage;
+
                     return (
                         <li key={page} {...liProps} {...(isCurrent ? currentLiProps : {})}>
                             <ButtonTag 
-                                className={isCurrent ? curentBtnClassName : buttonClassName} 
+                                className={isCurrent ? curentBtnClassName : `${buttonClassName} hover:cursor-pointer`} 
                                 {...buttonProps} 
                                 {...(isCurrent ? currentBtnProps : {})}
                                 onClick={isCurrent ? null : () => setCurrentPage(page)}
@@ -202,11 +220,20 @@ export const Pagination = ({ currentPage, setCurrentPage, maxItems, displayedBut
                     );
                 })}
 
-                {next && <li key="next" {...liProps}><ButtonTag className={buttonClassName} {...buttonProps} onClick={() => currentPage < numPages - 1 && setCurrentPage(currentPage + 1)}>{nextText}</ButtonTag></li>}
-                {lastPage && <li key="last" {...liProps}><ButtonTag className={buttonClassName} {...buttonProps} onClick={() => setCurrentPage(numPages - 1)}>{lastPageText}</ButtonTag></li>}
+                {currentPage < numPages - 1 && <li key="ellipsis_next" {...liProps}><ButtonTag className={buttonClassName} {...buttonProps}>...</ButtonTag></li>}
+                {currentPage < numPages - (displayedButtons - 1) && <li key={numPages - 1} {...liProps}><ButtonTag className={currentPage !== numPages - 1 ? `${buttonClassName} hover:cursor-pointer` : buttonClassName} {...buttonProps} onClick={() => setCurrentPage(numPages - 1)} disabled={currentPage !== numPages - 1 ? false : true}>{numPages}</ButtonTag></li>}
+                {next     && <li key="next" {...liProps}><ButtonTag className={currentPage !== numPages - 1 ? `${buttonClassName} hover:cursor-pointer` : `${buttonClassName} text-gray-400`} {...buttonProps} onClick={() => currentPage < numPages - 1 && setCurrentPage(currentPage + 1)} disabled={currentPage !== numPages - 1 ? false : true}>{nextText}</ButtonTag></li>}
+                {lastPage && <li key="last" {...liProps}><ButtonTag className={currentPage !== numPages - 1 ? `${buttonClassName} hover:cursor-pointer` : `${buttonClassName} text-gray-400`} {...buttonProps} onClick={() => setCurrentPage(numPages - 1)}>{lastPageText}</ButtonTag></li>}
             </ul>
+
             {position === 'right' && <ListDataInfoTag {...listDataInfoProps}>
-                <ShowingTextTag {...showTextWrappers.showingText.props}>{showingText}</ShowingTextTag> {showingStart} <ToTextTag {...showTextWrappers.toText.props}>{toText}</ToTextTag> {showingEnd} <OfTextTag {...showTextWrappers.ofText.props}>{ofText}</OfTextTag> {maxItems} <EntriesTextTag {...showTextWrappers.entriesText.props}>{entriesText}</EntriesTextTag>
+                <ShowingTextTag className={showTextWrappers?.showingText?.className || showTextWrapClass} {...showTextWrappers?.showingText?.props}>{showingText} </ShowingTextTag> 
+                {showingStart} 
+                <ToTextTag className={showTextWrappers?.toText?.className || showTextWrapClass} {...showTextWrappers?.toText?.props}> {toText} </ToTextTag> 
+                {showingEnd} 
+                <OfTextTag className={showTextWrappers?.ofText?.className || showTextWrapClass} {...showTextWrappers?.ofText?.props}> {ofText} </OfTextTag> 
+                {maxItems} 
+                <EntriesTextTag className={showTextWrappers?.entriesText?.className || showTextWrapClass} {...showTextWrappers?.entriesText?.props}> {entriesText}</EntriesTextTag>
             </ListDataInfoTag>}
         </Wrapper>
     );

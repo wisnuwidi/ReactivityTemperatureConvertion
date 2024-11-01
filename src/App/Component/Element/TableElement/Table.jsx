@@ -44,6 +44,7 @@ import { copyToClipboard, exportToCsv, exportToExcel, generatePdf } from '../../
  *         - next: The text for the next page button.
  *         - lastPage: The text for the last page button.
  *   - pageSizeOptions: An array of numbers representing the page size options for the dropdown.
+ *   - actionButtons: An array of objects representing action buttons with dynamic props and text, except for onClick.
  * @param {function} [props.onRowClick] - A callback function that will be called when a table row is clicked.
  * @param {function} [props.onCellClick] - A callback function that will be called when a table cell is clicked.
  * @param {object} [props.cellProps] - An object with key-value pairs for the table cells.
@@ -98,7 +99,7 @@ import { copyToClipboard, exportToCsv, exportToExcel, generatePdf } from '../../
                         alignItems: 'center',
                     },
                 },
-            }, // Enable search functionality
+            },
             increment: true,
             incrementText: 'Row #',
             paginate: {
@@ -147,6 +148,13 @@ import { copyToClipboard, exportToCsv, exportToExcel, generatePdf } from '../../
                 },
             },
             pageSizeOptions: [10, 25, 50],
+            pageSizeProps: {
+                className: 'custom-select-class',
+                style: {
+                    border: '1px solid #ccc',
+                    padding: '5px',
+                }
+            },
             properties: {
                 thead: {
                     props: {
@@ -190,11 +198,45 @@ import { copyToClipboard, exportToCsv, exportToExcel, generatePdf } from '../../
                         style: {},
                     }
                 }
-            }
+            },
+            actionButtons: [
+                {
+                    id: 'btn-print',
+                    onClick: handlePrint,
+                    className: 'text-white bg-green-500 hover:bg-green-700',
+                    text: 'Print',
+                },
+                {
+                    id: 'btn-copy',
+                    onClick: handleCopy,
+                    className: 'text-white bg-green-500 hover:bg-green-700',
+                    text: 'Copy'
+                },
+                {
+                    id: 'btn-pdf',
+                    onClick: handleExportToPdf,
+                    className: 'text-white bg-blue-500 hover:bg-blue-700',
+                    text: 'Export To PDF'
+                    fileName: 'exportPDF'
+                },
+                {
+                    id: 'btn-excel',
+                    onClick: handleExportToExcel,
+                    className: 'text-white bg-blue-500 hover:bg-blue-700',
+                    text: 'Export To Excel'
+                    fileName: 'exportExcel'
+                },
+                {
+                    id: 'btn-csv',
+                    onClick: handleExportToCsv,
+                    className: 'text-white bg-blue-500 hover:bg-blue-700',
+                    text: 'Export To CSV'
+                    fileName: 'exportCSV'
+                },
+            ]
         }}
     />
  */
-
 export const Table = ({ className, head = {}, data = [], footer = [], options = {}, onRowClick, onCellClick, cellProps = {}, customCell, ...tableProps }) => {
     const [tableData, setTableData] = useState(data);
     const [searchQuery, setSearchQuery] = useState('');
@@ -247,28 +289,19 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
     const tableDataToDisplay = options.paginate ? filteredData.slice(currentPage * maxItems, (currentPage + 1) * maxItems) : filteredData;
 
     const handleCopy = () => {
-        copyToClipboard(data, 'data.txt', 'Data copied to clipboard', {
-            fontSize: '20px',
-            fontWeight: 'bold',
-        });
-    };
-
-    const handleExportToCsv = () => {
-        exportToCsv(tableData, 'customData.csv', {
-            0: { halign: 'center', cellWidth: 40 },
-            1: { halign: 'center', cellWidth: 50 }
-        });
+        copyToClipboard(data, 'Data copied to clipboard');
     };
 
     const handlePrint = () => {
         window.print();
     };
 
-    const handleExportToPdf = () => {
+    const fileNamePdf = 'Exported Data PDF';
+    const handleExportToPdf = (fileName) => {
         generatePdf(
             Object.keys(head),
             tableData,
-            'customData.pdf',
+            fileName? fileName : `${fileNamePdf}.pdf`,
             {
                 0: { halign: 'center', cellWidth: 40 },
                 1: { halign: 'center', cellWidth: 50 }
@@ -276,8 +309,17 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
         );
     };
 
-    const handleExportToExcel = () => {
-        exportToExcel(tableData, 'customData.xlsx', 'CustomSheet');
+    const fileNameExcel = 'Exported Data Excel';
+    const handleExportToExcel = (fileName) => {
+        exportToExcel(tableData, fileName? fileName : `${fileNameExcel}.xlsx`, 'CustomSheet');
+    };
+
+    const fileNameCsv = 'Exported Data CSV';
+    const handleExportToCsv = (fileName) => {
+        exportToCsv(tableData, fileName? fileName : `${fileNameCsv}.csv`, {
+            0: { halign: 'center', cellWidth: 40 },
+            1: { halign: 'center', cellWidth: 50 }
+        });
     };
 
     return (
@@ -288,57 +330,51 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                         {options.paginate && (
                             <Select
                                 data={[{
+                                    className: `${options.pageSizeProps?.className || 'text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm p-2 rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-500'}`,
                                     id: 'row-data-table',
-                                    className: 'border border-gray-500 rounded-md p-2 w-full',
-                                    options: options.pageSizeOptions.map(size => ({
-                                        value: size,
-                                        label: `${size} rows`
-                                    })),
+                                    options: options.pageSizeOptions.map(size => ({ value: size, label: `${size} rows` })),
                                     label: {
-                                        left : {text: 'Show ', className: 'p-2',},
-                                        right: {text: ' Entries', className: 'p-2',}
-                                    }
+                                        left: { text: 'Show ', className: 'text-sm font-medium text-gray-700 p-2' },
+                                        right: { text: ' Entries', className: 'text-sm font-medium text-gray-700 p-2' }
+                                    },
+                                    value: maxItems,
+                                    ...(options.pageSizeProps || {})
                                 }]}
                                 value={maxItems}
                                 onChange={handlePageSizeChange}
-                                addable={{status: false}}
                                 wrapper={{
                                     tag: "div",
-                                    className: "w-full",
-                                    style: {
-                                        display: "flex"
-                                    }
+                                    className: "w-full flex",
                                 }}
                             />
                         )}
                     </div>
                     <div className="w-2/5">
                         <div className="flex justify-center">
-                            <Button
-                                children="Print"
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                onClick={handlePrint}
-                            />
-                            <Button
-                                children="Export To PDF"
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                onClick={handleExportToPdf}
-                            />
-                            <Button
-                                children="Export To Excel"
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                onClick={handleExportToExcel}
-                            />
-                            <Button
-                                children="Copy"
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                onClick={handleCopy}
-                            />
-                            <Button
-                                children="Export To CSV"
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                onClick={handleExportToCsv}
-                            />
+                            {options.actionButtons ? (
+                                <Button
+                                    buttons={options.actionButtons.map(button => ({
+                                        ...button,
+                                        className: button.className || "text-white bg-green-500 hover:bg-green-700 text-sm px-4 py-3 leading-none border-transparent rounded-none",
+                                        onClick: (() => {
+                                            switch (button.id) {
+                                                case 'btn-print':
+                                                    return handlePrint;
+                                                case 'btn-copy':
+                                                    return handleCopy;
+                                                case 'btn-pdf':
+                                                    return handleExportToPdf.bind(null, (button.filename? button.filename : fileNamePdf));
+                                                case 'btn-excel':
+                                                    return handleExportToExcel.bind(null, (button.filename? button.filename : fileNameExcel));
+                                                case 'btn-csv':
+                                                    return handleExportToCsv.bind(null, (button.filename? button.filename : fileNameCsv));
+                                                default:
+                                                    return () => {};
+                                            }
+                                        })(),
+                                    }))}
+                                />
+                            ) : (<>&nbsp;</>)}
                         </div>
                     </div>
                     <div className="w-1/5">

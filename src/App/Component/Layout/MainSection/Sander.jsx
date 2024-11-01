@@ -86,6 +86,13 @@ export const SenderTable = () => {
             increment: true,
             incrementText: 'Row #',
             pageSizeOptions: [5, 10, 25, 50, 100],
+            pageSizeProps: {
+             //   className: 'pageSizeProps-class',
+                style: {
+                    border: '1px solid #ccc',
+                    padding: '5px',
+                }
+            },
             paginate: {
                 firstPage: true,
                 previous: true,
@@ -109,25 +116,25 @@ export const SenderTable = () => {
                         },
                     },
                     button: {
-                        type: 'a',
+                      //  type: 'a',
                       //  className: 'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 hover:cursor-pointer',
-                        style: {},
+                      //  style: {},
                     },
                     ul: {
                      //   className: 'isolate inline-flex -space-x-px rounded-md shadow-sm',
                     },
                     li: {
-                        className: ''
+                     //   className: ''
                     },
                     currentButton: {
                         li: {
                             className: 'active',
-                            style: {},
+                        //    style: {},
                         },
                         button: {
                          //   className: 'relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600',
                             style: {
-                                pointerEvents: 'none',
+                            //    pointerEvents: 'none',
                             },
                         },
                     },
@@ -135,21 +142,19 @@ export const SenderTable = () => {
                 listDataInfo: {
                     type: 'div',
                     position: 'left',
-                    props: {
-                        style: {
-                            textAlign: 'center',
-                        },
-                        className: 'text-sm',
-                    },
+                //    props: {
+                    //    style: {textAlign: 'center',},
+                    //    className: 'text-sm',
+                 //   },
                     showingText: 'Displaying',
                     toText: 'to',
                     ofText: 'of',
                     entriesText: 'items',
                     showTextWrappers: {
-                        showingText: { tag: 'span', props: { className: 'font-bold' } },
-                        toText: { tag: 'em', props: { className: 'font-semibold' } },
-                        ofText: { tag: 'strong', props: { className: 'font-bold' } },
-                        entriesText: { tag: 'span', props: { className: 'font-bold' } },
+                    //    showingText: { tag: 'span', props: { className: 'font-bold' } },
+                    //    toText: { tag: 'em', props: { className: 'font-semibold' } },
+                    //    ofText: { tag: 'strong', props: { className: 'font-bold' } },
+                    //    entriesText: { tag: 'span', props: { className: 'font-bold' } },
                     },
                 },
             },
@@ -184,7 +189,34 @@ export const SenderTable = () => {
                         style: {},
                     }
                 }
-            }
+            },
+            actionButtons: [
+                {
+                    id: 'btn-print',
+                //    className: 'text-white bg-green-500 hover:bg-green-700 text-sm px-4 py-3 leading-none border-transparent rounded-none',
+                    text: 'Print'
+                },
+                {
+                    id: 'btn-copy',
+                //    className: 'text-white bg-green-500 hover:bg-green-700 text-sm px-4 py-3 leading-none border-transparent rounded-none',
+                    text: 'Copy'
+                },
+                {
+                    id: 'btn-pdf',
+                //    className: 'text-white bg-green-500 hover:bg-green-700 text-sm px-4 py-3 leading-none border-transparent rounded-none',
+                    text: 'Export To PDF'
+                },
+                {
+                    id: 'btn-excel',
+                    className: 'text-white bg-green-500 hover:bg-green-700 text-sm px-4 py-3 leading-none border-transparent rounded-none',
+                    text: 'Export To Excel'
+                },
+                {
+                    id: 'btn-csv',
+                //    className: 'text-white bg-green-500 hover:bg-green-700 text-sm px-4 py-3 leading-none border-transparent rounded-none',
+                    text: 'Export To CSV'
+                },
+            ]
         }}
     />
 }

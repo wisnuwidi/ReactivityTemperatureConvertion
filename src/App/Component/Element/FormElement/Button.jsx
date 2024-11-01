@@ -5,26 +5,34 @@
  * @time Created at : 31-10-2024, 01:03:34
  * @email           : IncoDIY<incodiy@gmail.com>
  * @author          : IncoDIY<incodiy@gmail.com>
- * @description     : This file contains a function component for rendering checkbox elements in a form.
- *                    It supports managing the state of multiple checkbox elements and allows adding new checkbox elements dynamically.
+ * @description     : This file contains a function component for rendering multiple buttons in a form.
  */
 
 /**
- * @function Button - A component for rendering a button.
+ * @function Button - A component for rendering multiple buttons.
  * 
- * @param {function} onClick - A function to be called when the button is clicked.
- * @param {ReactNode} children - The content of the button.
- * @param {string} className - The class name of the button.
- * @param {object} props - Additional props to be passed to the button element.
- * @returns {ReactElement} A React element representing the button.
+ * @param {array} buttons - An array of button objects, each containing id, onClick, className, props, and text properties.
+ * @param {object} props - Additional props to be passed to each button element.
+ * @returns {ReactElement} A React element representing the buttons.
  * 
  * @example
-    <Button onClick={() => console.log('Button clicked!')}>
-        Click Me
-    </Button>
+ * // Example usage:
+   const buttonsData = [
+       { id: 'btn1', onClick: () => console.log('Button 1 clicked'), className: 'btn-class', props: {}, text: 'Button 1' },
+       { id: 'btn2', onClick: () => console.log('Button 2 clicked'), className: 'btn-class', props: {}, text: 'Button 2' },
+   ];
+   
+   <Button buttons={buttonsData} />
  */
-export const Button = ({ onClick, children, className, ...props }) => (
-    <button onClick={onClick} className={className} {...props}>
-        {children}
-    </button>
+export const Button = ({ buttons = [], ...props }) => (
+    buttons.map(button => (
+        <button
+            key={button.id}
+            onClick={button.onClick}
+            className={button.className}
+            {...button.props}
+        >
+            {button.text}
+        </button>
+    ))
 );

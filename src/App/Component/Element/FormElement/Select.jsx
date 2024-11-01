@@ -320,22 +320,16 @@ import Label from '../FormElement/Label';
  */
 export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...props }) => {
     const [selects, setSelects] = useState(() => FindDuplicateArrayValue(data, ['name', 'id'], ''));
-    const [selectedValues, setSelectedValues] = useState(selects.reduce((acc, select) => ({ ...acc, [select.name]: select.value ? select.value[0] : '' }), {}));
+    const [selectedValues, setSelectedValues] = useState(() => selects.reduce((acc, select) => ({ ...acc, [select.name]: select.value ? select.value[0] : '' }), {}));
 
     useEffect(() => {
-        setSelects(FindDuplicateArrayValue(data, ['name', 'id'], ''));
-        setSelectedValues(selects.reduce((acc, select) => ({ ...acc, [select.name]: select.value ? select.value[0] : '' }), {}));
-    }, [data, addable]);
+        const duplicateSelects = FindDuplicateArrayValue(data, ['name', 'id'], '');
+        setSelects(duplicateSelects);
+        setSelectedValues(duplicateSelects.reduce((acc, select) => ({ ...acc, [select.name]: select.value ? select.value[0] : '' }), {}));
+    }, [data]);
 
     const WrapperTag = wrapper?.tag || 'div';
 
-    /**
-     * Handles the change event of a select element.
-     * Updates the value of the select element in the state based on the event target's name and value.
-     * Calls the onChange callback function with the event.
-     * @param {number} index - The index of the select element that changed.
-     * @param {object} event - The event object.
-     */
     const handleChange = (index, event) => {
         const updatedSelects = selects.map((select, i) =>
             i === index ? { ...select, value: event.target.value } : select
@@ -349,16 +343,9 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
 
     const { left, right } = addable.label || { left: {}, right: {} };
     const getNextLabel = (baseLabel, index, increments, position) => NextIncrement(index, increments, baseLabel, position);
-    
+
     const [lastAddedElement, setLastAddedElement] = useState(null);
-    /**
-     * Handles the addition of a new select element when the add button is clicked.
-     * If the addable prop is true, it will create a new select element with an incremented name and id.
-     * If the addable prop is false and the selects array is not empty, it will create a new select element with the same name and id as the last element in the selects array.
-     * If the addable prop is false and the selects array is empty, it will create a new select element with the same name and id as the data array if it is not empty.
-     * If the addable prop is false and the selects array is empty and the data array is empty, it will create a new select element with a default name and id.
-     * It will then update the selects state with the new select element.
-     */
+
     const handleAddSelect = () => {
         const lastElementIndex     = selects.length - 1;
         const lastAddedElementName = lastAddedElement?.name || selects[lastElementIndex]?.name || '';
@@ -368,12 +355,11 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
             const newSelectName = `${addable.selectProps.name}[${lastAddedElementName.match(/\[(\d+)\]/) ? Number(lastAddedElementName.match(/\[(\d+)\]/)[1]) + 1 : 0}]`;
             const newSelectId   = `${addable.selectProps.id}[${lastAddedElementId.match(/\[(\d+)\]/)     ? Number(lastAddedElementId.match(/\[(\d+)\]/)[1]) + 1 : 0}]`;
 
-            // Add The Incremental Bracket For Duplicate Name And ID For The Un-Bracketed First Element Found In The Selects Array
             let countElements   = selects.length - data.length;
             data.map((item, index) => {
                 if (item.name === addable.selectProps.name) data[index].name = `${data[index].name}[${countElements}]`;
                 if (item.id   === addable.selectProps.id)   data[index].id   = `${data[index].id}[${countElements}]`;
-            })
+            });
 
             const newSelect = {
                 ...addable.selectProps,
@@ -403,14 +389,7 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
     };
 
     const [deletedElementInfo, setDeletedElementInfo] = useState(null);
-    /**
-     * Handles the deletion of a select element.
-     * If the element has the same id and name as the data[index], it will be removed from the selects array.
-     * If the element was added by the user, it will be removed from the selects array.
-     * If the element is the last one, and the addable.minButtonLeft is set to 0, it will be removed from the selects array.
-     * If the element is not the last one, it will be removed from the selects array, and the selected values will be updated.
-     * @param {number} index - The index of the element to be deleted.
-     */
+
     const handleDeleteSelect = (index) => {
         const deletedElement = selects[index];
         const deletedElementInfo = {
@@ -437,7 +416,7 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
             }, {}));
         }
     };
-   
+
     return (
         <>
             {selects.map((select, index) => (
@@ -477,7 +456,6 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
                         />
                     )}
                     {addable.status && selects.length > (addable.minButtonLeft || 0) && (!addable.deleteOnlyAdded || selects[index].name !== (data[index] || {}).name) && (
-                //    {selects.length > (addable.minButtonLeft || 0) && (!addable.deleteOnlyAdded || selects[index].name !== (data[index] || {}).name) && (
                         <button {...addable.deleteButton} onClick={() => handleDeleteSelect(index)}>{addable.deleteButton?.text || "Delete"}</button>
                     )}
                 </WrapperTag>

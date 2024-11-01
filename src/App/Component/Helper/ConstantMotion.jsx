@@ -239,17 +239,23 @@ export const FindDuplicateArrayValue = (data, node = ['name', 'id'], pointer = '
     return renamedData;
 };
 
+/**
+ * Exports the provided data to an Excel file (.xlsx) and saves it to the user's local machine.
+ *
+ * @param {array} data - The data to be exported to the Excel file.
+ * @param {string} [outputName='dataExported.xlsx'] - The name of the output Excel file.
+ * @param {string} [sheetName='Sheet1'] - The name of the sheet in the Excel file.
+ */
 export const exportToExcel = (data, outputName = 'dataExported.xlsx', sheetName = 'Sheet1') => {
-    const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils.json_to_sheet(data);
-    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+    const workbook = { Sheets: { [sheetName]: worksheet }, SheetNames: [sheetName] };
     const workbookBlob = XLSX.write(workbook, { type: 'array', bookType: 'xlsx' });
-    const url = window.URL.createObjectURL(new Blob([workbookBlob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+    const url = URL.createObjectURL(new Blob([workbookBlob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
     const link = document.createElement('a');
     link.href = url;
     link.download = outputName;
     link.click();
-    window.URL.revokeObjectURL(url);
+    URL.revokeObjectURL(url);
 };
 
 /**
@@ -276,54 +282,78 @@ export const exportToExcel = (data, outputName = 'dataExported.xlsx', sheetName 
 *      );
 */
 export const generatePdf = (head, tableData, outputName = 'data.pdf', columnStyles = {}) => {
-   const pdf = new jsPDF();
-   pdf.autoTable({
-       head: [head],
-       body: tableData.map(row => Object.values(row)),
-       theme: 'striped',
-       styles: {
-           overflow: 'linebreak',
-           fontSize: 12,
-       },
-       columnStyles,
-   });
-   const pdfBlob = pdf.output("blob");
-   const url = window.URL.createObjectURL(pdfBlob);
-   const link = document.createElement('a');
-   link.href = url;
-   link.download = outputName;
-   link.click();
-   window.URL.revokeObjectURL(url);
+    const pdf = new jsPDF();
+    pdf.autoTable({
+        head: [head],
+        body: tableData,
+        theme: 'striped',
+        styles: {
+            overflow: 'linebreak',
+            fontSize: 12,
+        },
+        columnStyles,
+    });
+
+    const pdfBlob = pdf.output("blob");
+    const url = URL.createObjectURL(pdfBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = outputName;
+    link.click();
+    URL.revokeObjectURL(url);
 };
 
+
+/**
+ * Copies data to the clipboard in a tab-separated format and displays a notification with an animation.
+ *
+ * @param {array} data - The data to be copied to the clipboard, given as an array of objects where each
+ *     object property is a column name and the value is the cell value.
+ * @param {string} [notificationText='Copied to clipboard'] - The text to be displayed in the notification.
+ * @param {object} [notificationStyle={}] - An object mapping CSS style names to values. The object will be
+ *     merged with the default notification style.
+ * @param {string} [outputName=false] - If truthy, a link to download the data as a text file will be
+ *     created and clicked.
+ *
+ * @example
+ *      copyToClipboard([
+ *          { id: 1, name: 'John Doe', age: 25 },
+ *          { id: 2, name: 'Jane Doe', age: 27 },
+ *      ], 'Data copied', { backgroundColor: 'rgba(0,255,112,0.2)' }, 'data.txt');
+ */
 export const copyToClipboard = (data, notificationText = 'Copied to clipboard', notificationStyle = {}, outputName = false) => {
-    const textArea = document.createElement('textarea');
-    textArea.value = data.map(row => Object.values(row).join('\t')).join('\n');
-    document.body.appendChild(textArea);
-    textArea.select();
-    document.execCommand('copy');
-    textArea.remove();
-    
-    const notification = document.createElement('div');
-    notification.textContent = notificationText;
-    Object.assign(notification.style, {
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        background: '#fff',
-        padding: '10px',
-        borderRadius: '10px',
-        boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
-        ...notificationStyle
-    });
-    document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 2000);
+    const text = data.map(row => Object.values(row).join('\t')).join('\n');
+
+    const copyToClipboard = async () => {
+        try {
+            await navigator.clipboard.writeText(text);
+            const notification = document.createElement('div');
+            notification.className = 'fixed bg-blur-sm top-0 right-0 m-2 bg-gradient-to-r from-transparent via-transparent to-transparent px-4 pt-2 pb-3 font-sans font-lighter text-grey-900 text-md text-shadow-md border border-gray-300 animate-pulse';
+            Object.assign(notification.style, {
+                fontFamily: '"Protest Strike", sans-serif',
+                color: 'rgba(255,255,255,0.87)',
+                textShadow: 'rgba(0,0,0,0.15) 0px 1px 2px',
+                backgroundImage: 'linear-gradient(to right, rgba(0,255,112,0.18) 0%, rgba(255,239,0,0.97) 50%, rgba(255,255,255,0.98) 86%)',
+                backgroundSize: '200% 100%',
+                animation: 'gradient 3s ease infinite',
+                ...notificationStyle,
+            });
+            notification.textContent = notificationText;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 8000);
+        } catch (error) {
+            console.error('Failed to copy:', error);
+        }
+    };
+
+    copyToClipboard();
 
     if (outputName) {
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(new Blob([data.map(row => Object.values(row).join('\t')).join('\n')], { type: 'text/plain' }));
-        link.download = outputName;
+        const link = Object.assign(document.createElement('a'), {
+            href: URL.createObjectURL(new Blob([text], { type: 'text/plain' })),
+            download: outputName,
+        });
+
         link.click();
         URL.revokeObjectURL(link.href);
     }
