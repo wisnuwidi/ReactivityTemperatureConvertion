@@ -67,9 +67,8 @@ export const SenderTable = () => {
         onRowClick={(event, row) => console.log('row clicked', row)}
         onCellClick={(event, row, cell) => console.log('cell clicked', row, cell)}
         cellProps={{
-            // style: {
-            // //    padding: '10px',
-            // }
+        //    className: 'text-center',
+        //    style: {padding: '10px',}
         }}
         customCell={(row, cellKey) => {
             const cellValue = row[cellKey];

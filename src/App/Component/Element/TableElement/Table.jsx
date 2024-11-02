@@ -249,14 +249,26 @@ import { Pagination } from '../Widget/Pagination';
     />
  */
 export const Table = ({ className, head = {}, data = [], footer = [], options = {}, onRowClick, onCellClick, cellProps = {}, customCell, ...tableProps }) => {
-    const [tableData,   setTableData]   = useState(data);
+    const [tableData, setTableData] = useState(data);
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(0);
-    const [maxItems,    setMaxItems]    = useState(options.paginate?.maxItems || 10);
+    const [maxItems, setMaxItems] = useState(options.paginate?.maxItems || 10);
+    const [checkedRows, setCheckedRows] = useState({});
+    const [checkAll, setCheckAll] = useState(false);
+    const [filteredData, setFilteredData] = useState(data);
+
+    const tableDataToDisplay = options.paginate ? filteredData.slice(currentPage * maxItems, (currentPage + 1) * maxItems) : filteredData;
 
     useEffect(() => {
         setTableData(data);
+        setFilteredData(data);
     }, [data]);
+
+    useEffect(() => {
+        const currentRows = tableDataToDisplay.map((_, index) => index);
+        const allChecked = currentRows.every(index => checkedRows[currentPage * maxItems + index]);
+        setCheckAll(allChecked);
+    }, [checkedRows, tableDataToDisplay, currentPage, maxItems]);
 
     const handleRowClick = (event, row) => {
         if (onRowClick) {
@@ -280,7 +292,7 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
         }));
     };
 
-    const [sortKey,     setSortKey]     = useState(null);
+    const [sortKey, setSortKey] = useState(null);
     const [isAscending, setIsAscending] = useState(null);
 
     const handleSort = (key) => {
@@ -311,13 +323,9 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
         }));
     };
 
-    const [filteredData, setFilteredData] = useState(tableData);
-
     const { displayedButtons = 5, firstPage, previous, next, lastPage, text = {}, properties: paginationProperties = {}, listDataInfo = { type: 'span', position: 'left', props: { style: { display: 'block', textAlign: 'center', marginTop: '10px' } } } } = options.paginate || {};
 
     const { input = {}, label = 'Search', wrapper = {} } = options.search || {};
-
-    const tableDataToDisplay = options.paginate ? filteredData.slice(currentPage * maxItems, (currentPage + 1) * maxItems) : filteredData;
 
     const handleCopy = () => {
         copyToClipboard(data, 'Data copied to clipboard');
@@ -353,9 +361,27 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
         });
     };
 
-    const thClassName        = options.properties?.thead?.td?.className || "border bg-violet-100 text-gray-600 hover:cursor-pointer";
-    const thProps            = options.properties ? options.properties.thead.td : {};
+    const thClassName = options.properties?.thead?.td?.className || "border bg-violet-100 text-gray-600 hover:cursor-pointer";
+    const thProps = options.properties ? options.properties.thead.td : {};
     const cellPropsClassName = cellProps.className ? cellProps.className : 'border p-2';
+
+    const handleCheckboxChange = (event, index) => {
+        const { checked } = event.target;
+        setCheckedRows({
+            ...checkedRows,
+            [currentPage * maxItems + index]: checked,
+        });
+    };
+
+    const handleCheckAllChange = (event) => {
+        const { checked } = event.target;
+        const updatedCheckedRows = { ...checkedRows };
+        tableDataToDisplay.forEach((_, index) => {
+            updatedCheckedRows[currentPage * maxItems + index] = checked;
+        });
+        setCheckedRows(updatedCheckedRows);
+        setCheckAll(checked);
+    };
 
     return (
         <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12">
@@ -386,6 +412,15 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                             <tr {...options.properties ? options.properties.thead.tr : {}}>
                                 {options.increment && <th className={thClassName} {...thProps} {...cellProps}>
                                     {options.incrementText || '#'}
+                                
+                                
+                                    <input
+                                        name="check-all-current-page"
+                                        id="check-all-current-page"
+                                        type="checkbox"
+                                        checked={checkAll}
+                                        onChange={handleCheckAllChange}
+                                    />
                                 </th>}
                                 {Object.keys(head).map((key) => {
                                     return (
@@ -408,16 +443,27 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                                 return (
                                     <tr key={number} onClick={(event) => handleRowClick(event, row)} {...options.properties ? options.properties.tbody.tr : {}}>
                                         {options.increment && (
-                                            <td {...(options.properties ? options.properties.tbody.td : {})} style={{ textAlign: 'center' }}>
+                                            <td {...(options.properties ? options.properties.tbody.td : {})} style={{ textAlign: 'center', position: 'relative'}}>
                                                 {number + 1}
+                                                <input 
+                                                    type="checkbox" 
+                                                    name={`table-name[${index}]`} 
+                                                    id={`table-name-[${index}]`} 
+                                                    checked={!!checkedRows[currentPage * maxItems + index]}
+                                                    onChange={(event) => handleCheckboxChange(event, index)}
+                                                    className={'top-0 left-0 mx-1 my-1 absolute'}
+                                                />
                                             </td>
                                         )}
+                                        
                                         {Object.keys(head).map((key) => {
                                             return (
                                                 <td
+                                                    {...options.properties ? options.properties.tbody.td : {}}
                                                     key={key}
                                                     onClick={(event) => handleCellClick(event, row, row[key])}
-                                                    className={cellPropsClassName}
+                                                    className={`${cellPropsClassName}`}
+                                                    style={cellProps.style} 
                                                 >
                                                     {customCell ? customCell(row, key) : row[key]}
                                                 </td>
@@ -467,4 +513,3 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
         </div>
     );
 }
-
