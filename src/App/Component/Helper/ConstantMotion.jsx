@@ -197,8 +197,7 @@ export const NextIncrement = (index, increments, text, pos) => {
             `${incrementedPart} ${text} ${incrementedPart}` :
             incrementedPart;
     }
-
-
+    
     return nextContext;
 };
 

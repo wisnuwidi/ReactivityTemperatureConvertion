@@ -375,9 +375,9 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
                         ...left?.props
                     },
                     right: {
-                        text : getNextLabel(right?.text || '', selects.length, right?.increments, 'right'),
-                        className: right?.className,
-                        id: right?.id,
+                        text      : getNextLabel(right?.text || '', selects.length, right?.increments, 'right'),
+                        className : right?.className,
+                        id        : right?.id,
                         ...right?.props
                     }
                 }
