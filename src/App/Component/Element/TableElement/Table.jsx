@@ -356,6 +356,9 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
     const thClassName = options.properties?.thead?.td?.className || "border bg-violet-100 text-gray-600 hover:cursor-pointer";
     const thProps     = options.properties ? options.properties.thead.td : {};
 
+    const cellPropsClassName = cellProps.className ? cellProps.className : 'border p-2';
+    const cellPropsStyle     = {};//cellProps.style ? cellProps.style : { verticalAlign: 'middle' };
+
     return (
         <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12">
             <img src="https://play.tailwindcss.com/img/beams.jpg" alt="" className="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" />
@@ -383,13 +386,18 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                     <table className="border-collapse table-auto w-full text-sm" {...options.properties ? options.properties.table : {}} {...tableProps}>
                         <thead {...options.properties ? options.properties.thead.props : {}}>
                             <tr {...options.properties ? options.properties.thead.tr : {}}>
-                                {options.increment && <th className={options.properties?.thead?.td?.className || "border bg-violet-100 text-gray-600"} {...options.properties ? options.properties.thead.td : {}} {...cellProps}>{options.incrementText || '#'}</th>}
+                                {options.increment && <th className={thClassName} {...thProps} {...cellProps}>
+                                    {options.incrementText || '#'}
+                                </th>}
                                 {Object.keys(head).map((key) => {
                                     return (
-                                        <th key={key} className={thClassName} {...thProps} {...cellProps} onClick={() => handleSort(key)}>
+                                        <th key={key} className={`${cellPropsClassName} ${thClassName}`} {...thProps} {...cellProps} onClick={() => handleSort(key)}>
                                             {head[key]}
-                                            <span className="ml-2">
-                                                {isAscending ? <>&#x25B4;</> : <>&#x25BE;</>}
+                                            <span className="ml-2 mr-2 relative">
+                                                {sortKey === key ? (isAscending ? <>&#x25B4;</> : <>&#x25BE;</>) : <>
+                                                    <span className="inline-block align-middle absolute -top-0.5 text-[#96a2b3]">&#x25B4;</span>
+                                                    <span className="inline-block align-middle absolute -bottom-1 text-[#718096]">&#x25BE;</span>
+                                                </>}
                                             </span>
                                         </th>
                                     )
@@ -411,8 +419,8 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                                                 <td
                                                     key={key}
                                                     onClick={(event) => handleCellClick(event, row, row[key])}
-                                                    {...options.properties ? options.properties.tbody.td : {}}
-                                                    {...cellProps}
+                                                    className={cellPropsClassName}
+                                                    style={cellPropsStyle}
                                                 >
                                                     {customCell ? customCell(row, key) : row[key]}
                                                 </td>
@@ -425,9 +433,12 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                         {footer.length > 0 && (
                             <tfoot {...options.properties ? options.properties.tfooter.props : {}}>
                                 <tr {...options.properties ? options.properties.tfooter.tr : {}}>
+                                    {options.increment && (
+                                        <td>&nbsp;</td>
+                                    )}
                                     {Object.keys(head).map((key) => {
                                         return (
-                                            <td key={key} {...options.properties ? options.properties.tfooter.td : {}} {...cellProps}>
+                                            <td key={key} className={cellProps.className || 'p-2'} style={cellProps.style} {...options.properties ? options.properties.tfooter.td : {}}>
                                                 {footer[0][key]}
                                             </td>
                                         );
@@ -459,3 +470,4 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
         </div>
     );
 }
+

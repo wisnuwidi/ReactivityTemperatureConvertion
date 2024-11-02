@@ -67,9 +67,9 @@ export const SenderTable = () => {
         onRowClick={(event, row) => console.log('row clicked', row)}
         onCellClick={(event, row, cell) => console.log('cell clicked', row, cell)}
         cellProps={{
-            style: {
-                padding: '10px',
-            }
+            // style: {
+            // //    padding: '10px',
+            // }
         }}
         customCell={(row, cellKey) => {
             const cellValue = row[cellKey];
@@ -201,7 +201,7 @@ export const SenderTable = () => {
                         style: {},
                     },
                     td: {
-                        className: 'tfooter-column-class',
+                    //    className: 'tfooter-column-class',
                         style: {},
                     }
                 }
