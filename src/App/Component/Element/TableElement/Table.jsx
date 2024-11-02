@@ -102,10 +102,8 @@ import { copyToClipboard, exportToCsv, exportToExcel, generatePdf } from '../../
                     },
                 },
                 label: {
-                    left: {
-                        text: 'Cari ',
-                        className: 'input-label',
-                    }
+                    text: 'Cari ',
+                    className: 'input-label',
                 },
                 wrapper: {
                     style: {
@@ -326,7 +324,7 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
 
     const fileNameExcel = 'Exported Data Excel';
     const handleExportToExcel = (fileName) => {
-        exportToExcel(tableData, fileName? fileName : `${fileNameExcel}.xlsx`, 'CustomSheet');
+        exportToExcel(tableData, fileName? fileName : `${fileNameExcel}.xlsx`, `${fileNameExcel} Sheet`);
     };
 
     const fileNameCsv = 'Exported Data CSV';
@@ -339,9 +337,12 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
 
     return (
         <React.Fragment>
-            <div className="w-full md:w-auto">
-                <header className="flex justify-between">
-                    <div className="w-1/5">
+        <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12">
+            <img src="https://play.tailwindcss.com/img/beams.jpg" alt="" className="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" />
+            <div className="w-full mx-2.5 relative bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:mx-auto sm:rounded-lg sm:px-10">
+
+                <header className="flex justify-between content-center">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         {options.paginate && (
                             <Select
                                 data={[{
@@ -364,13 +365,13 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                             />
                         )}
                     </div>
-                    <div className="w-2/5">
-                        <div className="flex justify-center">
+                    <div className="w-2/3">
+                        <div className="flex justify-center mx-8">
                             {options.actionButtons ? (
                                 <Button
                                     buttons={options.actionButtons.map(button => ({
                                         ...button,
-                                        className: button.className || "text-white bg-green-500 hover:bg-green-700 text-sm px-4 py-3 leading-none border-transparent rounded-none",
+                                        className: button.className || "text-white bg-slate-400 hover:bg-slate-700 text-sm px-4 py-3 leading-none border-transparent rounded-none",
                                         onClick: (() => {
                                             switch (button.id) {
                                                 case 'btn-print':
@@ -392,7 +393,7 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                             ) : (<>&nbsp;</>)}
                         </div>
                     </div>
-                    <div className="w-1/5">
+                    <div className="">
                         {options.search && (
                             <Input 
                                 data={[{
@@ -417,45 +418,61 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                         )}
                     </div>
                 </header>
-                <table className="table-auto w-full" {...options.properties ? options.properties.table : {}} {...tableProps}>
-                    <thead {...options.properties ? options.properties.thead.props : {}}>
-                        <tr {...options.properties ? options.properties.thead.tr : {}}>
-                            {options.increment && <th {...options.properties ? options.properties.thead.td : {}}>{options.incrementText || '#'}</th>}
-                            {Object.keys(head).map((key) => (
-                                <th key={key} {...options.properties ? options.properties.thead.td : {}}>{head[key]}</th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody {...options.properties ? options.properties.tbody.props : {}}>
-                        {tableDataToDisplay.map((row, index) => {
-                            return (
-                                <tr key={index} onClick={(event) => handleRowClick(event, row)} {...options.properties ? options.properties.tbody.tr : {}}>
-                                    {options.increment && <td {...options.properties ? options.properties.tbody.td : {}} {...cellProps}>{index + 1}</td>}
+                
+                <main className="rounded-sm">
+                    <table className="border-collapse table-auto w-full text-sm" {...options.properties ? options.properties.table : {}} {...tableProps}>
+                        <thead {...options.properties ? options.properties.thead.props : {}}>
+                            <tr {...options.properties ? options.properties.thead.tr : {}}>
+                                {options.increment && <th className={options.properties?.thead?.td?.className || "border bg-violet-100 text-gray-600"} {...options.properties ? options.properties.thead.td : {}}>{options.incrementText || '#'}</th>}
+                                {Object.keys(head).map((key) => (
+                                    <th key={key} className={options.properties?.thead?.td?.className || "border bg-violet-100 text-gray-600"} {...options.properties ? options.properties.thead.td : {}} {...cellProps}>{head[key]}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody {...options.properties ? options.properties.tbody.props : {}}>
+                            {tableDataToDisplay.map((row, index) => {
+                                return (
+                                    <tr key={index} onClick={(event) => handleRowClick(event, row)} {...options.properties ? options.properties.tbody.tr : {}}>
+                                        {options.increment && (
+                                            <td
+                                                {...(options.properties ? options.properties.tbody.td : {})}
+                                                style={{ textAlign: 'center' }}
+                                            >
+                                                {index + 1}
+                                            </td>
+                                        )}
+                                        {Object.keys(head).map((key) => {
+                                            return (
+                                                <td 
+                                                    key={key} 
+                                                    onClick={(event) => handleCellClick(event, row, row[key])} 
+                                                    {...options.properties ? options.properties.tbody.td : {}} 
+                                                    {...cellProps}
+                                                >
+                                                    {customCell ? customCell(row, key) : row[key]}
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                        {footer.length > 0 && (
+                            <tfoot {...options.properties ? options.properties.tfooter.props : {}}>
+                                <tr {...options.properties ? options.properties.tfooter.tr : {}}>
                                     {Object.keys(head).map((key) => {
                                         return (
-                                            <td key={key} onClick={(event) => handleCellClick(event, row, row[key])} {...options.properties ? options.properties.tbody.td : {}} {...cellProps}>
-                                                {customCell ? customCell(row, key) : row[key]}
+                                            <td key={key} {...options.properties ? options.properties.tfooter.td : {}} {...cellProps}>
+                                                {footer[0][key]}
                                             </td>
                                         );
                                     })}
                                 </tr>
-                            );
-                        })}
-                    </tbody>
-                    {footer.length > 0 && (
-                        <tfoot {...options.properties ? options.properties.tfooter.props : {}}>
-                            <tr {...options.properties ? options.properties.tfooter.tr : {}}>
-                                {Object.keys(head).map((key) => {
-                                    return (
-                                        <td key={key} {...options.properties ? options.properties.tfooter.td : {}}>
-                                            {footer[0][key]}
-                                        </td>
-                                    );
-                                })}
-                            </tr>
-                        </tfoot>
-                    )}
-                </table>
+                            </tfoot>
+                        )}
+                    </table>
+                </main>
+
                 {options.paginate && (
                     <Pagination
                         currentPage      = {currentPage}
@@ -473,6 +490,8 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                     />
                 )}
             </div>
+        
+        </div>
         </React.Fragment>
     );
 }
