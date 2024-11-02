@@ -339,7 +339,7 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
         <React.Fragment>
         <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12">
             <img src="https://play.tailwindcss.com/img/beams.jpg" alt="" className="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" />
-            <div className="w-full mx-2.5 relative bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:mx-auto sm:rounded-lg sm:px-10">
+            <div className="w-full relative bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:mx-auto sm:rounded-lg sm:px-10" style={{ margin: '10px', width: '98%' }}>
 
                 <header className="flex justify-between content-center">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -431,14 +431,15 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                         </thead>
                         <tbody {...options.properties ? options.properties.tbody.props : {}}>
                             {tableDataToDisplay.map((row, index) => {
+                                const number = index + (currentPage) * displayedButtons;
                                 return (
-                                    <tr key={index} onClick={(event) => handleRowClick(event, row)} {...options.properties ? options.properties.tbody.tr : {}}>
+                                    <tr key={number} onClick={(event) => handleRowClick(event, row)} {...options.properties ? options.properties.tbody.tr : {}}>
                                         {options.increment && (
                                             <td
                                                 {...(options.properties ? options.properties.tbody.td : {})}
                                                 style={{ textAlign: 'center' }}
                                             >
-                                                {index + 1}
+                                                {number + 1}
                                             </td>
                                         )}
                                         {Object.keys(head).map((key) => {
