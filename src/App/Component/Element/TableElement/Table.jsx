@@ -353,11 +353,9 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
         });
     };
 
-    const thClassName = options.properties?.thead?.td?.className || "border bg-violet-100 text-gray-600 hover:cursor-pointer";
-    const thProps     = options.properties ? options.properties.thead.td : {};
-
+    const thClassName        = options.properties?.thead?.td?.className || "border bg-violet-100 text-gray-600 hover:cursor-pointer";
+    const thProps            = options.properties ? options.properties.thead.td : {};
     const cellPropsClassName = cellProps.className ? cellProps.className : 'border p-2';
-    const cellPropsStyle     = {};//cellProps.style ? cellProps.style : { verticalAlign: 'middle' };
 
     return (
         <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12">
@@ -420,7 +418,6 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                                                     key={key}
                                                     onClick={(event) => handleCellClick(event, row, row[key])}
                                                     className={cellPropsClassName}
-                                                    style={cellPropsStyle}
                                                 >
                                                     {customCell ? customCell(row, key) : row[key]}
                                                 </td>
