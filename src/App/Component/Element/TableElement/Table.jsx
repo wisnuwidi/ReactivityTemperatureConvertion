@@ -10,7 +10,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { copyToClipboard, exportToCsv, exportToExcel, generatePdf, SetExceptionProps } from '../../Helper/ConstantMotion';
+import { copyToClipboard, exportToCsv, exportToExcel, FormatCurrency, generatePdf, SetExceptionProps } from '../../Helper/ConstantMotion';
 import { TableHeader } from '../Widget/TableHeader';
 import { Pagination } from '../Widget/Pagination';
 import { Check } from '../FormElement/Check';
@@ -114,8 +114,11 @@ import { Check } from '../FormElement/Check';
                     },
                 },
             },
-            increment: true,
-            incrementText: 'Row #',
+            increment: {
+                text: 'Row #',
+                type: 'number',
+                checkLists: true
+            },
             paginate: {
                 firstPage: true,
                 previous: true,
@@ -251,7 +254,7 @@ import { Check } from '../FormElement/Check';
         }}
     />
  */
-export const Table = ({ className, head = {}, data = [], footer = [], options = {}, onRowClick, onCellClick, cellProps = {}, customCell, tableName = `table-${Math.random().toString(36).substring(8, 38)}`, wrapper, ...tableProps }) => {
+export const Table = ({ className, head = {}, data = [], footer = [], config = {}, options = {}, onRowClick, onCellClick, cellProps = {}, customCell, tableName = `table-${Math.random().toString(36).substring(8, 38)}`, wrapper, ...tableProps }) => {
     const [tableData,    setTableData]    = useState(data);
     const [searchQuery,  setSearchQuery]  = useState('');
     const [currentPage,  setCurrentPage]  = useState(0);
@@ -275,7 +278,10 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
     const thClassName        = options.properties?.thead?.td?.className || "border bg-violet-100 text-gray-600 hover:cursor-pointer";
     const thProps            = options.properties ? options.properties.thead.td : {};
     const cellPropsClassName = cellProps.className ? cellProps.className : 'border p-2';
-
+    
+// Define the formatNumber function to avoid the 'not defined' error
+    
+    
     const { 
         displayedButtons = 5, 
         firstPage, 
@@ -434,17 +440,32 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                         <thead {...options.properties ? options.properties.thead.props : {}}>
                             <tr {...options.properties ? options.properties.thead.tr : {}}>
                                 {options.increment && <th className={thClassName} {...thProps} {...cellProps}>
-                                    {options.incrementText || '#'}
-                                    <Check
-                                        data={[{
-                                            name:"check-all-current-page",
-                                            id:"check-all-current-page",
-                                            type:"checkbox",
-                                            checked:checkAll
-                                        }]}
-                                        onChange={handleCheckAllChange}
-                                        addable={{status:false}}
-                                    />
+                                    {options.increment.checkLists ? (
+                                        <Check
+                                            data={[{
+                                                name: `${tableName}-check-all-current-page`,
+                                                id: `${tableName}-check-all-current-page`,
+                                                type: "checkbox",
+                                                checked: checkAll,
+                                                label: {
+                                                    text: options.increment.text || '#',
+                                                    className: "input-label",
+                                                    position: "left",
+                                                }
+                                            }]}
+                                            onChange={handleCheckAllChange}
+                                            addable={{status: false}}
+                                            wrapper={{
+                                                tag: "span",
+                                                className: "p-2 justify-center",
+                                                style: {
+                                                    display: "flex"
+                                                }
+                                            }}
+                                        />
+                                    ) : options.increment && (
+                                        options.increment.text || '#'
+                                    )}
                                 </th>}
                                 {Object.keys(head).map((key) => {
                                     return (
@@ -468,22 +489,70 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                                     <tr key={number} onClick={(event) => handleRowClick(event, row)} {...options.properties ? options.properties.tbody.tr : {}}>
                                         {options.increment && (
                                             <td {...(options.properties ? options.properties.tbody.td : {})} style={{ textAlign: 'center', position: 'relative'}}>
-                                                {number + 1}
-                                                <Check 
-                                                    data={[{
-                                                        name: `table-name[${index}]`,
-                                                        id: `table-name-[${index}]`,
-                                                        className: 'top-0 left-0 mx-1 my-1 absolute',
-                                                        type: 'checkbox',
-                                                        checked: !!checkedRows[currentPage * maxItems + index],
-                                                    }]}
-                                                    onChange={(event) => handleCheckboxChange(event, index)}
-                                                    addable={{status:false}}
-                                                />
+                                                                                                
+                                                {options.increment.checkLists ? (
+                                                    <Check
+                                                        data={[{
+                                                            name: `${tableName}-check-[${index}]`,
+                                                            id: `${tableName}-check-[${index}]`,
+                                                            className: 'top-0 left-0 mx-1 my-1 absolute',
+                                                            type: 'checkbox',
+                                                            checked: !!checkedRows[currentPage * maxItems + index],
+                                                            label: {
+                                                                text: number + 1,
+                                                                className: "input-label",
+                                                                position: "right",
+                                                            }
+                                                        }]}
+                                                        onChange={handleCheckAllChange}
+                                                        addable={{status: false}}
+                                                        wrapper={{
+                                                            tag: "span",
+                                                            className: "p-2 justify-center",
+                                                            style: {
+                                                                display: "flex"
+                                                            }
+                                                        }}
+                                                    />
+                                                ) : options.increment && (
+                                                    number + 1
+                                                )}
+
                                             </td>
                                         )}
                                         
                                         {Object.keys(head).map((key) => {
+                                            let   value        = row[key];
+                                            let   exceptionCol = [];
+                                            const configColumn = config?.column;
+                                            const configFormat = config?.formats;
+                                            
+                                            if (configColumn && configColumn[key]) {
+                                                switch (configColumn[key]) {
+                                                    case 'currency': {
+                                                        value = FormatCurrency(row[key], {
+                                                            locale: configFormat?.currency?.locale,
+                                                            currency: configFormat?.currency?.currency,
+                                                            labelCurrency: configFormat?.currency?.label,
+                                                            minimumFractionDigits: configFormat?.currency?.minimumFractionDigits || 0,
+                                                            maximumFractionDigits: configFormat?.currency?.maximumFractionDigits
+                                                        });
+                                                        exceptionCol[key] = key;
+                                                        break;
+                                                    }
+                                                    case 'image': {
+                                                        value = <img src={row[key]} alt={key} className={configFormat?.image?.className || 'w-10 h-10 rounded-full m-auto'} />;
+                                                        exceptionCol[key] = key;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            
+                                            let cellValue = value;
+                                            if (customCell && !exceptionCol[key]) {
+                                                cellValue = customCell(row, key, exceptionCol[key]);
+                                            }
+
                                             return (
                                                 <td
                                                     {...options.properties ? options.properties.tbody.td : {}}
@@ -492,7 +561,7 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                                                     className={`${cellPropsClassName}`}
                                                     style={cellProps.style} 
                                                 >
-                                                    {customCell ? customCell(row, key) : row[key]}
+                                                    {cellValue}
                                                 </td>
                                             );
                                         })}

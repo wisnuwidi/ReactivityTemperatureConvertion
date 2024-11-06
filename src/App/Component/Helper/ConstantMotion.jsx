@@ -390,7 +390,6 @@ export const exportToCsv = (tableData, outputName = 'data.csv', columnStyles = {
 
     window.URL.revokeObjectURL(url);
 };
-
 export const SetExceptionProps = (wrapper, exceptionKeys) => {
     return Object.keys(wrapper).reduce((obj, key) => {
         if (!exceptionKeys.includes(key)) {
@@ -398,4 +397,38 @@ export const SetExceptionProps = (wrapper, exceptionKeys) => {
         }
         return obj;
     }, {});
+};
+
+/**
+ * Format currency in Indonesian locale by Default
+ * 
+ * @param {number} number - The number to be formatted
+ * @param {object} config - The configuration object
+ * @param {string} [config.locale=id-ID] - The locale
+ * @param {string} [config.label=Rp ] - The label
+ * @param {string} [config.style=currency] - The style
+ * @param {string} [config.currency=IDR] - The currency
+ * @param {number} [config.minimumFractionDigits=0] - The minimum fraction digits
+ * @param {number} [config.maximumFractionDigits=0] - The maximum fraction digits
+ * @returns {string} The formatted currency
+ * @example
+ * FormatCurrency(10000, {locale: 'id-ID', label: 'Rp ', minimumFractionDigits: 0, maximumFractionDigits: 0});
+ * // 'Rp 10.000'
+ */
+export const FormatCurrency = (number, config = {}) => {
+    const {locale, currency, style = 'currency'} = config;
+    let {minimumFractionDigits, maximumFractionDigits} = config;
+    
+    maximumFractionDigits = 
+        maximumFractionDigits < minimumFractionDigits ? 
+        minimumFractionDigits ? minimumFractionDigits : maximumFractionDigits ?  
+        maximumFractionDigits : 0 : maximumFractionDigits;
+    
+    return number.toLocaleString('id-ID', {
+        currency: currency ? currency || 'IDR' : undefined,
+        locale: currency ? locale || 'id-ID' : undefined,
+        style: currency ? style || 'currency' : undefined,
+        minimumFractionDigits: minimumFractionDigits || 0,
+        maximumFractionDigits: maximumFractionDigits,
+    });
 };

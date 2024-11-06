@@ -33,9 +33,26 @@ export const SenderTable = () => {
             // className: 'rounded-sm wrapper-table',
             // id: 'table-sander-id',
         }}
+        config={{
+            formats: {
+                currency: {
+                    currency: 'USD',
+                    minimumFractionDigits: 2
+                },
+                image: {
+                    className: 'w-10 h-10 rounded-full m-auto'
+                }
+            },
+            column: {
+                "salary": 'currency',
+                "bonus": 'currency',
+                "photo": 'image'
+            }
+        }}
         head={{
             "name": "Nama",
             "first_name": "Panggilan",
+            "photo": "Photo",
             "age": "Umur",
             "phone": "Telepon",
             "address": "Alamat",
@@ -51,6 +68,7 @@ export const SenderTable = () => {
                 "ID": index + 1,
                 "name": item.name,
                 "first_name": item.first_name,
+                "photo": item.photo,
                 "age": item.age,
                 "phone": item.phone,
                 "address": item.address,
@@ -102,8 +120,11 @@ export const SenderTable = () => {
                     // },
                 },
             },// Enable search functionality
-            increment: true,
-            incrementText: 'Row #',
+            increment: {
+                text: 'Row #',
+                type: 'number',
+                checkLists: true
+            },
             pageSizeOptions: [5, 10, 25, 50, 100],
             pageSizeProps: {
              //   className: 'pageSizeProps-class',
