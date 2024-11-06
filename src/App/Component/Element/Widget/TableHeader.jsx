@@ -82,32 +82,28 @@ import { Button } from '../FormElement/Button';
 */
 export const TableHeader = ({ options, maxItems, handlePageSizeChange, handlePrint, handleCopy, handleExportToPdf, handleExportToExcel, handleExportToCsv, fileNamePdf, fileNameExcel, fileNameCsv, searchQuery, handleSearchChange, wrapper, input }) => {
     return (
-        <header className="flex justify-between content-center">
-            <React.Fragment>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                {options.paginate && (
-                    <Select
-                        data={[{
-                            className : `${options.pageSizeProps?.className || 'text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm p-2 rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-500'}`,
-                            id        : 'row-data-table',
-                            value     : maxItems,
-                            options   : options.pageSizeOptions.map(size => ({ value: size, label: `${size} rows` })),
-                            label     : {
-                                left  : { text: 'Show ',    className: 'text-sm font-medium text-gray-700 p-2' },
-                                right : { text: ' Entries', className: 'text-sm font-medium text-gray-700 p-2' }
-                            },
-                            ...(options.pageSizeProps || {})
-                        }]}
-                        value    = {maxItems}
-                        onChange = {handlePageSizeChange}
-                        wrapper  = {{
-                            tag       : "div",
-                            className : "w-full flex",
-                        }}
-                    />
-                )}
-            </div>
-            <div className="w-2/3">
+        <header className="flex justify-between content-center items-center">
+            {options.paginate && (
+                <Select
+                    data={[{
+                        className : `${options.pageSizeProps?.className || 'text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm p-2 rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-500'}`,
+                        id        : 'row-data-table',
+                        value     : maxItems,
+                        options   : options.pageSizeOptions.map(size => ({ value: size, label: `${size} rows` })),
+                        label     : {
+                            left  : { text: 'Show ',    className: 'text-sm font-medium text-gray-700 p-2' },
+                            right : { text: ' Entries', className: 'text-sm font-medium text-gray-700 p-2' }
+                        },
+                        ...(options.pageSizeProps || {})
+                    }]}
+                    value    = {maxItems}
+                    onChange = {handlePageSizeChange}
+                    wrapper  = {{
+                        className : "w-1/4",
+                    }}
+                />
+            )}
+            <div className="w-2/4">
                 <div className="flex justify-center mx-8">
                     {options.actionButtons ? (
                         <Button
@@ -135,7 +131,7 @@ export const TableHeader = ({ options, maxItems, handlePageSizeChange, handlePri
                     ) : (<>&nbsp;</>)}
                 </div>
             </div>
-            <div className="">
+            <div className="w-1/4">
                 {options.search && (
                     <Input
                         data={[{
@@ -154,12 +150,14 @@ export const TableHeader = ({ options, maxItems, handlePageSizeChange, handlePri
                             placeholder: "Search..."
                         }]}
                         onChange={handleSearchChange}
-                        wrapper={wrapper}
+                        wrapper={{
+                            ...wrapper,
+                            className: `${wrapper?.className || "flex justify-end"}`
+                        }}
                         {...input}
                     />
                 )}
             </div>
-            </React.Fragment>
         </header>
     );
 };

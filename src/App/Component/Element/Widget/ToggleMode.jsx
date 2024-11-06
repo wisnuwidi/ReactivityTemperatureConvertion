@@ -35,7 +35,7 @@ export const ToggleMode = ({ darkLabel = "Switch Light", lightLabel = "Switch Da
 
     React.useEffect(() => {
         if (isDarkMode) {
-            document.body.classList.add("dark-mode");
+            document.body.classList.add("dark-mode", "antialiased", "text-slate-500", "dark:text-slate-400", "bg-white", "dark:bg-slate-900");
             document.querySelector(".toggle").classList.add("active");
             document.querySelector(".label").textContent = darkLabel;
         } else {

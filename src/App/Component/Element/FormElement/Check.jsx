@@ -152,8 +152,10 @@ export const Check = ({ data = [], onChange, wrapper = [], addable = {}, ...prop
 
     useEffect(() => {
         const updatedInputs = FindDuplicateArrayValue(data, ['name', 'id'], '');
-        setInputs(updatedInputs);
-        setInputValues(updatedInputs.reduce((acc, input) => ({ ...acc, [input.name]: input.checked || false }), {}));
+        if (JSON.stringify(inputs) !== JSON.stringify(updatedInputs)) {
+            setInputs(updatedInputs);
+            setInputValues(updatedInputs.reduce((acc, input) => ({ ...acc, [input.name]: input.checked || false }), {}));
+        }
     }, [data, addable]);
 
     const WrapperTag = wrapper?.tag || 'div';
@@ -264,7 +266,7 @@ export const Check = ({ data = [], onChange, wrapper = [], addable = {}, ...prop
                             {...input.label.props}
                         />
                     )}
-                    {inputs.length > (addable.minButtonLeft || 0) && (!addable.deleteOnlyAdded || inputs[index].name !== (data[index] || {}).name) && (
+                    {addable.status && inputs.length > (addable.minButtonLeft || 0) && (!addable.deleteOnlyAdded || inputs[index].name !== (data[index] || {}).name) && (
                         <button {...addable.deleteButton} onClick={() => handleDeleteInput(index)}>{addable.deleteButton?.text || "Delete"}</button>
                     )}
                 </WrapperTag>

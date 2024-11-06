@@ -390,3 +390,12 @@ export const exportToCsv = (tableData, outputName = 'data.csv', columnStyles = {
 
     window.URL.revokeObjectURL(url);
 };
+
+export const SetExceptionProps = (wrapper, exceptionKeys) => {
+    return Object.keys(wrapper).reduce((obj, key) => {
+        if (!exceptionKeys.includes(key)) {
+            obj[key] = wrapper[key];
+        }
+        return obj;
+    }, {});
+};

@@ -10,9 +10,10 @@
  */
 
 import { useState, useEffect } from 'react';
-import { copyToClipboard, exportToCsv, exportToExcel, generatePdf } from '../../Helper/ConstantMotion';
+import { copyToClipboard, exportToCsv, exportToExcel, generatePdf, SetExceptionProps } from '../../Helper/ConstantMotion';
 import { TableHeader } from '../Widget/TableHeader';
 import { Pagination } from '../Widget/Pagination';
+import { Check } from '../FormElement/Check';
 
 /**
  * @function Table
@@ -22,6 +23,7 @@ import { Pagination } from '../Widget/Pagination';
  *      custom actions, and exporting data.
  * 
  * @param {object} props - The props object.
+ *      - tableName: {string} The name of the table.
  *      - className: {string} The class name for the table wrapper.
  *      - head: {object} An object representing table headers, where keys are column keys and values are column names.
  *      - data: {array} An array of objects representing the table data.
@@ -61,6 +63,7 @@ import { Pagination } from '../Widget/Pagination';
  * 
  * @example
     <Table
+        tableName='Table Name'
         className='table-class'
         head={{
             name: 'Name',
@@ -248,16 +251,52 @@ import { Pagination } from '../Widget/Pagination';
         }}
     />
  */
-export const Table = ({ className, head = {}, data = [], footer = [], options = {}, onRowClick, onCellClick, cellProps = {}, customCell, ...tableProps }) => {
-    const [tableData, setTableData] = useState(data);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [currentPage, setCurrentPage] = useState(0);
-    const [maxItems, setMaxItems] = useState(options.paginate?.maxItems || 10);
-    const [checkedRows, setCheckedRows] = useState({});
-    const [checkAll, setCheckAll] = useState(false);
+export const Table = ({ className, head = {}, data = [], footer = [], options = {}, onRowClick, onCellClick, cellProps = {}, customCell, tableName = `table-${Math.random().toString(36).substring(8, 38)}`, wrapper, ...tableProps }) => {
+    const [tableData,    setTableData]    = useState(data);
+    const [searchQuery,  setSearchQuery]  = useState('');
+    const [currentPage,  setCurrentPage]  = useState(0);
+    const [maxItems,     setMaxItems]     = useState(options.paginate?.maxItems || 10);
+    const [checkedRows,  setCheckedRows]  = useState({});
+    const [checkAll,     setCheckAll]     = useState(false);
     const [filteredData, setFilteredData] = useState(data);
+    const [sortKey,      setSortKey]      = useState(null);
+    const [isAscending,  setIsAscending]  = useState(null);
 
+    const WrapperTableTagNode     = wrapper?.tag || 'div';
+    const wrapTableWithExceptions = SetExceptionProps ({ 
+        ...wrapper, 
+        className: wrapper?.className || 'w-[98%] mx-auto bg-white dark:bg-slate-900 px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 rounded-lg sm:px-10 my-2',
+    }, ['tag']);
+
+    const fileNamePdf        = 'Exported Data PDF';
+    const fileNameExcel      = 'Exported Data Excel';
+    const fileNameCsv        = 'Exported Data CSV';
     const tableDataToDisplay = options.paginate ? filteredData.slice(currentPage * maxItems, (currentPage + 1) * maxItems) : filteredData;
+    const thClassName        = options.properties?.thead?.td?.className || "border bg-violet-100 text-gray-600 hover:cursor-pointer";
+    const thProps            = options.properties ? options.properties.thead.td : {};
+    const cellPropsClassName = cellProps.className ? cellProps.className : 'border p-2';
+
+    const { 
+        displayedButtons = 5, 
+        firstPage, 
+        previous, 
+        next, 
+        lastPage, 
+        text = {}, 
+        properties: paginationProperties = {}, 
+        listDataInfo = { 
+            type: 'span', 
+            position: 'left', 
+            props: { 
+                style: { 
+                    display: 'block', 
+                    textAlign: 'center', 
+                    marginTop: '10px' 
+                } 
+            } 
+        } 
+    } = options.paginate || {};
+    const { inputSearch = {}, wrapper:wrappertableHeader = {} } = options.search || {};
 
     useEffect(() => {
         setTableData(data);
@@ -292,9 +331,6 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
         }));
     };
 
-    const [sortKey, setSortKey] = useState(null);
-    const [isAscending, setIsAscending] = useState(null);
-
     const handleSort = (key) => {
         let sortedData;
         if (key === sortKey) {
@@ -323,10 +359,6 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
         }));
     };
 
-    const { displayedButtons = 5, firstPage, previous, next, lastPage, text = {}, properties: paginationProperties = {}, listDataInfo = { type: 'span', position: 'left', props: { style: { display: 'block', textAlign: 'center', marginTop: '10px' } } } } = options.paginate || {};
-
-    const { input = {}, label = 'Search', wrapper = {} } = options.search || {};
-
     const handleCopy = () => {
         copyToClipboard(data, 'Data copied to clipboard');
     };
@@ -335,7 +367,6 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
         window.print();
     };
 
-    const fileNamePdf = 'Exported Data PDF';
     const handleExportToPdf = (fileName) => {
         generatePdf(
             Object.keys(head),
@@ -348,22 +379,16 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
         );
     };
 
-    const fileNameExcel = 'Exported Data Excel';
     const handleExportToExcel = (fileName) => {
         exportToExcel(tableData, fileName ? fileName : `${fileNameExcel}.xlsx`, `${fileNameExcel} Sheet`);
     };
 
-    const fileNameCsv = 'Exported Data CSV';
     const handleExportToCsv = (fileName) => {
         exportToCsv(tableData, fileName ? fileName : `${fileNameCsv}.csv`, {
             0: { halign: 'center', cellWidth: 40 },
             1: { halign: 'center', cellWidth: 50 }
         });
     };
-
-    const thClassName = options.properties?.thead?.td?.className || "border bg-violet-100 text-gray-600 hover:cursor-pointer";
-    const thProps = options.properties ? options.properties.thead.td : {};
-    const cellPropsClassName = cellProps.className ? cellProps.className : 'border p-2';
 
     const handleCheckboxChange = (event, index) => {
         const { checked } = event.target;
@@ -384,9 +409,7 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
     };
 
     return (
-        <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12">
-            <img src="https://play.tailwindcss.com/img/beams.jpg" alt="" className="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" />
-            <div className="w-full relative bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:mx-auto sm:rounded-lg sm:px-10" style={{ margin: '10px', width: '98%' }}>
+            <WrapperTableTagNode {...wrapTableWithExceptions}>
 
                 <TableHeader
                     options={options}
@@ -402,24 +425,25 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                     fileNameCsv={fileNameCsv}
                     searchQuery={searchQuery}
                     handleSearchChange={handleSearchChange}
-                    wrapper={wrapper}
-                    input={input}
+                    wrapper={wrappertableHeader}
+                    input={inputSearch}
                 />
                 
                 <main className="rounded-sm">
-                    <table className="border-collapse table-auto w-full text-sm" {...options.properties ? options.properties.table : {}} {...tableProps}>
+                    <table id={options.properties?.table?.id || tableName} name={tableName} className={className ? className : "border-collapse table-auto w-full text-sm"} {...options.properties ? options.properties.table : {}} {...tableProps}>
                         <thead {...options.properties ? options.properties.thead.props : {}}>
                             <tr {...options.properties ? options.properties.thead.tr : {}}>
                                 {options.increment && <th className={thClassName} {...thProps} {...cellProps}>
                                     {options.incrementText || '#'}
-                                
-                                
-                                    <input
-                                        name="check-all-current-page"
-                                        id="check-all-current-page"
-                                        type="checkbox"
-                                        checked={checkAll}
+                                    <Check
+                                        data={[{
+                                            name:"check-all-current-page",
+                                            id:"check-all-current-page",
+                                            type:"checkbox",
+                                            checked:checkAll
+                                        }]}
                                         onChange={handleCheckAllChange}
+                                        addable={{status:false}}
                                     />
                                 </th>}
                                 {Object.keys(head).map((key) => {
@@ -445,13 +469,16 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                                         {options.increment && (
                                             <td {...(options.properties ? options.properties.tbody.td : {})} style={{ textAlign: 'center', position: 'relative'}}>
                                                 {number + 1}
-                                                <input 
-                                                    type="checkbox" 
-                                                    name={`table-name[${index}]`} 
-                                                    id={`table-name-[${index}]`} 
-                                                    checked={!!checkedRows[currentPage * maxItems + index]}
+                                                <Check 
+                                                    data={[{
+                                                        name: `table-name[${index}]`,
+                                                        id: `table-name-[${index}]`,
+                                                        className: 'top-0 left-0 mx-1 my-1 absolute',
+                                                        type: 'checkbox',
+                                                        checked: !!checkedRows[currentPage * maxItems + index],
+                                                    }]}
                                                     onChange={(event) => handleCheckboxChange(event, index)}
-                                                    className={'top-0 left-0 mx-1 my-1 absolute'}
+                                                    addable={{status:false}}
                                                 />
                                             </td>
                                         )}
@@ -509,7 +536,6 @@ export const Table = ({ className, head = {}, data = [], footer = [], options = 
                     />
                 )}
 
-            </div>
-        </div>
+        </WrapperTableTagNode>
     );
 }

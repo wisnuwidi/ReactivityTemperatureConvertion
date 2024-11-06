@@ -7,7 +7,7 @@ import { Table } from '../../Element/TableElement/Table';
 
 export default function Sander () {  
     return (
-        <div className="sander">
+        <>
             <SenderTable />
 
             {/* <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12">
@@ -20,13 +20,19 @@ export default function Sander () {
                 </div>
             </div> */}
 
-        </div>
+        </>
     );
 }
 
 export const SenderTable = () => {
     return <Table
-        className='table table-compact table-zebra border-collapse'
+    //    name="Sanders"
+    //    className='table table-compact table-zebra border-collapse'
+        wrapper= {{
+            tag: 'article',
+            // className: 'rounded-sm wrapper-table',
+            // id: 'table-sander-id',
+        }}
         head={{
             "name": "Nama",
             "first_name": "Panggilan",
@@ -84,18 +90,16 @@ export const SenderTable = () => {
                 //    className: 'input input-bordered',
                 },
                 label: {
-                //    left: {
                     //    text: 'Cari ',
                    //     className: 'input-label',
-                //    }
                 },
                 wrapper: {
-                    className: 'flex justify-center',
-                    style: {
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                    },
+                    className: 'flex justify-end setbyuser',
+                    // style: {
+                    //     display: 'flex',
+                    //     justifyContent: 'space-between',
+                    //     alignItems: 'center',
+                    // },
                 },
             },// Enable search functionality
             increment: true,
@@ -457,7 +461,8 @@ export const SenderCheckElement = () => {
                 className: "custom-input",
                 placeholder: "Please input",
                 value: [],
-                required: true
+                required: true,
+                checked: true
             }, {
                 name: "namabeda",
                 id: "idsama", 

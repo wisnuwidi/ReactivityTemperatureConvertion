@@ -9,7 +9,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { FindDuplicateArrayValue, NextIncrement } from '../../Helper/ConstantMotion';
+import { FindDuplicateArrayValue, NextIncrement, SetExceptionProps } from '../../Helper/ConstantMotion';
 import Label from '../FormElement/Label';
 
 /**
@@ -329,6 +329,10 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
     }, [data]);
 
     const WrapperTag = wrapper?.tag || 'div';
+    const wrapperWithExceptions = SetExceptionProps ({ 
+        ...wrapper, 
+        className: wrapper?.className,
+    }, ['tag']);
 
     const handleChange = (index, event) => {
         const updatedSelects = selects.map((select, i) =>
@@ -420,7 +424,7 @@ export const Select = ({ data = [], onChange, wrapper = [], addable = {}, ...pro
     return (
         <>
             {selects.map((select, index) => (
-                <WrapperTag key={index} {...wrapper}>
+                <WrapperTag key={index} {...wrapperWithExceptions}>
                     {select.label?.left && (
                         <Label
                             text       = {select.label.left.text}
