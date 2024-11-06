@@ -40,7 +40,7 @@ export const SenderTable = () => {
                     minimumFractionDigits: 2
                 },
                 image: {
-                    className: 'w-10 h-10 rounded-full m-auto'
+                //    className: 'w-10 h-10 rounded-full m-auto'
                 }
             },
             column: {

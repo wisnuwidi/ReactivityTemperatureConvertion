@@ -279,8 +279,13 @@ export const Table = ({ className, head = {}, data = [], footer = [], config = {
     const thProps            = options.properties ? options.properties.thead.td : {};
     const cellPropsClassName = cellProps.className ? cellProps.className : 'border p-2';
     
-// Define the formatNumber function to avoid the 'not defined' error
-    
+    const defaultClassName = {
+        table     : "border-collapse table-auto w-full text-sm",
+        thead     : "bg-gray-100 dark:bg-slate-800",
+        tbody     : "bg-white dark:bg-slate-900",
+        tfooter   : "bg-gray-100 dark:bg-slate-800",
+        cellImage : "w-10 h-10 object-cover rounded-full m-auto",
+    };
     
     const { 
         displayedButtons = 5, 
@@ -435,158 +440,149 @@ export const Table = ({ className, head = {}, data = [], footer = [], config = {
                     input={inputSearch}
                 />
                 
-                <main className="rounded-sm">
-                    <table id={options.properties?.table?.id || tableName} name={tableName} className={className ? className : "border-collapse table-auto w-full text-sm"} {...options.properties ? options.properties.table : {}} {...tableProps}>
-                        <thead {...options.properties ? options.properties.thead.props : {}}>
-                            <tr {...options.properties ? options.properties.thead.tr : {}}>
-                                {options.increment && <th className={thClassName} {...thProps} {...cellProps}>
-                                    {options.increment.checkLists ? (
-                                        <Check
-                                            data={[{
-                                                name: `${tableName}-check-all-current-page`,
-                                                id: `${tableName}-check-all-current-page`,
-                                                type: "checkbox",
-                                                checked: checkAll,
-                                                label: {
-                                                    text: options.increment.text || '#',
-                                                    className: "input-label",
-                                                    position: "left",
-                                                }
-                                            }]}
-                                            onChange={handleCheckAllChange}
-                                            addable={{status: false}}
-                                            wrapper={{
-                                                tag: "span",
-                                                className: "p-2 justify-center",
-                                                style: {
-                                                    display: "flex"
-                                                }
-                                            }}
-                                        />
-                                    ) : options.increment && (
-                                        options.increment.text || '#'
-                                    )}
-                                </th>}
-                                {Object.keys(head).map((key) => {
-                                    return (
-                                        <th key={key} className={`${cellPropsClassName} ${thClassName}`} {...thProps} {...cellProps} onClick={() => handleSort(key)}>
-                                            {head[key]}
-                                            <span className="ml-2 mr-2 relative">
-                                                {sortKey === key ? (isAscending ? <>&#x25B4;</> : <>&#x25BE;</>) : <>
-                                                    <span className="inline-block align-middle absolute -top-0.5 text-[#96a2b3]">&#x25B4;</span>
-                                                    <span className="inline-block align-middle absolute -bottom-1 text-[#718096]">&#x25BE;</span>
-                                                </>}
-                                            </span>
-                                        </th>
-                                    )
-                                })}
-                            </tr>
-                        </thead>
-                        <tbody {...options.properties ? options.properties.tbody.props : {}}>
-                            {tableDataToDisplay.map((row, index) => {
-                                const number = index + (currentPage) * displayedButtons;
+                <table id={options.properties?.table?.id || tableName} name={tableName} className={className ? className : defaultClassName.table} {...options.properties ? options.properties.table : {}} {...tableProps}>
+                    <thead {...options.properties ? options.properties.thead.props : {}}>
+                        <tr {...options.properties ? options.properties.thead.tr : {}}>
+                            {options.increment && <th className={thClassName} {...thProps} {...cellProps}>
+                                {options.increment.checkLists ? (
+                                    <Check
+                                        data={[{
+                                            name: `${tableName}-check-all-current-page`,
+                                            id: `${tableName}-check-all-current-page`,
+                                            type: "checkbox",
+                                            checked: checkAll,
+                                            label: {
+                                                text: options.increment.text || '#',
+                                                className: "input-label",
+                                                position: "left",
+                                            }
+                                        }]}
+                                        onChange={handleCheckAllChange}
+                                        addable={{status: false}}
+                                        wrapper={{
+                                            tag: "span",
+                                            className: "flex p-2 justify-center checkall",
+                                        }}
+                                    />
+                                ) : options.increment && (
+                                    options.increment.text || '#'
+                                )}
+                            </th>}
+                            {Object.keys(head).map((key) => {
                                 return (
-                                    <tr key={number} onClick={(event) => handleRowClick(event, row)} {...options.properties ? options.properties.tbody.tr : {}}>
-                                        {options.increment && (
-                                            <td {...(options.properties ? options.properties.tbody.td : {})} style={{ textAlign: 'center', position: 'relative'}}>
-                                                                                                
-                                                {options.increment.checkLists ? (
-                                                    <Check
-                                                        data={[{
-                                                            name: `${tableName}-check-[${index}]`,
-                                                            id: `${tableName}-check-[${index}]`,
-                                                            className: 'top-0 left-0 mx-1 my-1 absolute',
-                                                            type: 'checkbox',
-                                                            checked: !!checkedRows[currentPage * maxItems + index],
-                                                            label: {
-                                                                text: number + 1,
-                                                                className: "input-label",
-                                                                position: "right",
-                                                            }
-                                                        }]}
-                                                        onChange={handleCheckAllChange}
-                                                        addable={{status: false}}
-                                                        wrapper={{
-                                                            tag: "span",
-                                                            className: "p-2 justify-center",
-                                                            style: {
-                                                                display: "flex"
-                                                            }
-                                                        }}
-                                                    />
-                                                ) : options.increment && (
-                                                    number + 1
-                                                )}
+                                    <th key={key} className={`${cellPropsClassName} ${thClassName}`} {...thProps} {...cellProps} onClick={() => handleSort(key)}>
+                                        {head[key]}
+                                        <span className="ml-2 mr-2 relative">
+                                            {sortKey === key ? (isAscending ? <>&#x25B4;</> : <>&#x25BE;</>) : <>
+                                                <span className="inline-block align-middle absolute -top-0.5 text-[#96a2b3]">&#x25B4;</span>
+                                                <span className="inline-block align-middle absolute -bottom-1 text-[#718096]">&#x25BE;</span>
+                                            </>}
+                                        </span>
+                                    </th>
+                                )
+                            })}
+                        </tr>
+                    </thead>
+                    <tbody {...options.properties ? options.properties.tbody.props : {}}>
+                        {tableDataToDisplay.map((row, index) => {
+                            const number = index + (currentPage) * displayedButtons;
+                            return (
+                                <tr key={number} onClick={(event) => handleRowClick(event, row)} {...options.properties ? options.properties.tbody.tr : {}}>
+                                    {options.increment && (
+                                        <td {...(options.properties ? options.properties.tbody.td : {})} style={{ textAlign: 'center', position: 'relative'}}>
+                                                                                            
+                                            {options.increment.checkLists ? (
+                                                <Check
+                                                    data={[{
+                                                        name: `${tableName}-check-[${index}]`,
+                                                        id: `${tableName}-check-[${index}]`,
+                                                        className: 'top-0 left-0 mx-1 my-1 absolute',
+                                                        type: 'checkbox',
+                                                        checked: !!checkedRows[currentPage * maxItems + index],
+                                                        label: {
+                                                            text: number + 1,
+                                                            position: "right",
+                                                        }
+                                                    }]}
+                                                    onChange={handleCheckAllChange}
+                                                    addable={{status: false}}
+                                                    wrapper={{
+                                                        tag: "span",
+                                                        className: "checklists flex p-2 justify-center",
+                                                    }}
+                                                />
+                                            ) : options.increment && (
+                                                number + 1
+                                            )}
 
-                                            </td>
-                                        )}
+                                        </td>
+                                    )}
+                                    
+                                    {Object.keys(head).map((key) => {
+                                        let   value        = row[key];
+                                        let   exceptionCol = [];
+                                        const configColumn = config?.column;
+                                        const configFormat = config?.formats;
                                         
-                                        {Object.keys(head).map((key) => {
-                                            let   value        = row[key];
-                                            let   exceptionCol = [];
-                                            const configColumn = config?.column;
-                                            const configFormat = config?.formats;
-                                            
-                                            if (configColumn && configColumn[key]) {
-                                                switch (configColumn[key]) {
-                                                    case 'currency': {
-                                                        value = FormatCurrency(row[key], {
-                                                            locale: configFormat?.currency?.locale,
-                                                            currency: configFormat?.currency?.currency,
-                                                            labelCurrency: configFormat?.currency?.label,
-                                                            minimumFractionDigits: configFormat?.currency?.minimumFractionDigits || 0,
-                                                            maximumFractionDigits: configFormat?.currency?.maximumFractionDigits
-                                                        });
-                                                        exceptionCol[key] = key;
-                                                        break;
-                                                    }
-                                                    case 'image': {
-                                                        value = <img src={row[key]} alt={key} className={configFormat?.image?.className || 'w-10 h-10 rounded-full m-auto'} />;
-                                                        exceptionCol[key] = key;
-                                                        break;
-                                                    }
+                                        if (configColumn && configColumn[key]) {
+                                            switch (configColumn[key]) {
+                                                case 'currency': {
+                                                    value = FormatCurrency(row[key], {
+                                                        locale: configFormat?.currency?.locale,
+                                                        currency: configFormat?.currency?.currency,
+                                                        labelCurrency: configFormat?.currency?.label,
+                                                        minimumFractionDigits: configFormat?.currency?.minimumFractionDigits || 0,
+                                                        maximumFractionDigits: configFormat?.currency?.maximumFractionDigits
+                                                    });
+                                                    exceptionCol[key] = key;
+                                                    break;
+                                                }
+                                                case 'image': {
+                                                    value = <img src={row[key]} alt={key} className={configFormat?.image?.className || defaultClassName.cellImage} />;
+                                                    exceptionCol[key] = key;
+                                                    break;
                                                 }
                                             }
-                                            
-                                            let cellValue = value;
-                                            if (customCell && !exceptionCol[key]) {
-                                                cellValue = customCell(row, key, exceptionCol[key]);
-                                            }
+                                        }
+                                        
+                                        let cellValue = value;
+                                        if (customCell && !exceptionCol[key]) {
+                                            cellValue = customCell(row, key, exceptionCol[key]);
+                                        }
 
-                                            return (
-                                                <td
-                                                    {...options.properties ? options.properties.tbody.td : {}}
-                                                    key={key}
-                                                    onClick={(event) => handleCellClick(event, row, row[key])}
-                                                    className={`${cellPropsClassName}`}
-                                                    style={cellProps.style} 
-                                                >
-                                                    {cellValue}
-                                                </td>
-                                            );
-                                        })}
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                        {footer.length > 0 && (
-                            <tfoot {...options.properties ? options.properties.tfooter.props : {}}>
-                                <tr {...options.properties ? options.properties.tfooter.tr : {}}>
-                                    {options.increment && (
-                                        <td>&nbsp;</td>
-                                    )}
-                                    {Object.keys(head).map((key) => {
                                         return (
-                                            <td key={key} className={cellProps.className || 'p-2'} style={cellProps.style} {...options.properties ? options.properties.tfooter.td : {}}>
-                                                {footer[0][key]}
+                                            <td
+                                                {...options.properties ? options.properties.tbody.td : {}}
+                                                key={key}
+                                                onClick={(event) => handleCellClick(event, row, row[key])}
+                                                className={`${cellPropsClassName}`}
+                                                style={cellProps.style} 
+                                            >
+                                                {cellValue}
                                             </td>
                                         );
                                     })}
                                 </tr>
-                            </tfoot>
-                        )}
-                    </table>
-                </main>
+                            );
+                        })}
+                    </tbody>
+                    {footer.length > 0 && (
+                        <tfoot {...options.properties ? options.properties.tfooter.props : {}}>
+                            <tr {...options.properties ? options.properties.tfooter.tr : {}}>
+                                {options.increment && (
+                                    <td>&nbsp;</td>
+                                )}
+                                {Object.keys(head).map((key) => {
+                                    return (
+                                        <td key={key} className={cellProps.className || 'p-2'} style={cellProps.style} {...options.properties ? options.properties.tfooter.td : {}}>
+                                            {footer[0][key]}
+                                        </td>
+                                    );
+                                })}
+                            </tr>
+                        </tfoot>
+                    )}
+                </table>
 
                 {options.paginate && (
                     <Pagination
