@@ -14,6 +14,7 @@ import { copyToClipboard, exportToCsv, exportToExcel, FormatCurrency, generatePd
 import { TableHeader } from '../Widget/TableHeader';
 import { Pagination } from '../Widget/Pagination';
 import { Check } from '../FormElement/Check';
+import { TableMergeColumns } from '../Widget/TableMergeColumns';
 
 /**
  * @function Table
@@ -254,7 +255,7 @@ import { Check } from '../FormElement/Check';
         }}
     />
  */
-export const Table = ({ className, head = {}, data = [], footer = [], config = {}, options = {}, onRowClick, onCellClick, cellProps = {}, customCell, tableName = `table-${Math.random().toString(36).substring(8, 38)}`, wrapper, ...tableProps }) => {
+export const Table = ({ className, head = {}, data = [], footer = [], config = {}, options = {}, onRowClick, onCellClick, cellProps = {}, customCell, tableName = `table-${Math.random().toString(36).substring(8, 38)}`, wrapper, merge = {}, ...tableProps }) => {
     const [tableData,    setTableData]    = useState(data);
     const [searchQuery,  setSearchQuery]  = useState('');
     const [currentPage,  setCurrentPage]  = useState(0);
@@ -418,7 +419,10 @@ export const Table = ({ className, head = {}, data = [], footer = [], config = {
         setCheckedRows(updatedCheckedRows);
         setCheckAll(checked);
     };
-
+    
+    const mergedColumns = TableMergeColumns(merge);
+    console.log(mergedColumns);
+    
     return (
             <WrapperTableTagNode {...wrapTableWithExceptions}>
 
@@ -442,6 +446,7 @@ export const Table = ({ className, head = {}, data = [], footer = [], config = {
                 
                 <table id={options.properties?.table?.id || tableName} name={tableName} className={className ? className : defaultClassName.table} {...options.properties ? options.properties.table : {}} {...tableProps}>
                     <thead {...options.properties ? options.properties.thead.props : {}}>
+                        
                         <tr {...options.properties ? options.properties.thead.tr : {}}>
                             {options.increment && <th className={thClassName} {...thProps} {...cellProps}>
                                 {options.increment.checkLists ? (
