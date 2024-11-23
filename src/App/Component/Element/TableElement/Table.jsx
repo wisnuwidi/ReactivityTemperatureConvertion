@@ -10,11 +10,10 @@
  */
 
 import { useState, useEffect } from 'react';
-import { copyToClipboard, exportToCsv, exportToExcel, FormatCurrency, generatePdf, SetExceptionProps } from '../../Helper/ConstantMotion';
-import { TableHeader } from '../Widget/TableHeader';
-import { Pagination } from '../Widget/Pagination';
 import { Check } from '../FormElement/Check';
-import { TableMergeColumns } from '../Widget/TableMergeColumns';
+import { Pagination } from '../Widget/Pagination';
+import { TableHeader, TableMergeColumns } from '../Widget/Table';
+import { copyToClipboard, exportToCsv, exportToExcel, FormatCurrency, generatePdf, SetExceptionProps } from '../../Helper/ConstantMotion';
 
 /**
  * @function Table
@@ -272,6 +271,9 @@ export const Table = ({ className, head = {}, data = [], footer = [], config = {
         className: wrapper?.className || 'w-[98%] mx-auto bg-white dark:bg-slate-900 px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 rounded-lg sm:px-10 my-2',
     }, ['tag']);
 
+    let headListsOrigin      = head;
+    
+    const mergedColumnLists  = TableMergeColumns(merge, Object.keys(head));
     const fileNamePdf        = 'Exported Data PDF';
     const fileNameExcel      = 'Exported Data Excel';
     const fileNameCsv        = 'Exported Data CSV';
@@ -420,8 +422,40 @@ export const Table = ({ className, head = {}, data = [], footer = [], config = {
         setCheckAll(checked);
     };
     
-    const mergedColumns = TableMergeColumns(merge);
-    console.log(mergedColumns);
+    let mergedColspan   = {};
+    let mergedRowspan   = {};
+    let mergedColumns   = {};
+    if (mergedColumnLists) {
+        let mergedHeadLists  = {};
+        let headListsEntries = {};
+
+        mergedColumnLists.dataColumns.forEach((node) => {
+            if (!head[node]) {
+                const nodeKey = node.toLowerCase().replace(/\s+/g, '_');
+                mergedHeadLists[nodeKey] = node;
+                mergedColumnLists.childColumns[nodeKey].columns.forEach((column) => {
+                    headListsEntries[column] = headListsOrigin[column];
+                });
+            } else {
+                mergedRowspan[node]    = 2;
+                mergedHeadLists[node]  = head[node];
+                headListsEntries[node] = headListsOrigin[node];
+            }
+        });
+        
+        Object.entries(mergedColumnLists.childColumns).forEach(([key, value]) => {
+            mergedColspan[key] = value.colspan;
+            value.columns.forEach((column) => {
+                mergedColumns[column] = head[column];
+            });
+        });
+
+        head = {};
+        head = mergedHeadLists;
+
+        headListsOrigin = {};
+        headListsOrigin = headListsEntries;
+    }
     
     return (
             <WrapperTableTagNode {...wrapTableWithExceptions}>
@@ -445,10 +479,11 @@ export const Table = ({ className, head = {}, data = [], footer = [], config = {
                 />
                 
                 <table id={options.properties?.table?.id || tableName} name={tableName} className={className ? className : defaultClassName.table} {...options.properties ? options.properties.table : {}} {...tableProps}>
+                    
                     <thead {...options.properties ? options.properties.thead.props : {}}>
                         
                         <tr {...options.properties ? options.properties.thead.tr : {}}>
-                            {options.increment && <th className={thClassName} {...thProps} {...cellProps}>
+                            {options.increment && <th className={thClassName} {...thProps} {...cellProps} {...mergedRowspan ? {rowSpan: 2} : {}}>
                                 {options.increment.checkLists ? (
                                     <Check
                                         data={[{
@@ -473,9 +508,10 @@ export const Table = ({ className, head = {}, data = [], footer = [], config = {
                                     options.increment.text || '#'
                                 )}
                             </th>}
+
                             {Object.keys(head).map((key) => {
                                 return (
-                                    <th key={key} className={`${cellPropsClassName} ${thClassName}`} {...thProps} {...cellProps} onClick={() => handleSort(key)}>
+                                    <th key={key} className={`${cellPropsClassName} ${thClassName}`} {...thProps} {...cellProps} onClick={() => handleSort(key)} {...mergedColspan[key] ? {colSpan: mergedColspan[key]} : {}} {...mergedRowspan[key] ? {rowSpan: mergedRowspan[key]} : {}}>
                                         {head[key]}
                                         <span className="ml-2 mr-2 relative">
                                             {sortKey === key ? (isAscending ? <>&#x25B4;</> : <>&#x25BE;</>) : <>
@@ -483,10 +519,29 @@ export const Table = ({ className, head = {}, data = [], footer = [], config = {
                                                 <span className="inline-block align-middle absolute -bottom-1 text-[#718096]">&#x25BE;</span>
                                             </>}
                                         </span>
-                                    </th>
+                                    </th>                                    
                                 )
                             })}
                         </tr>
+
+                        <>
+                            {mergedColumns && (
+                                <tr>
+                                    {Object.entries(mergedColumns).map(([columnKey, columnValues]) =>
+                                        <th key={`${columnKey}`} className={`${cellPropsClassName} ${thClassName}`} {...thProps} {...cellProps} onClick={() => handleSort(columnKey)}>
+                                            {columnValues}
+                                            <span className="ml-2 mr-2 relative">
+                                                {sortKey === columnKey ? (isAscending ? <>&#x25B4;</> : <>&#x25BE;</>) : <>
+                                                    <span className="inline-block align-middle absolute -top-0.5 text-[#96a2b3]">&#x25B4;</span>
+                                                    <span className="inline-block align-middle absolute -bottom-1 text-[#718096]">&#x25BE;</span>
+                                                </>}
+                                            </span>
+                                        </th>
+                                    )}
+                                </tr>
+                            )}
+                        </>
+                        
                     </thead>
                     <tbody {...options.properties ? options.properties.tbody.props : {}}>
                         {tableDataToDisplay.map((row, index) => {
@@ -497,7 +552,7 @@ export const Table = ({ className, head = {}, data = [], footer = [], config = {
                                         <td {...(options.properties ? options.properties.tbody.td : {})} style={{ textAlign: 'center', position: 'relative'}}>
                                                                                             
                                             {options.increment.checkLists ? (
-                                                <Check
+                                                <Check 
                                                     data={[{
                                                         name: `${tableName}-check-[${index}]`,
                                                         id: `${tableName}-check-[${index}]`,
@@ -506,11 +561,12 @@ export const Table = ({ className, head = {}, data = [], footer = [], config = {
                                                         checked: !!checkedRows[currentPage * maxItems + index],
                                                         label: {
                                                             text: number + 1,
-                                                            position: "right",
+                                                            className: "input-label",
+                                                            position: "left",
                                                         }
                                                     }]}
-                                                    onChange={handleCheckAllChange}
-                                                    addable={{status: false}}
+                                                    onChange={(event) => handleCheckboxChange(event, index)}
+                                                    addable={{status:false}}
                                                     wrapper={{
                                                         tag: "span",
                                                         className: "checklists flex p-2 justify-center",
@@ -523,7 +579,7 @@ export const Table = ({ className, head = {}, data = [], footer = [], config = {
                                         </td>
                                     )}
                                     
-                                    {Object.keys(head).map((key) => {
+                                    {Object.keys(headListsOrigin).map((key) => {
                                         let   value        = row[key];
                                         let   exceptionCol = [];
                                         const configColumn = config?.column;

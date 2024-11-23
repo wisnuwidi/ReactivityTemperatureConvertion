@@ -1,11 +1,11 @@
 /**
- * @filename        : TableHeader.jsx
+ * @filename        : Table.jsx
  * @license         : MIT
  * @copyright       : 2023 IncoDIY
- * @time Created at : 02-11-2024, 22:25:30
+ * @time Created at : 07-11-2024, 13:54:24
  * @email           : IncoDIY<incodiy@gmail.com>
  * @author          : IncoDIY<incodiy@gmail.com>
- * @description     : This file contains a function component for rendering a table header with pagination, search, and action buttons.
+ * @description     : This file contains a function component for widget table.
  */
 
 import React from 'react';
@@ -161,3 +161,104 @@ export const TableHeader = ({ options, maxItems, handlePageSizeChange, handlePri
         </header>
     );
 };
+
+/**
+ * @function mergeColumns
+ * This function takes an array of objects which have properties of `thead` or `tfooter`.
+ * Each of this properties must have `columns` and `label` properties.
+ * The function will merge the columns of each table section.
+ * @param {object[]} mergeConfig - the configuration of columns to merge
+ * @param dataColumns[] - the data columns
+ * @returns {object} - the merged columns configuration
+ * @example
+   const columnsConfig = [
+        {
+            columns: ['name', 'age'],
+            label: 'Data Karyawan'
+        },
+        {
+            columns: ['position', 'category'],
+            label: 'Job Information'
+        }
+   ];
+ */
+export const TableMergeColumns = (mergeConfig, dataColumns = []) => {
+    const mergedNodes  = [];
+    const replaceNodes = [];
+    const hideNodes    = [];
+
+    Object.keys(mergeConfig).forEach((key) => {
+        mergedNodes.push({
+            nodeIndex : dataColumns.indexOf(mergeConfig[key].columns[0]),
+            columns   : mergeConfig[key].columns
+        });
+        
+        mergeConfig[key].columns.forEach((column, nodeIndex) => {
+            if (0 === nodeIndex) {
+                replaceNodes[column] = mergeConfig[key].label;
+            }
+            hideNodes[mergeConfig[key].label] = { columns: mergeConfig[key].columns.slice(1) };
+        });
+    });
+    
+    let mergeStatus = false;
+    const mergedCols  = [];
+    let hideCols = [];
+    let n = 0;
+    const mergedNodeInfo = {};
+    mergedNodes.forEach((item) => {
+        const nodeIndex = item.nodeIndex;
+        item.columns.forEach((column, index) => {
+            if (0 === index) mergedCols[nodeIndex] = replaceNodes[column];
+            if (undefined !== replaceNodes[column]) {
+                let replaceNodeColumns = replaceNodes[column] ? replaceNodes[column].toLowerCase().replace(/\s+/g, '_') : '';
+                mergedNodeInfo[replaceNodeColumns]  = {
+                    columns: item.columns,
+                    colspan: item.columns.length
+                };
+                mergeStatus = true;
+            }
+
+            n++;
+        });
+
+        if (hideNodes[mergedCols[nodeIndex]]) {
+            hideCols.push({columns: hideNodes[mergedCols[nodeIndex]].columns});
+        }
+    });
+
+    let hideColumns = [];
+    if (hideCols) {
+        hideCols.forEach((item) => {
+            item.columns.forEach((column) => {
+                hideColumns[column] = dataColumns.indexOf(column);
+            });
+        });
+    }
+    
+    let replaceDataColumns = [];
+    replaceDataColumns = dataColumns.map((item) => {
+        if (!hideColumns[item]) {
+            return item;
+        }
+    });
+
+    let newDataColumns = replaceDataColumns.map((item, index) => {
+        if (mergedCols[index]) {
+            return mergedCols[index];
+        }
+        
+        return item;
+    });
+
+    newDataColumns = newDataColumns.filter(item => typeof item !== 'undefined');
+
+    const dataColumnLists = {
+        dataColumns  : newDataColumns,
+        childColumns : mergedNodeInfo
+    };
+    
+    if (true === mergeStatus) {
+        return dataColumnLists;
+    }
+}

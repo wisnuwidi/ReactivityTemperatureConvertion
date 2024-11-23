@@ -65,46 +65,13 @@ export const SenderTable = () => {
         }}
         merge={[
             {
-                thead: {
-                    columns: ['name', 'age'],
-                    label: 'Data Karyawan'
-                },
-                tbody: {
-                    columns: ['salary', 'bonus'],
-                    label: 'Financial Summary'
-                },
-                tfooter: {
-                    columns: ['salary', 'bonus'],
-                    label: 'Financial Summary'
-                }
+                columns: ['name', 'age', 'address'],
+                label: 'Data Karyawan'
             },
             {
-                thead: {
-                    columns: ['position', 'category'],
-                    label: 'Job Information'
-                }
+                columns: ['position', 'category'],
+                label: 'Job Information'
             }
-
-            // {
-            //     position: 'header',
-            //     columns: ['name', 'age'],
-            //     label: 'Data Karyawan'
-            // },
-            // {
-            //     position: 'header',
-            //     columns: ['salary', 'bonus'],
-            //     label: 'Financial Summary'
-            // },
-            // {
-            //     position: 'body',
-            //     columns: ['photo', 'address'],
-            //     label: 'Data Lain'
-            // },
-            // {
-            //     position: 'footer',
-            //     columns: ['salary', 'bonus'],
-            //     label: 'Financial Summary'
-            // }
         ]}
         data={require('../../../Develop/DummyData/DataTable.json').map((item, index) => {
             return {
