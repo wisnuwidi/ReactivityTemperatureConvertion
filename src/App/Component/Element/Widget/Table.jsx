@@ -163,24 +163,44 @@ export const TableHeader = ({ options, maxItems, handlePageSizeChange, handlePri
 };
 
 /**
- * @function mergeColumns
- * This function takes an array of objects which have properties of `thead` or `tfooter`.
- * Each of this properties must have `columns` and `label` properties.
- * The function will merge the columns of each table section.
- * @param {object[]} mergeConfig - the configuration of columns to merge
- * @param dataColumns[] - the data columns
- * @returns {object} - the merged columns configuration
+ * @function TableMergeColumns
+ * 
+ * @description
+ *      This function is designed to merge columns in a table based on the specified configuration. 
+ *      It takes an array of merge configurations and an array of data columns, returning a new configuration 
+ *      with merged columns and metadata about the merged columns.
+ *
+ * @param {object[]} mergeConfig - An array of objects defining the configuration for column merging. 
+ *      Each object should have:
+ *          - columns: {array} An array of strings representing the column keys to be merged.
+ *          - label: {string} A string representing the label for the merged columns.
+ * @param {string[]} dataColumns - An array of strings representing the current data columns.
+ * @returns {object} - An object containing:
+ *      - dataColumns: {array} An array of strings representing the new data columns with merged configurations.
+ *      - childColumns: {object} An object mapping merged column labels to their original columns and colspan.
+ *
  * @example
-   const columnsConfig = [
-        {
-            columns: ['name', 'age'],
-            label: 'Data Karyawan'
-        },
-        {
-            columns: ['position', 'category'],
-            label: 'Job Information'
-        }
-   ];
+ *      const columnsConfig = [
+ *          {
+ *              columns: ['name', 'age'],
+ *              label: 'Employee Data'
+ *          },
+ *          {
+ *              columns: ['position', 'category'],
+ *              label: 'Job Information'
+ *          }
+ *      ];
+ *      const dataCols = ['name', 'age', 'position', 'category', 'salary'];
+ *      const result = TableMergeColumns(columnsConfig, dataCols);
+ *      console.log(result);
+ *      // Output:
+ *      // {
+ *      //     dataColumns: ['Employee Data', 'Job Information', 'salary'],
+ *      //     childColumns: {
+ *      //         employee_data: { columns: ['name', 'age'], colspan: 2 },
+ *      //         job_information: { columns: ['position', 'category'], colspan: 2 }
+ *      //     }
+ *      // }
  */
 export const TableMergeColumns = (mergeConfig, dataColumns = []) => {
     const mergedNodes  = [];
