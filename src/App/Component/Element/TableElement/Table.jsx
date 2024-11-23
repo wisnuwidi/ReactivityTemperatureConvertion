@@ -70,6 +70,12 @@ import { copyToClipboard, exportToCsv, exportToExcel, FormatCurrency, generatePd
             age: 'Age',
             address: 'Address'
         }}
+        merge={[
+            {
+                columns: ['name', 'address'],
+                label: 'Data Karyawan'
+            }
+        ]}
         data={[
             { name: 'John Doe', age: 25, address: '123 Main St' },
             { name: 'Jane Doe', age: 30, address: '456 Elm St' },
